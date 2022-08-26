@@ -20,7 +20,6 @@ namespace game
 		GameErrors lastErrorType = GameErrors::None;
 		std::string lastErrorString = "None";
 		explicit operator bool() const;
-		void Clear(void);
 	};
 
 	// Cant seems to get this one in the struct/class

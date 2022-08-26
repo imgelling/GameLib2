@@ -6,11 +6,7 @@ namespace game
 	{
 		return  (lastErrorType != GameErrors::None);
 	}
-	void GameError::Clear(void)
-	{
-		lastErrorString = "None";
-		lastErrorType = GameErrors::None;
-	}
+
 	std::ostream& operator<< (std::ostream& stream , const GameError error)
 	{
 		uint32_t errID = (uint32_t)error.lastErrorType;
