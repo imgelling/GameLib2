@@ -12,7 +12,8 @@ namespace game
 		GameInvalidParameter,
 		GameRenderer,
 		GameWindowsSpecific,
-		GameOpenGLSpecific
+		GameOpenGLSpecific,
+		GameVulkanSpecific
 	};
 	
 	struct GameError

@@ -17,6 +17,7 @@ namespace game
 		case (uint32_t)GameErrors::GameInvalidParameter: stream << "GameErrorInvalidParameters"; break;
 		case (uint32_t)GameErrors::GameWindowsSpecific: stream << "GameErrorWindowsSpecific"; break;
 		case (uint32_t)GameErrors::GameOpenGLSpecific: stream << "GameErrorOpenGLSpecific"; break;
+		case (uint32_t)GameErrors::GameVulkanSpecific: stream << "GameErrorVulkanSpecific"; break;
 		case (uint32_t)GameErrors::GameRenderer: stream << "GameRenderer"; break;
 		default: return stream << "GameErrorUnknown";
 		}
