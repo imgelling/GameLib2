@@ -10,6 +10,7 @@ namespace game
 		None = 0,
 		GameMemoryAllocation,
 		GameInvalidParameter,
+		GameRenderer,
 		GameWindowsSpecific,
 		GameOpenGLSpecific
 	};
