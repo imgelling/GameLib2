@@ -13,7 +13,8 @@ namespace game
 		GameRenderer,
 		GameWindowsSpecific,
 		GameOpenGLSpecific,
-		GameVulkanSpecific
+		GameVulkanSpecific,
+		GameContent
 	};
 	
 	struct GameError
@@ -34,6 +35,7 @@ namespace game
 			case (uint32_t)GameErrors::GameOpenGLSpecific: _stream << "GameErrorOpenGLSpecific"; break;
 			case (uint32_t)GameErrors::GameVulkanSpecific: _stream << "GameErrorVulkanSpecific"; break;
 			case (uint32_t)GameErrors::GameRenderer: _stream << "GameRenderer"; break;
+			case (uint32_t)GameErrors::GameContent: _stream << "GameContent"; break;
 			default: return _stream << "GameErrorUnknown";
 			}
 			// Append the error text to general error code
