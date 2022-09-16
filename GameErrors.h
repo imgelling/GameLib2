@@ -43,7 +43,9 @@ namespace game
 		}
 	};
 
-	// Cant seems to get this one in the struct/class
-
+	inline GameError::operator bool() const
+	{
+		return  (lastErrorType != GameErrors::None);
+	}
 
 }
