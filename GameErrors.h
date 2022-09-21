@@ -22,7 +22,6 @@ namespace game
 		GameErrors lastErrorType = GameErrors::None;
 		std::string lastErrorString = "None";
 		explicit operator bool() const;
-		//friend std::ostream& operator<< (std::ostream& stream, const game::GameError error);
 		friend std::ostream& operator<< (std::ostream& _stream, const GameError error)
 		{
 			uint32_t errID = (uint32_t)error.lastErrorType;
