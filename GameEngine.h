@@ -65,21 +65,19 @@ namespace game
 #endif
 
 	class Engine;
-	extern Engine* enginePointer;
-	extern SystemInfo systemInfo;
+	extern Engine* enginePointer;		// Pointer to game engine for Windows messaging system
+	extern SystemInfo systemInfo;		// Info about the cpu and gpu of the system
 	
 	class Engine
 	{
-		friend class PixelMode;
-		friend class SpriteBatch;
 	public:
-		Keyboard geKeyboard;
-		Mouse geMouse;
-		Logger* geLogger;
-		bool geIsRunning;
-		bool geIsMinimized;
-		bool geIsMaximized;
-		bool geFullScreenToggled;
+		Keyboard geKeyboard;			// Provides key state info and text input
+		Mouse geMouse;					// Provides mouse state info
+		Logger* geLogger;				// Provides a logging interface
+		bool geIsRunning;				// Is the engine running?
+		bool geIsMinimized;				// Is the game window minimized?
+		bool geIsMaximized;				// Is the game window maximized?
+		bool geIsFullScreen;			// Is the game window full screen (no border)?
 #if defined(GAME_DIRECTX9)
 		LPDIRECT3DDEVICE9 d3d9Device;
 #endif
@@ -105,25 +103,49 @@ namespace game
 
 		Engine();
 		~Engine();
+		// Sets the attributes of the game window and what
+		// rendering API the engine uses.
 		void geSetAttributes(const Attributes &attrib);
+		// Creates the renderer and gets the engine ready to 
+		// start.
 		bool geCreate();
+		// Starts the game engine loop.
 		void geStartEngine();
+		// Flags the engine to stop the game loop.
 		void geStopEngine();
+		// User sets the logger used by the engine.
+		// Mandatory for the engine to start.
 		void geSetLogger(Logger* logger);
 
 		// Frame and update timing 
 		
+		// Returns the number of updates per second
+		// the engine is running at.
 		uint32_t geGetUpdatesPerSecond() const noexcept;
+		// Returns the number of frames per second
+		// the engine is running at.
 		uint32_t geGetFramesPerSecond() const noexcept;
+		// Returns the MHZ the cpu is running at.
+		// Note: This basically returns the MHZ of the core
+		// currently running, normally just base speed.
+		// Probably need to do correctly if possible. Used to work
+		// when the same code was in main.cpp in the update method...?
 		uint32_t geGetCPUFrequency() const noexcept;
+		// Sets the MAX frames per second the engine will render
 		void geSetFrameLock(const uint32_t limit) noexcept;
+		// Sets the MAX updates per second the engine will update
 		void geSetUpdateLock(const uint32_t limit) noexcept;
+		// Sets both the MAX updates and frames per second the engine do
 		void geSetGameLocks(const uint32_t fps, const uint32_t ups) noexcept;
 
 		
 		// Renderer specific
 
-		void geClear(const uint32_t bufferFlags, const Color color);
+		// Clears the current render target and/or depthstencil to
+		// specified color.
+		// Also starts the frame for DX9 and DX12. This 
+		// needs to be called for them.
+		void geClear(const uint32_t bufferFlags, const Color color);  // probably need a value for depth/stencil
 		bool geCreateTexture(Texture2D& texture);
 		bool geLoadTexture(const std::string fileName, Texture2D& texture);
 		void geUnLoadTexture(Texture2D& texture);
@@ -190,7 +212,7 @@ namespace game
 		_cpuFrequency = 0;
 		geIsMinimized = false;
 		geIsMaximized = false;
-		geFullScreenToggled = false;
+		geIsFullScreen = false;
 #if defined(GAME_DIRECTX9)
 		d3d9Device = nullptr;
 #endif
@@ -441,7 +463,7 @@ namespace game
 
 	inline void Engine::geClear(const uint32_t bufferFlags, const Color color)
 	{
-		if (bufferFlags)
+		if (bufferFlags && _renderer)
 		{
 			_renderer->Clear(bufferFlags, color);
 		}
@@ -526,7 +548,7 @@ namespace game
 		Recti size;  // get window size on linux
 		#endif
 		HandleWindowResize(size.right, size.bottom);
-		geFullScreenToggled = true;
+		geIsFullScreen = !geIsFullScreen;
 	}
 
 	inline void Engine::_GetAndLogCPUInfo()
@@ -567,8 +589,6 @@ namespace game
 		// Make sure a logger is attached
 		if (geLogger == nullptr)
 		{
-			//std::exception err;
-			//err.what("Must set a logger with geSetLogger().");
 			throw std::logic_error("Must set a logger with geSetLogger() before calling geCreate().");
 			return false;
 		}
@@ -813,8 +833,8 @@ namespace game
 				enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
 				break;
 			case SIZE_MAXIMIZED:
-				enginePointer->geIsMaximized = true;
 				enginePointer->geIsMinimized = false;
+				enginePointer->geIsMaximized = true;
 				enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
 				break;
 			case SIZE_RESTORED:
@@ -823,9 +843,9 @@ namespace game
 					enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
 					enginePointer->geIsMaximized = false;
 				}
-				if (enginePointer->geFullScreenToggled)
+				if (enginePointer->geIsFullScreen)
 				{
-					enginePointer->geFullScreenToggled = false;
+					enginePointer->geIsFullScreen = false;
 				}
 				enginePointer->geIsMinimized = false;
 				break;
