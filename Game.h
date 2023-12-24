@@ -52,6 +52,9 @@ Change Log:
 		Misc:
 			* Removed text buffer in keyboard text input mode.  This needs to be somewhere else to allow
 			  for user to make multiple or define how they work.  The code is still there, just commented out
+	- December 23, 2023:
+		Misc:
+			* OpenGL-Window is now GameLib2 on github, https://github.com/imgelling/gamelib2
 
 */
 
