@@ -39,7 +39,7 @@ namespace game
 		void Pixel(const int32_t x, const int32_t y, const game::Color& color) noexcept;
 		void PixelClip(const int32_t x, const int32_t y, const game::Color& color) noexcept;
 		void Line(int32_t x1, int32_t y1, int32_t x2, int32_t y2, const Color& color) noexcept;
-		void LineClip(const int32_t x1, const int32_t y1, const int32_t x2,  int32_t y2, const Color& color) noexcept;
+		void LineClip(const int32_t x1, const int32_t y1, const int32_t x2, const int32_t y2, const Color& color) noexcept;
 		void HLine(const int32_t x1, const int32_t x2, const int32_t y, const Color& color) noexcept;
 		void HLineClip(const int32_t x1, const int32_t x2, const int32_t y, const Color& color) noexcept;
 		void VLine(const int32_t x, const int32_t y1, const int32_t y2, const Color& color) noexcept;
