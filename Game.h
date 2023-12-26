@@ -224,6 +224,7 @@ Change Log:
 #include "GameTerminal.h"
 #include "GameTexture2D.h"
 #include "GameTimer.h"
+#include "GameThreadPool.h"
 #include "GameWindow.h"
 #pragma endregion
 
