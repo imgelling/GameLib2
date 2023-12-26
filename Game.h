@@ -55,6 +55,9 @@ Change Log:
 	- December 23, 2023:
 		Misc:
 			* OpenGL-Window is now GameLib2 on github, https://github.com/imgelling/gamelib2
+	- December 25, 2023:
+		Features:
+			* ThreadPool was added, example usage is at bottom of GameThreadPool.h
 
 */
 

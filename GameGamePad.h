@@ -1,5 +1,5 @@
-#if !defined(GAMECONTROLLER_H)
-#define GAMECONTROLLER_H
+#if !defined(GAMEGAMEPAD_H)
+#define GAMEGAMEPAD_H
 
 #include <stdint.h>
 #include <Xinput.h>
