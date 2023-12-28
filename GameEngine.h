@@ -70,6 +70,8 @@ namespace game
 	
 	class Engine
 	{
+		friend class PixelMode;
+		friend class SpriteBatch;
 	public:
 		Keyboard geKeyboard;			// Provides key state info and text input
 		Mouse geMouse;					// Provides mouse state info
