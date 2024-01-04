@@ -78,7 +78,7 @@ namespace game
 			this->z = z;
 			this->w = (T)1;
 		}
-		Vector3 operator+ (const Vector3& rhs)
+		Vector3 operator + (const Vector3& rhs)
 		{
 			Vector3<T> c;
 			c.x = x + rhs.x;
@@ -86,14 +86,14 @@ namespace game
 			c.z = z + rhs.z;
 			return c;
 		}
-		Vector3& operator+= (const Vector3& rhs)
+		Vector3& operator += (const Vector3& rhs)
 		{
 			x = x + rhs.x;
 			y = y + rhs.y;
 			z = z + rhs.z;
 			return *this;
 		}
-		Vector3 operator- (const Vector3& rhs)
+		Vector3 operator - (const Vector3& rhs)
 		{
 			Vector3<T> c;
 			c.x = x - rhs.x;
@@ -101,14 +101,14 @@ namespace game
 			c.z = z - rhs.z;
 			return c;
 		}
-		Vector3& operator-= (const Vector3& rhs)
+		Vector3& operator -= (const Vector3& rhs)
 		{
 			x = x - rhs.x;
 			y = y - rhs.y;
 			z = z - rhs.z;
 			return *this;
 		}
-		Vector3 operator* (const T& scalar)
+		Vector3 operator * (const T& scalar)
 		{
 			Vector3<T> c;
 			c.x = x * scalar;
@@ -116,14 +116,14 @@ namespace game
 			c.z = z * scalar;
 			return c;
 		}
-		Vector3& operator*= (const T& scalar)
+		Vector3& operator *= (const T& scalar)
 		{
 			x = x * scalar;
 			y = y * scalar;
 			z = z * scalar;
 			return *this;
 		}
-		Vector3 operator/ (const T& scalar)
+		Vector3 operator / (const T& scalar)
 		{
 			Vector3<T> c;
 			c.x = x / scalar;
@@ -131,7 +131,7 @@ namespace game
 			c.z = z / scalar;
 			return c;
 		}
-		Vector3& operator/= (const T& scalar)
+		Vector3& operator /= (const T& scalar)
 		{
 			x = x / scalar;
 			y = y / scalar;
