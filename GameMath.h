@@ -20,14 +20,10 @@ namespace game
 		Vector2() : 
 			x((T)0.0), y((T)0.0)
 		{
-			//x = (T)0.0;
-			//y = (T)0.0;
 		};
 		Vector2(const T& xIn, const T& yIn) : 
 			x(xIn) , y(yIn)
 		{
-			//this->x = x;
-			//this->y = y;
 		}
 		Vector2 operator - (const Vector2& rhs)
 		{
@@ -79,10 +75,6 @@ namespace game
 		Vector3(const T& xIn, const T& yIn, const T& zIn) :
 			x(xIn), y(yIn), z(zIn), w((T)1)
 		{
-			//this->x = x;
-			//this->y = y;
-			//this->z = z;
-			//this->w = (T)1;
 		}
 		Vector3 operator + (const Vector3& rhs)
 		{
@@ -169,14 +161,14 @@ namespace game
 		//	*this = ret;
 		//	return *this;
 		//}
-		float Mag2() { return ((x * x) + (y * y) + (z * z)); }
-		float Mag() { return sqrt((x * x) + (y * y) + (z * z)); }
-		float Dot(const Vector3<T>& rhs) {
+		float_t Mag2() { return ((x * x) + (y * y) + (z * z)); }
+		float_t Mag() { return sqrt((x * x) + (y * y) + (z * z)); }
+		float_t Dot(const Vector3<T>& rhs) {
 			return (x * rhs.x) + (y * rhs.y) + (z * rhs.z);
 		}
 		void Normalize()
 		{
-			float l = Mag();
+			float_t l = Mag();
 			if (l == 0) return;
 			x /= l;
 			y /= l;
