@@ -17,15 +17,17 @@ namespace game
 			T y;
 			T height;
 		};
-		Vector2()  
+		Vector2() : 
+			x((T)0.0), y((T)0.0)
 		{
-			x = (T)0.0;
-			y = (T)0.0;
+			//x = (T)0.0;
+			//y = (T)0.0;
 		};
-		Vector2(const T& x, const T& y)
+		Vector2(const T& xIn, const T& yIn) : 
+			x(xIn) , y(yIn)
 		{
-			this->x = x;
-			this->y = y;
+			//this->x = x;
+			//this->y = y;
 		}
 		Vector2 operator - (const Vector2& rhs)
 		{
@@ -66,17 +68,21 @@ namespace game
 	class Vector3
 	{
 	public:
-		T x = 0;
-		T y = 0;
-		T z = 0;
-		T w = 1;
-		Vector3() {}
-		Vector3(const T& x, const T& y, const T& z)
+		T x;
+		T y;
+		T z;
+		T w;
+		Vector3() :
+			x((T)0), y((T)0), z((T)0), w((T)1)
 		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-			this->w = (T)1;
+		}
+		Vector3(const T& xIn, const T& yIn, const T& zIn) :
+			x(xIn), y(yIn), z(zIn), w((T)1)
+		{
+			//this->x = x;
+			//this->y = y;
+			//this->z = z;
+			//this->w = (T)1;
 		}
 		Vector3 operator + (const Vector3& rhs)
 		{
