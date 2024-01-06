@@ -58,11 +58,11 @@ namespace game
 		void TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1);
 		Pointi GetScaledMousePosition() const noexcept;
 		Pointi GetPixelFrameBufferSize() const noexcept;
+		uint32_t* videoBuffer;
 	private:
 		Texture2D _frameBuffer;
 		Vector2f _oneOverScale;
 		Vector2f _savedPositionOfScaledTexture;
-		uint32_t* _video;
 		Vector2i _bufferSize;
 		Vector2i _windowSize;
 		uint8_t* _fontROM;
@@ -176,7 +176,7 @@ namespace game
 
 	inline PixelMode::PixelMode()
 	{
-		_video = nullptr;
+		videoBuffer = nullptr;
 		_fontROM = nullptr;
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		_compiledQuad = 0;
@@ -196,7 +196,7 @@ namespace game
 
 	inline PixelMode::~PixelMode()
 	{
-		if (_video != nullptr) delete[] _video;
+		if (videoBuffer != nullptr) delete[] videoBuffer;
 		if (_fontROM != nullptr) delete[] _fontROM;
 #if defined (GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
@@ -243,8 +243,8 @@ namespace game
 		_windowSize = enginePointer->geGetWindowSize();
 
 		// Create video buffer
-		_video = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
-		if (_video == nullptr)
+		videoBuffer = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
+		if (videoBuffer == nullptr)
 		{
 			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer." };
 			return false;
@@ -815,7 +815,7 @@ namespace game
 		{
 			glBindTexture(GL_TEXTURE_2D, _frameBuffer.bind);
 
-			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _frameBuffer.width, _frameBuffer.height, GL_RGBA, game::systemInfo.gpuInfo.internalPixelType, (GLvoid*)_video);
+			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _frameBuffer.width, _frameBuffer.height, GL_RGBA, game::systemInfo.gpuInfo.internalPixelType, (GLvoid*)videoBuffer);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 #endif
@@ -823,7 +823,7 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
 			D3DLOCKED_RECT rect;
-			unsigned char* test = (unsigned char*)_video;
+			unsigned char* test = (unsigned char*)videoBuffer;
 			_frameBuffer.textureInterface9->LockRect(0, &rect, 0, 0);
 			unsigned char* dest = static_cast<unsigned char*>(rect.pBits);
 			memcpy(dest, test, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
@@ -840,7 +840,7 @@ namespace game
 				return;
 			}
 			unsigned char* dest = (unsigned char*)mappedTex.pData;
-			memcpy(dest, (unsigned char*)_video, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			memcpy(dest, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
 
 			_frameBuffer.textureInterface10->Unmap(D3D10CalcSubresource(0, 0, 1));
 		}
@@ -853,7 +853,7 @@ namespace game
 			{
 				std::cout << "Could not map framebuffer in PixelMode.\n.";
 			}
-			memcpy(data.pData, (unsigned char*)_video, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			memcpy(data.pData, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
 			enginePointer->d3d11DeviceContext->Unmap(_frameBuffer.textureInterface11.Get(), 0);
 		}
 #endif
@@ -861,7 +861,7 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_DIRECTX12))
 		{
 			D3D12_SUBRESOURCE_DATA textureData = {};
-			textureData.pData = reinterpret_cast<uint8_t*>(_video);
+			textureData.pData = reinterpret_cast<uint8_t*>(videoBuffer);
 			textureData.RowPitch = static_cast<LONG_PTR>(_frameBuffer.width) * 4;
 			textureData.SlicePitch = 0;// textureData.RowPitch* _frameBuffer[_currentBuffer].height;
 			CD3DX12_RESOURCE_BARRIER trans = CD3DX12_RESOURCE_BARRIER::Transition(_frameBuffer.textureResource12.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
@@ -1320,11 +1320,11 @@ namespace game
 #if defined(GAME_DIRECTX9)
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
-			std::fill_n(_video, _bufferSize.width * _bufferSize.height, color.packedARGB);
+			std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedARGB);
 			return;
 		}
 #endif
-		std::fill_n(_video, _bufferSize.width * _bufferSize.height, color.packedABGR);
+		std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedABGR);
 	}
 
 	inline void PixelMode::Pixel(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1354,39 +1354,11 @@ namespace game
 #if defined(GAME_DIRECTX9)
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
-			_video[y * _bufferSize.width + x] = color.packedARGB;
+			videoBuffer[y * _bufferSize.width + x] = color.packedARGB;
 			return;
 		}
 #endif
-		_video[y * _bufferSize.width + x] = color.packedABGR;
-//#if defined(GAME_DIRECTX10)
-//		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-//		{
-//			_video[y * _bufferSize.width + x] = color.packedABGR;
-//			return;
-//		}
-//#endif
-//#if defined(GAME_DIRECTX11)
-//		if (enginePointer->geIsUsing(GAME_DIRECTX11))
-//		{
-//			_video[y * _bufferSize.width + x] = color.packedABGR;
-//			return;
-//		}
-//#endif
-//#if defined(GAME_DIRECTX12)
-//		if (enginePointer->geIsUsing(GAME_DIRECTX12))
-//		{
-//			_video[(y) * _bufferSize.width + x] = color.packedABGR;
-//			return;
-//		}
-//#endif
-//#if defined(GAME_OPENGL)
-//		if (enginePointer->geIsUsing(GAME_OPENGL))
-//		{
-//			_video[y * _bufferSize.width + x] = color.packedABGR;
-//			return;
-//		}
-//#endif
+		videoBuffer[y * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::PixelClip(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1396,11 +1368,11 @@ namespace game
 #if defined(GAME_DIRECTX9)
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
-			_video[y * _bufferSize.width + x] = color.packedARGB;
+			videoBuffer[y * _bufferSize.width + x] = color.packedARGB;
 			return;
 		}
 #endif
-		_video[(y) * _bufferSize.width + x] = color.packedABGR;
+		videoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::Line(int32_t x1, int32_t y1, const int32_t x2, const int32_t y2, const Color& color) noexcept

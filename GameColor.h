@@ -186,6 +186,8 @@ namespace game
 		const Color Red(1.0f, 0, 0, 1.0f);
 		const Color Green(0, 1.0f, 0, 1.0f);
 		const Color Blue(0, 0, 1.0f, 1.0f);
+		const Color CornFlowerBlue((uint32_t)100, 149, 237, 255);
+		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
 		const Color Black(0, 0, 0, 1.0f);
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);

@@ -190,7 +190,14 @@ namespace game
 
 	inline void RendererDX11::Swap()
 	{
-		_d3d11SwapChain->Present(0, 0);
+		if (_attributes.VsyncOn)
+		{
+			_d3d11SwapChain->Present(1, 0); // first is vsync, 0 for non, 1-4 interval, second is ???
+		}
+		else
+		{
+			_d3d11SwapChain->Present(0, 0);
+		}
 	}
 
 	inline void RendererDX11::HandleWindowResize(const uint32_t width, const uint32_t height)
