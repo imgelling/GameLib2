@@ -42,6 +42,7 @@ namespace game
 
     inline void ThreadPool::Start(const int32_t threadsWanted = 0)
     {
+        if (_hasStarted) return;
         uint32_t numThreads = 0;
         if (threadsWanted < 1)
         {
@@ -98,6 +99,7 @@ namespace game
 
     inline void ThreadPool::Stop() 
     {
+        if (!_hasStarted) return;
         _shouldTerminate = true;
         _terminateCondition.notify_all();
         
