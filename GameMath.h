@@ -260,4 +260,8 @@ namespace game
 	typedef Rect<double> Rectd;
 #pragma endregion
 
+#pragma region Quaternion
+
+#pragma endregion
+
 }
