@@ -227,16 +227,8 @@ namespace game
 			this->right = right;
 			this->bottom = bottom;
 		}
-		union
-		{
-			T top;
-			T y;
-		};
-		union
-		{
-			T left;
-			T x;
-		};
+		T top;
+		T left;
 		T bottom;
 		T right;
 		Rect()
