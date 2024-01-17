@@ -17,6 +17,7 @@
 #include "GameMath.h"
 #include "GameTexture2D.h"
 #include "GameTextShaders.h"
+#include "GameThreadPool.h"
 
 // Just a test to make sure defines are working
 #if defined(GAME_ENABLE_SHADERS)
@@ -58,8 +59,12 @@ namespace game
 		void TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1);
 		Pointi GetScaledMousePosition() const noexcept;
 		Pointi GetPixelFrameBufferSize() const noexcept;
-		uint32_t* videoBuffer;
+		uint32_t* currentVideoBuffer;
 	private:
+		ThreadPool _threadPool;
+		uint32_t* videoBuffer0;
+		uint32_t* videoBuffer1;
+		uint32_t _currentVideoBuffer;
 		Texture2D _frameBuffer;
 		Vector2f _oneOverScale;
 		Vector2f _savedPositionOfScaledTexture;
@@ -69,6 +74,7 @@ namespace game
 		//uint32_t _currentBuffer;
 		void _UpdateFrameBuffer();
 		void _ScaleQuadToWindow();
+		void _Clear(uint32_t* buffer, int size, uint32_t color);
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		uint32_t _compiledQuad;
 #endif
@@ -176,8 +182,12 @@ namespace game
 
 	inline PixelMode::PixelMode()
 	{
-		videoBuffer = nullptr;
+		currentVideoBuffer = nullptr;
+		videoBuffer0 = nullptr;
+		videoBuffer1 = nullptr;
+		_currentVideoBuffer = 0;
 		_fontROM = nullptr;
+		_threadPool.Start(1);
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		_compiledQuad = 0;
 #endif
@@ -196,8 +206,10 @@ namespace game
 
 	inline PixelMode::~PixelMode()
 	{
-		if (videoBuffer != nullptr) delete[] videoBuffer;
+		if (videoBuffer0 != nullptr) delete[] videoBuffer0;
+		if (videoBuffer1 != nullptr) delete[] videoBuffer1;
 		if (_fontROM != nullptr) delete[] _fontROM;
+		_threadPool.Stop();
 #if defined (GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
@@ -242,13 +254,21 @@ namespace game
 		// Save window size
 		_windowSize = enginePointer->geGetWindowSize();
 
-		// Create video buffer
-		videoBuffer = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
-		if (videoBuffer == nullptr)
+		// Create video buffers
+		videoBuffer0 = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
+		if (videoBuffer0 == nullptr)
 		{
-			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer." };
+			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 0." };
 			return false;
 		}
+		videoBuffer1 = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
+		if (videoBuffer0 == nullptr)
+		{
+			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 1." };
+			return false;
+		}
+
+		currentVideoBuffer = videoBuffer0;
 
 		Clear(Colors::Black);
 
@@ -853,7 +873,7 @@ namespace game
 			{
 				std::cout << "Could not map framebuffer in PixelMode.\n.";
 			}
-			memcpy(data.pData, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			memcpy(data.pData, (unsigned char*)currentVideoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
 			enginePointer->d3d11DeviceContext->Unmap(_frameBuffer.textureInterface11.Get(), 0);
 		}
 #endif
@@ -1315,16 +1335,59 @@ namespace game
 #endif
 	}
 
+	inline void PixelMode::_Clear(uint32_t* buffer, int size, uint32_t color)
+	{
+		std::fill_n(buffer, size, color);
+	}
+
 	inline void PixelMode::Clear(const Color &color) noexcept
 	{
 #if defined(GAME_DIRECTX9)
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
-			std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedARGB);
+			//std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedARGB);
+			_threadPool.Queue(std::bind(std::fill_n<uint32_t*, int, uint32_t>, currentVideoBuffer, (_bufferSize.width * _bufferSize.height), color.packedARGB));
+			if (_currentVideoBuffer == 1)
+			{
+
+				currentVideoBuffer = videoBuffer0;
+				_currentVideoBuffer = 0;
+				return;
+			}
+
+			if (_currentVideoBuffer == 0)
+			{
+				currentVideoBuffer = videoBuffer1;
+				_currentVideoBuffer = 1;
+				return;
+			}
 			return;
 		}
-#endif
-		std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedABGR);
+#endif		
+		// normal 1941
+		// _clear 2135
+		// std::fill_n 2165
+
+		//_threadPool.Queue(std::bind(&PixelMode::_Clear, this, currentVideoBuffer, (_bufferSize.width * _bufferSize.height), color.packedABGR));
+		_threadPool.Queue(std::bind(std::fill_n<uint32_t*, int, uint32_t>, currentVideoBuffer, (_bufferSize.width * _bufferSize.height), color.packedABGR));
+		//_Clear(currentVideoBuffer, _bufferSize.width * _bufferSize.height, color.packedABGR);
+
+		if (_currentVideoBuffer == 1)
+		{
+
+			currentVideoBuffer = videoBuffer0;
+			_currentVideoBuffer = 0;
+			return;
+		}
+
+		if (_currentVideoBuffer == 0)
+		{
+			currentVideoBuffer = videoBuffer1;
+			_currentVideoBuffer = 1;
+			return;
+		}
+
+
 	}
 
 	inline void PixelMode::Pixel(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1358,7 +1421,7 @@ namespace game
 			return;
 		}
 #endif
-		videoBuffer[y * _bufferSize.width + x] = color.packedABGR;
+		currentVideoBuffer[y * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::PixelClip(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1372,7 +1435,7 @@ namespace game
 			return;
 		}
 #endif
-		videoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
+		currentVideoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::Line(int32_t x1, int32_t y1, const int32_t x2, const int32_t y2, const Color& color) noexcept
