@@ -27,6 +27,7 @@ namespace game
         // Is there work in the queue.  Does
         // not signify all work on threads is done.
         bool hasWork();
+        // Number of worker threads total
         uint32_t NumberOfThreads() const noexcept { return (uint32_t)_threadPool.size(); }
 
     private:
