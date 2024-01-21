@@ -59,11 +59,11 @@ namespace game
 		void TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1);
 		Pointi GetScaledMousePosition() const noexcept;
 		Pointi GetPixelFrameBufferSize() const noexcept;
-		uint32_t* currentVideoBuffer;
+		uint32_t* videoBuffer;
 	private:
 		ThreadPool _threadPool;
-		uint32_t* videoBuffer0;
-		uint32_t _currentVideoBuffer;
+		//uint32_t* videoBuffer0;
+		//uint32_t _currentVideoBuffer;
 		Texture2D _frameBuffer;
 		Vector2f _oneOverScale;
 		Vector2f _savedPositionOfScaledTexture;
@@ -181,10 +181,8 @@ namespace game
 
 	inline PixelMode::PixelMode()
 	{
-		currentVideoBuffer = nullptr;
-		videoBuffer0 = nullptr;
+		videoBuffer = nullptr;
 		_totalBufferSize = 0;
-		_currentVideoBuffer = 0;
 		_fontROM = nullptr;
 		_threadPool.Start(1);
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
@@ -205,7 +203,7 @@ namespace game
 
 	inline PixelMode::~PixelMode()
 	{
-		if (videoBuffer0 != nullptr) delete[] videoBuffer0;
+		if (videoBuffer != nullptr) delete[] videoBuffer;
 		if (_fontROM != nullptr) delete[] _fontROM;
 		_threadPool.Stop();
 #if defined (GAME_OPENGL)
@@ -253,13 +251,12 @@ namespace game
 		_windowSize = enginePointer->geGetWindowSize();
 
 		// Create video buffers
-		videoBuffer0 = new uint32_t[((size_t)_bufferSize.width) * ((size_t)_bufferSize.height)];
-		if (videoBuffer0 == nullptr)
+		videoBuffer = new uint32_t[_totalBufferSize];
+		if (videoBuffer == nullptr)
 		{
 			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 0." };
 			return false;
 		}
-		currentVideoBuffer = videoBuffer0;
 		Clear(Colors::Black);
 
 		// Create frame buffer texture
@@ -863,7 +860,7 @@ namespace game
 			{
 				std::cout << "Could not map framebuffer in PixelMode.\n.";
 			}
-			memcpy(data.pData, (unsigned char*)currentVideoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			memcpy(data.pData, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
 			enginePointer->d3d11DeviceContext->Unmap(_frameBuffer.textureInterface11.Get(), 0);
 		}
 #endif
@@ -871,7 +868,7 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_DIRECTX12))
 		{
 			D3D12_SUBRESOURCE_DATA textureData = {};
-			textureData.pData = reinterpret_cast<uint8_t*>(currentVideoBuffer);
+			textureData.pData = reinterpret_cast<uint8_t*>(videoBuffer);
 			textureData.RowPitch = static_cast<LONG_PTR>(_frameBuffer.width) * 4;
 			textureData.SlicePitch = 0;// textureData.RowPitch* _frameBuffer[_currentBuffer].height;
 			CD3DX12_RESOURCE_BARRIER trans = CD3DX12_RESOURCE_BARRIER::Transition(_frameBuffer.textureResource12.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_COPY_DEST);
@@ -1330,10 +1327,11 @@ namespace game
 #if defined(GAME_DIRECTX9)
 		if (enginePointer->geIsUsing(GAME_DIRECTX9))
 		{
-			std::fill_n(videoBuffer, _bufferSize.width * _bufferSize.height, color.packedARGB);
+			std::fill_n(videoBuffer, _totalBufferSize, color.packedARGB);
+			return;
 		}
 #endif		
-		std::fill_n(currentVideoBuffer, _totalBufferSize, color.packedABGR); //2600
+		std::fill_n(videoBuffer, _totalBufferSize, color.packedABGR); //2600
 	}
 
 	inline void PixelMode::Pixel(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1367,7 +1365,7 @@ namespace game
 			return;
 		}
 #endif
-		currentVideoBuffer[y * _bufferSize.width + x] = color.packedABGR;
+		videoBuffer[y * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::PixelClip(const int32_t x, const int32_t y, const game::Color& color) noexcept
@@ -1381,7 +1379,7 @@ namespace game
 			return;
 		}
 #endif
-		currentVideoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
+		videoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
 	}
 
 	inline void PixelMode::Line(int32_t x1, int32_t y1, const int32_t x2, const int32_t y2, const Color& color) noexcept
@@ -2003,7 +2001,7 @@ namespace game
 
 	inline Pointi PixelMode::GetPixelFrameBufferSize() const noexcept
 	{
-		return { _bufferSize.width, _bufferSize.height };
+		return _bufferSize;// { _bufferSize.width, _bufferSize.height };
 	}
 }
 
