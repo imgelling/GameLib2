@@ -61,9 +61,9 @@ namespace game
         }
         componentsPerPixel = 4;
 
-        _data = new uint8_t[width * 4 * height];
+        _data = new uint8_t[width * componentsPerPixel * height];
 
-        hr = frame->CopyPixels(nullptr, width * 4, width * 4 * height , static_cast<uint8_t*>(_data));
+        hr = frame->CopyPixels(nullptr, width * componentsPerPixel, width * componentsPerPixel * height , static_cast<uint8_t*>(_data));
 
         if (FAILED(hr)) {
             delete[] _data;
