@@ -16,6 +16,11 @@ namespace game
 		~ImageLoader();
 	private:
 		void* _data;
+		uint32_t _argbToABGR(uint32_t argbColor) {
+			uint32_t r = (argbColor >> 16) & 0xFF;
+			uint32_t b = argbColor & 0xFF;
+			return (argbColor & 0xFF00FF00) | (b << 16) | r;
+		}
 	};
 
 	inline ImageLoader::ImageLoader()
@@ -59,11 +64,21 @@ namespace game
         _data = new uint8_t[width * 4 * height];
 
         hr = frame->CopyPixels(nullptr, width * 4, width * 4 * height , static_cast<uint8_t*>(_data));
+
         if (FAILED(hr)) {
             delete[] _data;
             _data = nullptr;
             return nullptr;
         }
+
+		// Windows loads as ARGB, most use ABGR so convert it
+		uint32_t* colorMap = (uint32_t*)_data;
+		for (uint32_t pix = 0; pix < width * height; pix++)
+		{
+			*colorMap = _argbToABGR(*colorMap);
+			colorMap++;
+		}
+
 		return _data;
 	}
 

@@ -11,11 +11,13 @@ namespace game
 		{
 			T x;
 			T width;
+			T u;
 		};
 		union
 		{
 			T y;
 			T height;
+			T v;
 		};
 		Vector2() : 
 			x((T)0.0), y((T)0.0)
