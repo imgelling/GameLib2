@@ -7,6 +7,105 @@
 
 namespace game
 {
+    class ImageSaver
+    {
+    public:
+        bool Save(uint32_t *data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra);
+    private:
+    };
+
+    inline bool ImageSaver::Save(uint32_t* data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra)
+    {
+		Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
+		HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
+		if (FAILED(hr)) {
+			return false;
+		}
+		
+		// Create a new IWICBitmap object
+		Microsoft::WRL::ComPtr<IWICBitmap> pBitmap;
+		hr = factory->CreateBitmapFromMemory(width, height, GUID_WICPixelFormat32bppRGBA, width * 4, width * height * 4, (uint8_t*)data, pBitmap.GetAddressOf());
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Create a new IWICStream object
+		Microsoft::WRL::ComPtr<IWICStream> pStream;
+		hr = factory->CreateStream(pStream.GetAddressOf());
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Initialize the IWICStream object
+		hr = pStream->InitializeFromFilename(ConvertToWide(filename).c_str(), GENERIC_WRITE);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Create a new IWICBitmapEncoder object
+		Microsoft::WRL::ComPtr<IWICBitmapEncoder> pEncoder;
+		hr = factory->CreateEncoder(GUID_ContainerFormatPng, NULL, pEncoder.GetAddressOf());
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Initialize the IWICBitmapEncoder object
+		hr = pEncoder->Initialize(pStream.Get(), WICBitmapEncoderNoCache);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Create a new IWICBitmapFrameEncode object
+		Microsoft::WRL::ComPtr<IWICBitmapFrameEncode> pFrameEncode;
+		hr = pEncoder->CreateNewFrame(pFrameEncode.GetAddressOf(), NULL);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Initialize the IWICBitmapFrameEncode object
+		hr = pFrameEncode->Initialize(NULL);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Set the size of the PNG image
+		hr = pFrameEncode->SetSize(width, height);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Write the screenshot data to the PNG image
+		//hr = pFrameEncode->WritePixels(height, width * 4, width * height * 4, (BYTE*)data);
+		hr = pFrameEncode->WriteSource(pBitmap.Get(), NULL);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Commit the PNG image
+		hr = pFrameEncode->Commit();
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		// Commit the IWICBitmapEncoder object
+		hr = pEncoder->Commit();
+		if (FAILED(hr))
+		{
+			return false;
+		}
+        return true;
+    }
+
 	class ImageLoader
 	{
 	public :
@@ -27,6 +126,10 @@ namespace game
 	{
 		_data = nullptr;
 	}
+
+
+ 
+
 
 	inline void* ImageLoader::Load(const char* fileName, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel)
 	{
