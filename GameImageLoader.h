@@ -10,11 +10,11 @@ namespace game
     class ImageSaver
     {
     public:
-        bool Save(uint32_t *data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra);
+        bool Save(const uint32_t *data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra) const;
     private:
     };
 
-    inline bool ImageSaver::Save(uint32_t* data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra)
+    inline bool ImageSaver::Save(const uint32_t* data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra) const
     {
 		Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
 		HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
@@ -62,10 +62,26 @@ namespace game
 
 		// Create a new IWICBitmapFrameEncode object
 		Microsoft::WRL::ComPtr<IWICBitmapFrameEncode> pFrameEncode;
-		hr = pEncoder->CreateNewFrame(pFrameEncode.GetAddressOf(), NULL);
+		Microsoft::WRL::ComPtr<IPropertyBag2> pPropertybag;
+		hr = pEncoder->CreateNewFrame(pFrameEncode.GetAddressOf(), pPropertybag.GetAddressOf());
 		if (FAILED(hr))
 		{
 			return false;
+		}
+		
+		// Compression filter test
+		//IPropertyBag2* pPropertybag = NULL;
+		if (SUCCEEDED(hr))
+		{
+			// Set the compression quality
+			PROPBAG2 option = { 0 };
+			VARIANT varValue = {};
+			LPCOLESTR s = L"FilterOption";
+			option.pstrName = const_cast<wchar_t*>(s); // bad but only way I got it to work.
+			varValue.vt = VT_UI1;
+			varValue.fltVal = WICPngFilterNone; // no filter, see https://learn.microsoft.com/en-us/windows/win32/api/wincodec/ne-wincodec-wicpngfilteroption
+			hr = pPropertybag->Write(1, &option, &varValue);
+			if (FAILED(hr)) std::cout << "prperty failed.. \n";
 		}
 
 		// Initialize the IWICBitmapFrameEncode object
@@ -115,11 +131,7 @@ namespace game
 		~ImageLoader();
 	private:
 		void* _data;
-		uint32_t _argbToABGR(uint32_t argbColor) {
-			uint32_t r = (argbColor >> 16) & 0xFF;
-			uint32_t b = argbColor & 0xFF;
-			return (argbColor & 0xFF00FF00) | (b << 16) | r;
-		}
+		uint32_t _ARGBToABGR(uint32_t argbColor) const noexcept;
 	};
 
 	inline ImageLoader::ImageLoader()
@@ -127,9 +139,12 @@ namespace game
 		_data = nullptr;
 	}
 
-
- 
-
+	inline uint32_t ImageLoader::_ARGBToABGR(uint32_t argbColor) const noexcept
+	{
+		uint32_t r = (argbColor >> 16) & 0xFF;
+		uint32_t b = argbColor & 0xFF;
+		return (argbColor & 0xFF00FF00) | (b << 16) | r;
+	}
 
 	inline void* ImageLoader::Load(const char* fileName, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel)
 	{
@@ -178,7 +193,7 @@ namespace game
 		uint32_t* colorMap = (uint32_t*)_data;
 		for (uint32_t pix = 0; pix < width * height; pix++)
 		{
-			*colorMap = _argbToABGR(*colorMap);
+			*colorMap = _ARGBToABGR(*colorMap);
 			colorMap++;
 		}
 

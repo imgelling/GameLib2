@@ -64,6 +64,8 @@ namespace game
 		ThreadPool _threadPool;
 		//uint32_t* videoBuffer0;
 		//uint32_t _currentVideoBuffer;
+		uint32_t* videoBuffers[10];
+		uint32_t numbuffers;
 		Texture2D _frameBuffer;
 		Vector2f _oneOverScale;
 		Vector2f _savedPositionOfScaledTexture;
@@ -71,7 +73,7 @@ namespace game
 		uint32_t _totalBufferSize;
 		Vector2i _windowSize;
 		uint8_t* _fontROM;
-		//uint32_t _currentBuffer;
+		uint32_t _currentBuffer;
 		void _UpdateFrameBuffer();
 		void _ScaleQuadToWindow();
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
@@ -184,7 +186,11 @@ namespace game
 		videoBuffer = nullptr;
 		_totalBufferSize = 0;
 		_fontROM = nullptr;
-		_threadPool.Start(1);
+		_threadPool.Start();
+		numbuffers = 5;
+		_currentBuffer = 0;
+		for (uint32_t i = 0; i < 10; i++)
+			videoBuffers[i] = nullptr;
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		_compiledQuad = 0;
 #endif
@@ -203,9 +209,11 @@ namespace game
 
 	inline PixelMode::~PixelMode()
 	{
-		if (videoBuffer != nullptr) delete[] videoBuffer;
-		if (_fontROM != nullptr) delete[] _fontROM;
+		//if (videoBuffer != nullptr) delete[] videoBuffer;
 		_threadPool.Stop();
+		if (_fontROM != nullptr) delete[] _fontROM;
+		for (uint32_t i = 0; i < numbuffers; i++)
+			if (videoBuffers[i]) delete[] videoBuffers[i];
 #if defined (GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
@@ -257,7 +265,15 @@ namespace game
 			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 0." };
 			return false;
 		}
-		Clear(Colors::Black);
+		//Clear(Colors::Black);
+		std::fill_n(videoBuffer, _totalBufferSize, Colors::Black.packedABGR); //1075
+		for (uint32_t i = 0; i < numbuffers; i++)
+		{
+			videoBuffers[i] = new uint32_t[_totalBufferSize];
+			memcpy(videoBuffers[i], videoBuffer, (size_t)_totalBufferSize * 4);
+		}
+		delete [] videoBuffer;
+		videoBuffer = videoBuffers[_currentBuffer];
 
 		// Create frame buffer texture
 
@@ -1330,8 +1346,13 @@ namespace game
 			std::fill_n(videoBuffer, _totalBufferSize, color.packedARGB);
 			return;
 		}
-#endif		
-		std::fill_n(videoBuffer, _totalBufferSize, color.packedABGR); //2600
+#endif	
+		_threadPool.Queue(std::bind(std::fill_n<uint32_t*, uint32_t, uint32_t>, videoBuffers[_currentBuffer], _totalBufferSize, color.packedABGR));
+		//std::fill_n(videoBuffer, _totalBufferSize, color.packedABGR); //1075
+		_currentBuffer++;
+		if (_currentBuffer > numbuffers - 1) _currentBuffer = 0;
+		videoBuffer = videoBuffers[_currentBuffer];
+		//ZeroMemory(videoBuffer, _totalBufferSize*4);// superfast
 	}
 
 	inline void PixelMode::Pixel(const int32_t x, const int32_t y, const game::Color& color) noexcept
