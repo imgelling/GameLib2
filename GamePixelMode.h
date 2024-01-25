@@ -259,20 +259,20 @@ namespace game
 		_windowSize = enginePointer->geGetWindowSize();
 
 		// Create video buffers
-		videoBuffer = new uint32_t[_totalBufferSize];
-		if (videoBuffer == nullptr)
-		{
-			lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 0." };
-			return false;
-		}
+		//videoBuffer = new uint32_t[_totalBufferSize];
+		//if (videoBuffer == nullptr)
+		//{
+		//	lastError = { GameErrors::GameRenderer, "Could not allocate RAM for PixelMode video buffer 0." };
+		//	return false;
+		//}
 		//Clear(Colors::Black);
-		std::fill_n(videoBuffer, _totalBufferSize, Colors::Black.packedABGR); //1075
+		//std::fill_n(videoBuffer, _totalBufferSize, Colors::Black.packedABGR);
 		for (uint32_t i = 0; i < numbuffers; i++)
 		{
 			videoBuffers[i] = new uint32_t[_totalBufferSize];
-			memcpy(videoBuffers[i], videoBuffer, (size_t)_totalBufferSize * 4);
+			std::fill_n(videoBuffers[i], _totalBufferSize, Colors::Black.packedABGR);
 		}
-		delete [] videoBuffer;
+		//delete [] videoBuffer;
 		videoBuffer = videoBuffers[_currentBuffer];
 
 		// Create frame buffer texture
