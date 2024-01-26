@@ -2000,7 +2000,7 @@ namespace game
 				{
 					for (int32_t j = 0; j < 8; j++)
 					{
-						if (_fontROM[(j + oy * 8) * 128 + (i + ox * 8)] > 0)
+							if (_fontROM[(j + oy * 8) * 128 + (i + ox * 8)] > 0)
 							Pixel(px + i, py + j, color);
 					}
 				}

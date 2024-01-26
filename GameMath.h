@@ -2,6 +2,8 @@
 
 namespace game
 {
+	template <typename T>
+	class Matrix4x4;
 #pragma region Vector2 
 	template <typename T>
 	class Vector2
@@ -138,31 +140,31 @@ namespace game
 			z = z / scalar;
 			return *this;
 		}
-		//Vector3 operator* (const Matrix4x4<T>& mat)
-		//{
-		//	Vector3<T> ret;
-		//	ret.x = (x * mat.m[0] + y * mat.m[4] + z * mat.m[8] + w * mat.m[12]);
-		//	ret.y = (x * mat.m[1] + y * mat.m[5] + z * mat.m[9] + w * mat.m[13]);
-		//	ret.z = (x * mat.m[2] + y * mat.m[6] + z * mat.m[10] + w * mat.m[14]);
-		//	ret.w = (x * mat.m[3] + y * mat.m[7] + z * mat.m[11] + w * mat.m[15]);
-		//	//if (w != 0)
-		//	//{
-		//	//	ret.x /= w;
-		//	//	ret.y /= w;
-		//	//	ret.z /= w;
-		//	//}
-		//	return ret;
-		//}
-		//Vector3& operator*= (const Matrix4x4<T>& mat)
-		//{
-		//	Vector3<T> ret;
-		//	ret.x = (x * mat.m[0] + y * mat.m[4] + z * mat.m[8] + w * mat.m[12]);
-		//	ret.y = (x * mat.m[1] + y * mat.m[5] + z * mat.m[9] + w * mat.m[13]);
-		//	ret.z = (x * mat.m[2] + y * mat.m[6] + z * mat.m[10] + w * mat.m[14]);
-		//	ret.w = (x * mat.m[3] + y * mat.m[7] + z * mat.m[11] + w * mat.m[15]);
-		//	*this = ret;
-		//	return *this;
-		//}
+		Vector3 operator* (const Matrix4x4<T>& mat)
+		{
+			Vector3<T> ret;
+			ret.x = (x * mat.m[0] + y * mat.m[4] + z * mat.m[8] + w * mat.m[12]);
+			ret.y = (x * mat.m[1] + y * mat.m[5] + z * mat.m[9] + w * mat.m[13]);
+			ret.z = (x * mat.m[2] + y * mat.m[6] + z * mat.m[10] + w * mat.m[14]);
+			ret.w = (x * mat.m[3] + y * mat.m[7] + z * mat.m[11] + w * mat.m[15]);
+			//if (w != 0)
+			//{
+			//	ret.x /= w;
+			//	ret.y /= w;
+			//	ret.z /= w;
+			//}
+			return ret;
+		}
+		Vector3& operator*= (const Matrix4x4<T>& mat)
+		{
+			Vector3<T> ret;
+			ret.x = (x * mat.m[0] + y * mat.m[4] + z * mat.m[8] + w * mat.m[12]);
+			ret.y = (x * mat.m[1] + y * mat.m[5] + z * mat.m[9] + w * mat.m[13]);
+			ret.z = (x * mat.m[2] + y * mat.m[6] + z * mat.m[10] + w * mat.m[14]);
+			ret.w = (x * mat.m[3] + y * mat.m[7] + z * mat.m[11] + w * mat.m[15]);
+			*this = ret;
+			return *this;
+		}
 		float_t Mag2() { return ((x * x) + (y * y) + (z * z)); }
 		float_t Mag() { return sqrt((x * x) + (y * y) + (z * z)); }
 		float_t Dot(const Vector3<T>& rhs) {
@@ -215,6 +217,162 @@ namespace game
 	typedef Vector3<float> Vector3f;
 	typedef Vector3<double> Vector3d;
 	typedef Vector3<int> Vector3i;
+#pragma endregion
+
+#pragma region Matrix4x4
+	template <typename T>
+	class Matrix4x4
+	{
+	public:
+		T m[16];// = { 0.0 };
+		Matrix4x4() { SetIdentity(); }
+		Matrix4x4(const Matrix4x4& in)
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				m[i] = in.m[i];
+			}
+		}
+		Matrix4x4(const T(&in)[16])
+		{
+			memcpy(m, in, sizeof(in));
+		}
+		Matrix4x4 operator+ (const Matrix4x4& rhs)
+		{
+			Matrix4x4<T> ret;
+			for (int i = 0; i < 16; i++)
+			{
+				ret.m[i] = m[i] + rhs.m[i];
+			}
+			return ret;
+		}
+		Matrix4x4& operator+= (const Matrix4x4& rhs)
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				m[i] = m[i] + rhs.m[i];
+			}
+			return *this;
+		}
+		Matrix4x4 operator- (const Matrix4x4& rhs)
+		{
+			Matrix4x4<T> ret;
+			for (int i = 0; i < 16; i++)
+			{
+				ret.m[i] = m[i] - rhs.m[i];
+			}
+			return ret;
+		}
+		Matrix4x4& operator-= (const Matrix4x4& rhs)
+		{
+			for (int i = 0; i < 16; i++)
+			{
+				m[i] = m[i] - rhs.m[i];
+			}
+			return *this;
+		}
+		Matrix4x4 operator* (const T& scalar)
+		{
+			Matrix4x4<T> ret;
+			for (int i = 0; i < 16; i++)
+			{
+				ret.m[i] = m[i] * scalar;
+			}
+			return ret;
+		}
+		Matrix4x4& operator*= (const T& scalar)
+		{
+			//Matrix4x4<T> ret;
+			for (int i = 0; i < 16; i++)
+			{
+				m[i] = m[i] * scalar;
+			}
+			return *this;
+		}
+		Matrix4x4 operator* (const Matrix4x4& rhs)
+		{
+			Matrix4x4<T> ret;
+			for (int i = 0; i < 4; i++) // row
+			{
+				for (int j = 0; j < 4; j++) // col
+				{
+					//ret.m[j * 4 + i] = 0;  // zero out location in return
+					for (int k = 0; k < 4; k++)
+					{
+						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
+					}
+				}
+			}
+
+			return ret;
+		}
+		void SetIdentity()
+		{
+			//for (int i = 0; i < 16; i++)
+			//{
+			//	//if (i % 5 == 0) m[i] = 1.0;
+			//	//else m[i] = 0.0;
+			//	m[i] = (T)0.0;
+			//}
+			ZeroMemory(m, 16*4);
+			m[0] = m[5] = m[10] = m[15] = (T)1.0;
+		}
+		void SetRotationX(const T& rot)
+		{
+			m[5] = cos(rot);
+			m[6] = sin(rot);
+			m[9] = -sin(rot);
+			m[10] = cos(rot);
+		}
+		void SetRotationY(const T& rot)
+		{
+			m[0] = cos(rot);
+			m[2] = -sin(rot);
+			m[8] = sin(rot);
+			m[10] = cos(rot);
+		}
+		void SetRotationZ(const T& rot)
+		{
+			m[0] = cos(rot);
+			m[1] = sin(rot);
+			m[4] = -sin(rot);
+			m[5] = cos(rot);
+		}
+		void SetTranslation(const T& x, const T& y, const T& z)
+		{
+			//m[12] = x;
+			//m[13] = y;
+			//m[14] = z;
+			m[3] = x;
+			m[7] = y;
+			m[11] = z;
+		}
+		void SetScale(const T& x, const T& y, const T& z)
+		{
+			m[0] = x;
+			m[5] = y;
+			m[10] = z;
+		}
+
+		double Determinant() {
+			return
+				m[12] * m[9] * m[6] * m[3] - m[8] * m[13] * m[6] * m[3] -
+				m[12] * m[5] * m[10] * m[3] + m[4] * m[13] * m[10] * m[3] +
+				m[8] * m[5] * m[14] * m[3] - m[4] * m[9] * m[14] * m[3] -
+				m[12] * m[9] * m[2] * m[7] + m[8] * m[13] * m[2] * m[7] +
+				m[12] * m[1] * m[10] * m[7] - m[0] * m[13] * m[10] * m[7] -
+				m[8] * m[1] * m[14] * m[7] + m[0] * m[9] * m[14] * m[7] +
+				m[12] * m[5] * m[2] * m[11] - m[4] * m[13] * m[2] * m[11] -
+				m[12] * m[1] * m[6] * m[11] + m[0] * m[13] * m[6] * m[11] +
+				m[4] * m[1] * m[14] * m[11] - m[0] * m[5] * m[14] * m[11] -
+				m[8] * m[5] * m[2] * m[15] + m[4] * m[9] * m[2] * m[15] +
+				m[8] * m[1] * m[6] * m[15] - m[0] * m[9] * m[6] * m[15] -
+				m[4] * m[1] * m[10] * m[15] + m[0] * m[5] * m[10] * m[15];
+		}
+	};
+	typedef Matrix4x4<double> Matrix4x4d;
+	typedef Matrix4x4<float> Matrix4x4f;
+	typedef Matrix4x4<int> Matrix4x4i;
 #pragma endregion
 
 #pragma region Rect
