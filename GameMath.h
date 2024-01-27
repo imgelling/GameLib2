@@ -296,13 +296,14 @@ namespace game
 			{
 				for (int j = 0; j < 4; j++) // col
 				{
-					//ret.m[j * 4 + i] = 0;  // zero out location in return
+					ret.m[j * 4 + i] = 0;  // zero out location in return
 					for (int k = 0; k < 4; k++)
 					{
 						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
 					}
 				}
 			}
+
 
 			return ret;
 		}
