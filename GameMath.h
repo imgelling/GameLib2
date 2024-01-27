@@ -341,12 +341,12 @@ namespace game
 		}
 		void SetTranslation(const T& x, const T& y, const T& z)
 		{
-			//m[12] = x;
-			//m[13] = y;
-			//m[14] = z;
-			m[3] = x;
-			m[7] = y;
-			m[11] = z;
+			m[12] = x;
+			m[13] = y;
+			m[14] = z;
+			//m[3] = x;
+			//m[7] = y;
+			//m[11] = z;
 		}
 		void SetScale(const T& x, const T& y, const T& z)
 		{
