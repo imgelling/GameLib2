@@ -55,6 +55,14 @@ namespace game
 			y = y + rhs.y;
 			return *this;
 		}
+		Vector2 operator * (const T& scalar)
+		{
+			Vector2<T> c;
+			c.x = x * scalar;
+			c.y = y * scalar;
+			//c.z = z * scalar;
+			return c;
+		}
 
 	private:
 	};
@@ -235,7 +243,7 @@ namespace game
 		}
 		Matrix4x4(const T(&in)[16])
 		{
-			memcpy(m, in, sizeof(in));
+			memcpy(m, in, sizeof(in)); // probably needs * 16
 		}
 		Matrix4x4 operator+ (const Matrix4x4& rhs)
 		{
@@ -344,9 +352,6 @@ namespace game
 			m[12] = x;
 			m[13] = y;
 			m[14] = z;
-			//m[3] = x;
-			//m[7] = y;
-			//m[11] = z;
 		}
 		void SetScale(const T& x, const T& y, const T& z)
 		{
