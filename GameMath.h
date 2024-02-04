@@ -136,16 +136,18 @@ namespace game
 		Vector3 operator / (const T& scalar)
 		{
 			Vector3<T> c;
-			c.x = x / scalar;
-			c.y = y / scalar;
-			c.z = z / scalar;
+			float_t oneOverScalar = (T)1 / scalar;
+			c.x = x * oneOverScalar;// / scalar;
+			c.y = y * oneOverScalar;// / scalar;
+			c.z = z * oneOverScalar;// / scalar;
 			return c;
 		}
 		Vector3& operator /= (const T& scalar)
 		{
-			x = x / scalar;
-			y = y / scalar;
-			z = z / scalar;
+			float_t oneOverScalar = (T)1 / scalar;
+			x = x * oneOverScalar;// / scalar;
+			y = y * oneOverScalar;// / scalar;
+			z = z * oneOverScalar;// / scalar;
 			return *this;
 		}
 		Vector3 operator* (const Matrix4x4<T>& mat)
@@ -173,12 +175,13 @@ namespace game
 			*this = ret;
 			return *this;
 		}
-		float_t Mag2() { return ((x * x) + (y * y) + (z * z)); }
-		float_t Mag() { return sqrt((x * x) + (y * y) + (z * z)); }
-		float_t Dot(const Vector3<T>& rhs) {
+		float_t Mag2() const noexcept { return ((x * x) + (y * y) + (z * z)); }
+		float_t Mag() const noexcept { return sqrt((x * x) + (y * y) + (z * z)); }
+		float_t Dot(const Vector3<T>& rhs) const noexcept
+		{
 			return (x * rhs.x) + (y * rhs.y) + (z * rhs.z);
 		}
-		void Normalize()
+		void Normalize() noexcept
 		{
 			float_t l = Mag();
 			if (l == 0) return;
@@ -186,7 +189,7 @@ namespace game
 			y /= l;
 			z /= l;
 		}
-		Vector3 Cross(const Vector3& rhs)
+		Vector3 Cross(const Vector3& rhs) const noexcept
 		{
 			Vector3<T> t;
 			t.x = (y * rhs.z) - (z * rhs.y);
