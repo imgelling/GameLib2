@@ -293,7 +293,6 @@ namespace game
 		}
 		Matrix4x4& operator*= (const T& scalar)
 		{
-			//Matrix4x4<T> ret;
 			for (int i = 0; i < 16; i++)
 			{
 				m[i] = m[i] * scalar;
@@ -303,20 +302,35 @@ namespace game
 		Matrix4x4 operator* (const Matrix4x4& rhs)
 		{
 			Matrix4x4<T> ret;
+			ZeroMemory(ret.m, 16 * 4);
 			for (int i = 0; i < 4; i++) // row
 			{
 				for (int j = 0; j < 4; j++) // col
 				{
-					ret.m[j * 4 + i] = 0;  // zero out location in return
 					for (int k = 0; k < 4; k++)
 					{
 						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
 					}
 				}
 			}
-
-
 			return ret;
+		}
+		Matrix4x4 operator*= (const Matrix4x4& rhs)
+		{
+			Matrix4x4<T> ret;
+			ZeroMemory(ret.m, 16 * 4);
+			for (int i = 0; i < 4; i++) // row
+			{
+				for (int j = 0; j < 4; j++) // col
+				{
+					for (int k = 0; k < 4; k++)
+					{
+						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
+					}
+				}
+			}
+			*this = ret;
+			return *this;
 		}
 		void SetIdentity()
 		{
