@@ -363,7 +363,6 @@ namespace game
 		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		desc.MiscFlags = 0;
 
-
 		if (FAILED(_d3d11Device->CreateTexture2D(&desc, NULL, &texture.textureInterface11)))
 		{
 			lastError = { GameErrors::GameDirectX11Specific, "Could not create texture." };

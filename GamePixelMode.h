@@ -863,7 +863,14 @@ namespace game
 				return;
 			}
 			unsigned char* dest = (unsigned char*)mappedTex.pData;
-			memcpy(dest, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			unsigned char* buffer = (unsigned char*)videoBuffer;
+			for (int i = 0; i < _bufferSize.height; i++)
+			{
+				memcpy(dest, buffer, (size_t)_bufferSize.width * 4);
+				dest += mappedTex.RowPitch;
+				buffer += _bufferSize.width * 4;
+			}
+			//memcpy(dest, (unsigned char*)videoBuffer, (size_t)_totalBufferSize * 4);
 
 			_frameBuffer.textureInterface10->Unmap(D3D10CalcSubresource(0, 0, 1));
 		}
@@ -871,12 +878,19 @@ namespace game
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
-			D3D11_MAPPED_SUBRESOURCE data;
+			D3D11_MAPPED_SUBRESOURCE data = {};
 			if (FAILED(enginePointer->d3d11DeviceContext->Map(_frameBuffer.textureInterface11.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &data)))
 			{
-				std::cout << "Could not map framebuffer in PixelMode.\n.";
+				std::cout << "Could not map framebuffer in PixelMode.\n";
 			}
-			memcpy(data.pData, (unsigned char*)videoBuffer, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
+			unsigned char* dest = static_cast<unsigned char*>(data.pData);
+			unsigned char* buffer = (unsigned char*)videoBuffer;
+			for (int i = 0; i < _bufferSize.height; i++)
+			{
+				memcpy(dest, buffer, (size_t)_bufferSize.width * 4);
+				dest += data.RowPitch;
+				buffer += _bufferSize.width * 4;
+			}
 			enginePointer->d3d11DeviceContext->Unmap(_frameBuffer.textureInterface11.Get(), 0);
 		}
 #endif
