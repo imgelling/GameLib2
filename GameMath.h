@@ -299,18 +299,23 @@ namespace game
 			}
 			return *this;
 		}
-		Matrix4x4 operator* (const Matrix4x4& rhs)
+		// __restrict
+		Matrix4x4 operator* (const Matrix4x4& rhs) //953
 		{
 			Matrix4x4<T> ret;
 			ZeroMemory(ret.m, 16 * 4);
+
 			for (int i = 0; i < 4; i++) // row
 			{
-				for (int j = 0; j < 4; j++) // col
+				for (int k = 0; k < 4; k++)
 				{
-					for (int k = 0; k < 4; k++)
-					{
-						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
-					}
+					//for (int j = 0; j < 4; j++)
+					//{
+						ret.m[0 * 4 + i] += m[k * 4 + i] * rhs.m[0 * 4 + k];
+						ret.m[1 * 4 + i] += m[k * 4 + i] * rhs.m[1 * 4 + k];
+						ret.m[2 * 4 + i] += m[k * 4 + i] * rhs.m[2 * 4 + k];
+						ret.m[3 * 4 + i] += m[k * 4 + i] * rhs.m[3 * 4 + k];
+					//}
 				}
 			}
 			return ret;
@@ -319,14 +324,19 @@ namespace game
 		{
 			Matrix4x4<T> ret;
 			ZeroMemory(ret.m, 16 * 4);
+
 			for (int i = 0; i < 4; i++) // row
 			{
-				for (int j = 0; j < 4; j++) // col
+				for (int k = 0; k < 4; k++)
 				{
-					for (int k = 0; k < 4; k++)
-					{
-						ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
-					}
+					//for (int j = 0; j < 4; j++)
+					//{
+					//	ret.m[j * 4 + i] += m[k * 4 + i] * rhs.m[j * 4 + k];
+					//}
+					ret.m[0 * 4 + i] += m[k * 4 + i] * rhs.m[0 * 4 + k];
+					ret.m[1 * 4 + i] += m[k * 4 + i] * rhs.m[1 * 4 + k];
+					ret.m[2 * 4 + i] += m[k * 4 + i] * rhs.m[2 * 4 + k];
+					ret.m[3 * 4 + i] += m[k * 4 + i] * rhs.m[3 * 4 + k];
 				}
 			}
 			*this = ret;
