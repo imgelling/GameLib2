@@ -332,10 +332,10 @@ namespace game
 
 			// Update to updatelock
 			msElapsed = _updateTimer.Elapsed();
-			if (msElapsed >= (_updateTime))
+			if (msElapsed >= _updateTime)
 			{
-				Update(msElapsed);
 				_updateTimer.Reset();
+				Update(msElapsed);
 				upsTime += msElapsed;
 				updatesCounted++;
 				if (upsTime >= 1000.0f)
@@ -351,9 +351,9 @@ namespace game
 			msElapsed = _frameLockTimer.Elapsed();
 			if (msElapsed >= _frameTime)
 			{
-				Render(msElapsed);
-
 				_frameLockTimer.Reset();
+				Render(msElapsed);
+				//std::cout << 1.0f / (msElapsed) << "\n";
 				fpsTime += msElapsed;
 				framesCounted++;
 				if (fpsTime >= 1000.0f)
@@ -362,9 +362,9 @@ namespace game
 					framesCounted = 0;
 					fpsTime = fpsTime - 1000.0f;
 				}
+
 				// Swap the buffers
 				_Swap();
-
 			}
 
 		} while (geIsRunning);
