@@ -199,7 +199,7 @@ namespace game
 		}
 		Vector3 Lerp(const Vector3<T>& second, const T by)
 		{
-			return *this * (1 - by) + (Vector3<T>)second * by;
+			return *this * (1.0 - by) + (Vector3<T>)second * by;
 		}
 		Vector3 Lerp(const Vector3<T>& first, const Vector3<T>& second, const T by)
 		{
@@ -300,7 +300,7 @@ namespace game
 			return *this;
 		}
 		// __restrict
-		Matrix4x4 operator* (const Matrix4x4& __restrict rhs) //953
+		Matrix4x4 operator* (const Matrix4x4& __restrict rhs)
 		{
 			Matrix4x4<T> ret;
 			ZeroMemory(ret.m, 16 * 4);

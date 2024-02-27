@@ -189,7 +189,6 @@ namespace game
 		Attributes _attributes;
 		RendererBase* _renderer;
 		Window _window;
-		Timer _renderTimer;
 		Timer _updateTimer;
 		Timer _frameLockTimer;
 		Timer _cpuSpeedTimer;
@@ -301,7 +300,6 @@ namespace game
 		geIsRunning = true;
 
 		// Reset the timers
-		_renderTimer.Reset();
 		_frameLockTimer.Reset();
 		_updateTimer.Reset();
 		_cpuSpeedTimer.Reset();
@@ -350,12 +348,12 @@ namespace game
 
 			// If software frame lock is on, make sure we adhere to that
 			// and keep track of FPS
-			if (_frameLockTimer.Elapsed() >= _frameTime)
+			msElapsed = _frameLockTimer.Elapsed();
+			if (msElapsed >= _frameTime)
 			{
-				_frameLockTimer.Reset();
-				msElapsed = _renderTimer.Elapsed();
-				_renderTimer.Reset();
 				Render(msElapsed);
+
+				_frameLockTimer.Reset();
 				fpsTime += msElapsed;
 				framesCounted++;
 				if (fpsTime >= 1000.0f)
@@ -364,9 +362,9 @@ namespace game
 					framesCounted = 0;
 					fpsTime = fpsTime - 1000.0f;
 				}
-
 				// Swap the buffers
 				_Swap();
+
 			}
 
 		} while (geIsRunning);
