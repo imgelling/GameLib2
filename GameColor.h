@@ -36,8 +36,8 @@ namespace game
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
 
+		float_t oneOver255 = 1.0f / 255.0f;
 	private:
-		float_t _convert256toF = 1.0f / 255.0f;
 	};
 
 	inline Color::Color()
@@ -153,10 +153,10 @@ namespace game
 		this->g = g;
 		this->b = b;
 		this->a = a;
-		this->rf = r * _convert256toF;
-		this->gf = g * _convert256toF;
-		this->bf = b * _convert256toF;
-		this->af = a * _convert256toF;
+		this->rf = r * oneOver255;
+		this->gf = g * oneOver255;
+		this->bf = b * oneOver255;
+		this->af = a * oneOver255;
 
 		uint32_t packedR = r << 0;
 		uint32_t packedG = g << 8;
