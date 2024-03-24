@@ -157,12 +157,6 @@ namespace game
 			ret.y = (x * mat.m[1] + y * mat.m[5] + z * mat.m[9] + w * mat.m[13]);
 			ret.z = (x * mat.m[2] + y * mat.m[6] + z * mat.m[10] + w * mat.m[14]);
 			ret.w = (x * mat.m[3] + y * mat.m[7] + z * mat.m[11] + w * mat.m[15]);
-			//if (w != 0)
-			//{
-			//	ret.x /= w;
-			//	ret.y /= w;
-			//	ret.z /= w;
-			//}
 			return ret;
 		}
 		Vector3& operator*= (const Matrix4x4<T>& mat)
