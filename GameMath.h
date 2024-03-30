@@ -5,11 +5,12 @@ namespace game
 	template <typename T>
 	class Matrix4x4;
 #pragma region Vector2 
+#pragma pack(push, 16)
 	template <typename T>
 	class Vector2
 	{
 	public:
-		union 
+		union
 		{
 			T x;
 			T width;
@@ -21,12 +22,12 @@ namespace game
 			T height;
 			T v;
 		};
-		Vector2() : 
+		Vector2() :
 			x((T)0.0), y((T)0.0)
 		{
 		};
-		Vector2(const T& xIn, const T& yIn) : 
-			x(xIn) , y(yIn)
+		Vector2(const T& xIn, const T& yIn) :
+			x(xIn), y(yIn)
 		{
 		}
 		Vector2 operator - (const Vector2& rhs)
@@ -60,18 +61,19 @@ namespace game
 			Vector2<T> c;
 			c.x = x * scalar;
 			c.y = y * scalar;
-			//c.z = z * scalar;
 			return c;
 		}
 
 	private:
 	};
-	typedef Vector2<int> Vector2i, Pointi;	
-	typedef Vector2<float> Vector2f, Pointf;
+	typedef Vector2<int32_t> Vector2i, Pointi;
+	typedef Vector2<float_t> Vector2f, Pointf;
 	typedef Vector2<double> Vector2d, Pointd;
+#pragma pack(pop)
 #pragma endregion
 
 #pragma region Vector3
+#pragma pack(push, 16)
 	template <typename T>
 	class Vector3
 	{
@@ -219,19 +221,21 @@ namespace game
 		}
 	private:
 	};
-	typedef Vector3<float> Vector3f;
+	typedef Vector3<int32_t> Vector3i;
+	typedef Vector3<float_t> Vector3f;
 	typedef Vector3<double> Vector3d;
-	typedef Vector3<int> Vector3i;
+#pragma pack(pop)
 #pragma endregion
 
 #pragma region Matrix4x4
+#pragma pack(push, 16)
 	template <typename T>
 	class Matrix4x4
 	{
 	public:
-		T m[16];// = { 0.0 };
+		T m[16];
 		Matrix4x4() { SetIdentity(); }
-		Matrix4x4(const Matrix4x4& in)
+		Matrix4x4(const Matrix4x4& __restrict in)
 		{
 			for (int i = 0; i < 16; i++)
 			{
@@ -240,37 +244,37 @@ namespace game
 		}
 		Matrix4x4(const T(&in)[16])
 		{
-			memcpy(m, in, sizeof(in)); // probably needs * 16
+			memcpy(m, in, sizeof(T) * 16);
 		}
-		Matrix4x4 operator+ (const Matrix4x4& rhs)
+		Matrix4x4 operator+ (const Matrix4x4& __restrict rhs)
 		{
 			Matrix4x4<T> ret;
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				ret.m[i] = m[i] + rhs.m[i];
 			}
 			return ret;
 		}
-		Matrix4x4& operator+= (const Matrix4x4& rhs)
+		Matrix4x4& operator+= (const Matrix4x4& __restrict rhs)
 		{
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				m[i] = m[i] + rhs.m[i];
 			}
 			return *this;
 		}
-		Matrix4x4 operator- (const Matrix4x4& rhs)
+		Matrix4x4 operator- (const Matrix4x4& __restrict rhs)
 		{
 			Matrix4x4<T> ret;
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				ret.m[i] = m[i] - rhs.m[i];
 			}
 			return ret;
 		}
-		Matrix4x4& operator-= (const Matrix4x4& rhs)
+		Matrix4x4& operator-= (const Matrix4x4& __restrict rhs)
 		{
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				m[i] = m[i] - rhs.m[i];
 			}
@@ -279,7 +283,7 @@ namespace game
 		Matrix4x4 operator* (const T& scalar)
 		{
 			Matrix4x4<T> ret;
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				ret.m[i] = m[i] * scalar;
 			}
@@ -287,28 +291,27 @@ namespace game
 		}
 		Matrix4x4& operator*= (const T& scalar)
 		{
-			for (int i = 0; i < 16; i++)
+			for (uint32_t i = 0; i < 16; i++)
 			{
 				m[i] = m[i] * scalar;
 			}
 			return *this;
 		}
-		// __restrict
 		Matrix4x4 operator* (const Matrix4x4& __restrict rhs)
 		{
 			Matrix4x4<T> ret;
 			ZeroMemory(ret.m, 16 * 4);
 
-			for (int i = 0; i < 4; i++) // row
+			for (uint32_t i = 0; i < 4; i++) // row
 			{
-				for (int k = 0; k < 4; k++)
+				for (uint32_t k = 0; k < 4; k++)
 				{
 					//for (int j = 0; j < 4; j++)
 					//{
-						ret.m[0 * 4 + i] += m[k * 4 + i] * rhs.m[0 * 4 + k];
-						ret.m[1 * 4 + i] += m[k * 4 + i] * rhs.m[1 * 4 + k];
-						ret.m[2 * 4 + i] += m[k * 4 + i] * rhs.m[2 * 4 + k];
-						ret.m[3 * 4 + i] += m[k * 4 + i] * rhs.m[3 * 4 + k];
+					ret.m[0 * 4 + i] += m[k * 4 + i] * rhs.m[0 * 4 + k];
+					ret.m[1 * 4 + i] += m[k * 4 + i] * rhs.m[1 * 4 + k];
+					ret.m[2 * 4 + i] += m[k * 4 + i] * rhs.m[2 * 4 + k];
+					ret.m[3 * 4 + i] += m[k * 4 + i] * rhs.m[3 * 4 + k];
 					//}
 				}
 			}
@@ -319,9 +322,9 @@ namespace game
 			Matrix4x4<T> ret;
 			ZeroMemory(ret.m, 16 * 4);
 
-			for (int i = 0; i < 4; i++) // row
+			for (uint32_t i = 0; i < 4; i++) // row
 			{
-				for (int k = 0; k < 4; k++)
+				for (uint32_t k = 0; k < 4; k++)
 				{
 					//for (int j = 0; j < 4; j++)
 					//{
@@ -338,13 +341,7 @@ namespace game
 		}
 		void SetIdentity()
 		{
-			//for (int i = 0; i < 16; i++)
-			//{
-			//	//if (i % 5 == 0) m[i] = 1.0;
-			//	//else m[i] = 0.0;
-			//	m[i] = (T)0.0;
-			//}
-			ZeroMemory(m, 16*4);
+			ZeroMemory(m, 16 * 4);
 			m[0] = m[5] = m[10] = m[15] = (T)1.0;
 		}
 		void SetRotationX(const T& rot)
@@ -398,8 +395,9 @@ namespace game
 		}
 	};
 	typedef Matrix4x4<double> Matrix4x4d;
-	typedef Matrix4x4<float> Matrix4x4f;
-	typedef Matrix4x4<int> Matrix4x4i;
+	typedef Matrix4x4<float_t> Matrix4x4f;
+	typedef Matrix4x4<int32_t> Matrix4x4i;
+#pragma pack(pop)
 #pragma endregion
 
 #pragma region Rect
