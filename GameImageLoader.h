@@ -151,7 +151,9 @@ namespace game
 		// Clears data if multiple loads happen
 		if (_data != nullptr)
 		{
-            delete[] _data;
+            //delete[] _data;
+
+			_aligned_free(_data);
 			_data = nullptr;
 		}
 
@@ -179,12 +181,13 @@ namespace game
         }
         componentsPerPixel = 4;
 
-        _data = new uint8_t[width * componentsPerPixel * height];
+        _data = (uint8_t*)_aligned_malloc((size_t)width * componentsPerPixel * height * sizeof(uint8_t), 16); //new uint8_t[width * componentsPerPixel * height];
 
         hr = frame->CopyPixels(nullptr, width * componentsPerPixel, width * componentsPerPixel * height , static_cast<uint8_t*>(_data));
 
         if (FAILED(hr)) {
-            delete[] _data;
+            //delete[] _data;
+			_aligned_free(_data);
             _data = nullptr;
             return nullptr;
         }
@@ -204,7 +207,8 @@ namespace game
 	{
 		if (_data != nullptr)
 		{
-            delete[] _data;
+            //delete[] _data;
+			_aligned_free(_data);
 			_data = nullptr;
 		}
 	}
@@ -213,7 +217,8 @@ namespace game
 	{
 		if (_data != nullptr)
 		{
-            delete[] _data;
+            //delete[] _data;
+			_aligned_free(_data);
 		}
 	}
 }

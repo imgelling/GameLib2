@@ -213,7 +213,11 @@ namespace game
 		_threadPool.Stop();
 		if (_fontROM != nullptr) delete[] _fontROM;
 		for (uint32_t i = 0; i < numbuffers; i++)
-			if (videoBuffers[i]) delete[] videoBuffers[i];
+			if (videoBuffers[i])
+			{
+				//delete[] videoBuffers[i];
+				_aligned_free(videoBuffers[i]);
+			}
 #if defined (GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
@@ -269,7 +273,7 @@ namespace game
 		//std::fill_n(videoBuffer, _totalBufferSize, Colors::Black.packedABGR);
 		for (uint32_t i = 0; i < numbuffers; i++)
 		{
-			videoBuffers[i] = new uint32_t[_totalBufferSize];
+			videoBuffers[i] = (uint32_t*)_aligned_malloc((size_t)_totalBufferSize * sizeof(uint32_t), 16); //new uint32_t[_totalBufferSize];
 			std::fill_n(videoBuffers[i], _totalBufferSize, Colors::Black.packedABGR);
 		}
 		//delete [] videoBuffer;
