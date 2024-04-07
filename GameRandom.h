@@ -13,8 +13,9 @@ namespace game
 		void SetSeed(const uint32_t seed);
 		void NewSeed();
 		uint32_t GetSeed() const noexcept;
-		uint32_t Rnd();
-		uint32_t RndRange(const uint32_t min, const uint32_t max);
+		uint32_t Randui() noexcept;
+		float_t Randf() noexcept;
+		uint32_t RndRange(const uint32_t min, const uint32_t max) noexcept;
 		~Random();
 	private:
 		uint32_t _seed;
@@ -59,12 +60,19 @@ namespace game
 		return _seed;
 	}
 
-	inline uint32_t Random::Rnd()
+	// Returns a random unsigned int
+	inline uint32_t Random::Randui() noexcept
 	{
 		return _mt19937Generator();
 	}
 
-	inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max)
+	// Returns a float between 0.0f and 1.0f
+	inline float_t Random::Randf() noexcept
+	{
+		return RndRange(0,INT_MAX) / (float_t)INT_MAX;
+	}
+
+	inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max) noexcept
 	{
 		std::uniform_int_distribution<unsigned> distrib(min, max);
 		return distrib(_mt19937Generator);

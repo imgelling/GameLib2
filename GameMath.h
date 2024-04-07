@@ -69,6 +69,12 @@ namespace game
 	typedef Vector2<int32_t> Vector2i, Pointi;
 	typedef Vector2<float_t> Vector2f, Pointf;
 	typedef Vector2<double> Vector2d, Pointd;
+//Pointf lerp2D(const Pointf& __restrict b, const Pointf& __restrict a, float_t t) {
+//	Pointf result;
+//	result.x = a.x + t * (b.x - a.x);
+//	result.y = a.y + t * (b.y - a.y);
+//	return result;
+//}
 #pragma pack(pop)
 #pragma endregion
 
