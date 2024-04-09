@@ -6,6 +6,7 @@
 
 namespace game
 {
+#pragma pack(push, 16)
 	class Color
 	{
 	public:
@@ -39,6 +40,7 @@ namespace game
 		float_t oneOver255 = 1.0f / 255.0f;
 	private:
 	};
+#pragma pack(pop)
 
 	inline Color::Color()
 	{
