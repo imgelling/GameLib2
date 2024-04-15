@@ -219,6 +219,7 @@ namespace game
 		{
             //delete[] _data;
 			_aligned_free(_data);
+			_data = nullptr;
 		}
 	}
 }
