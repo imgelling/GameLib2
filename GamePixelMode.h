@@ -56,7 +56,7 @@ namespace game
 		void HPillClip(const int32_t x, const int32_t y, const int32_t length, const int32_t radius, const game::Color& color) noexcept;
 		void VPillClip(const int32_t x, const int32_t y, const int32_t height, const int32_t radius, const game::Color& color) noexcept;
 		void Text(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1);
-		void TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1);
+		void TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale = 1) noexcept;
 		Pointi GetScaledMousePosition() const noexcept;
 		Pointi GetPixelFrameBufferSize() const noexcept;
 		uint32_t* videoBuffer;
@@ -1898,7 +1898,7 @@ namespace game
 		}
 	}
 
-	inline void PixelMode::TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale)
+	inline void PixelMode::TextClip(const std::string& text, const int32_t x, const int32_t y, const game::Color& color, const uint32_t scale) noexcept
 	{
 		int32_t px = x;
 		int32_t py = y;
