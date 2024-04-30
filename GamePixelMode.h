@@ -60,6 +60,7 @@ namespace game
 		Pointi GetScaledMousePosition() const noexcept;
 		Pointi GetPixelFrameBufferSize() const noexcept;
 		uint32_t* videoBuffer;
+		uint8_t* _fontROM;
 	private:
 		ThreadPool _threadPool;
 		//uint32_t* videoBuffer0;
@@ -72,7 +73,6 @@ namespace game
 		Vector2i _bufferSize;
 		uint32_t _totalBufferSize;
 		Vector2i _windowSize;
-		uint8_t* _fontROM;
 		uint32_t _currentBuffer;
 		void _UpdateFrameBuffer();
 		void _ScaleQuadToWindow();

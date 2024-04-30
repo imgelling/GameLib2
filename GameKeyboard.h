@@ -27,7 +27,10 @@ namespace game
 		uint32_t GetTabSize() const;
 		void SetTabSize(const uint32_t tabSize);
 		uint32_t GetCursorPosition() const;
+		void SetTextInputText(const std::string& text) noexcept;
+		bool TextInputTextChange() noexcept;
 	private:
+		bool _textInputTextChange;
 		void _UpdateText(uint8_t key, uint8_t shiftedKey);
 		bool* _keyCurrentState;
 		bool* _keyOldState;
@@ -42,6 +45,16 @@ namespace game
 		
 	};
 
+	inline void Keyboard::SetTextInputText(const std::string& text) noexcept
+	{
+		_textInput = text;
+		const uint64_t size = text.size();
+		for (uint32_t len = 0; len < size; len++)
+		{
+			_cursorPosition++;
+		}
+	}
+
 	inline Keyboard::Keyboard()
 	{
 		_keyCurrentState = new bool[256];
@@ -51,6 +64,7 @@ namespace game
 		_isTextInputMode = false;
 		_tabSize = 5;
 		_cursorPosition = 0;
+		_textInputTextChange = false;
 
 		//_textBufferPosition = 0;
 	}
