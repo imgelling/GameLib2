@@ -63,6 +63,15 @@ namespace game
 			c.y = y * scalar;
 			return c;
 		}
+		float_t Mag2() const noexcept { return ((x * x) + (y * y)); }
+		float_t Mag() const noexcept { return sqrt((x * x) + (y * y)); }
+		void Normalize() noexcept
+		{
+			float_t l = Mag();
+			if (l == 0) return;
+			x /= l;
+			y /= l;
+		}
 
 	private:
 	};

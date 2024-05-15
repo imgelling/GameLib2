@@ -245,8 +245,8 @@ namespace game
 				if (_textInput.length())
 				{
 					_textInput.erase((size_t)_cursorPosition - 1, 1);
+					_cursorPosition--;
 				}
-				_cursorPosition--;
 				return;
 			}
 
