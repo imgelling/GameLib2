@@ -192,6 +192,7 @@ namespace game
 		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
 		const Color Black(0, 0, 0, 1.0f);
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
+		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
 		const Color DarkGray(0.25f, 0.25f, 0.25f, 1.0f);
 		const Color DarkRed(0.75f, 0.0f, 0, 1.0f);

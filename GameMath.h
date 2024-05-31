@@ -234,6 +234,14 @@ namespace game
 			relative = relative.Normalize();
 			return ((*this * std::cos(theta)) + (relative * std::sin(theta)));
 		}
+		bool operator==(const Vector3<T>& other)
+		{
+			return ((x == other.x) && (y == other.y) && (z == other.z));
+		}
+		bool operator!=(const Vector3<T>& other)
+		{
+			return ((x != other.x) || (y != other.y) || (z != other.z));
+		}
 	private:
 	};
 	typedef Vector3<int32_t> Vector3i;
