@@ -120,6 +120,21 @@ namespace game
 			z = z + rhs.z;
 			return *this;
 		}
+		Vector3 operator + (const float_t rhs)
+		{
+			Vector3<T> c;
+			c.x = x + rhs;
+			c.y = y + rhs;
+			c.z = z + rhs;
+			return c;
+		}
+		Vector3& operator += (const float_t rhs)
+		{
+			x = x + rhs;
+			y = y + rhs;
+			z = z + rhs;
+			return *this;
+		}
 		Vector3 operator - (const Vector3& rhs)
 		{
 			Vector3<T> c;
@@ -134,6 +149,21 @@ namespace game
 			y = y - rhs.y;
 			z = z - rhs.z;
 			return *this;
+		}
+		Vector3& operator -= (const float_t rhs)
+		{
+			x = x - rhs;
+			y = y - rhs;
+			z = z - rhs;
+			return *this;
+		}
+		Vector3& operator - (const float_t rhs)
+		{
+			Vector3<T> c;
+			c.x = x - rhs;
+			c.y = y - rhs;
+			c.z = z - rhs;
+			return c;
 		}
 		Vector3 operator * (const T& scalar)
 		{
