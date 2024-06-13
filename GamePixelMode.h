@@ -187,7 +187,7 @@ namespace game
 		_totalBufferSize = 0;
 		_fontROM = nullptr;
 		_threadPool.Start();
-		numbuffers = 5;
+		numbuffers = 3;
 		_currentBuffer = 0;
 		for (uint32_t i = 0; i < 10; i++)
 			videoBuffers[i] = nullptr;
