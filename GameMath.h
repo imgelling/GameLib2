@@ -226,9 +226,10 @@ namespace game
 		{
 			float_t l = Mag();
 			if (l == 0) return;
-			x /= l;
-			y /= l;
-			z /= l;
+			l = 1.0f / l;
+			x *= l;
+			y *= l;
+			z *= l;
 		}
 		Vector3 Cross(const Vector3& rhs) const noexcept
 		{
@@ -278,6 +279,11 @@ namespace game
 	typedef Vector3<float_t> Vector3f;
 	typedef Vector3<double> Vector3d;
 #pragma pack(pop)
+	template <typename T>
+	static std::ostream& operator<< (std::ostream& stream, const Vector3<T>& type)
+	{
+		return stream << type.x << ", " << type.y << ", " << type.z;
+	}
 #pragma endregion
 
 #pragma region Matrix4x4
