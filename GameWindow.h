@@ -166,7 +166,7 @@ namespace game
 #ifdef UNICODE
 		SetWindowText(_windowHandle, ConvertToWide(title).c_str());
 #else
-		SetWindowText(olc_hWnd, s.c_str());
+		SetWindowText(_windowHandle, s.c_str());
 #endif
 #elif defined(__linux__)
 
