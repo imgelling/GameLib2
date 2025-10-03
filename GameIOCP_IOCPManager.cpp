@@ -102,7 +102,8 @@ namespace game
 				{
 				case IOCP_TYPE_NETWORK: if (_networkWork) _networkWork(result, bytesTransferred, completionKey, ioData); continue;
 				case IOCP_TYPE_TIMER: if (_timerWork) _timerWork(result, ioData); continue;
-				case IOCP_TYPE_FILE: std::cout << "Bytes written : " << bytesTransferred << "\n"; delete ioData; continue;
+				case IOCP_TYPE_FILE_WRITE: std::cout << "Bytes written : " << bytesTransferred << "\n"; delete ioData; continue;
+				case IOCP_TYPE_FILE_READ: std::cout << "Bytes read : " << bytesTransferred << "\n"; delete ioData; continue;
 				default:
 					std::cout << "Invalid ioDataType\n";
 				}

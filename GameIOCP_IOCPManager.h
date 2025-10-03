@@ -9,7 +9,8 @@ namespace game
 	{
 		constexpr uint8_t IOCP_TYPE_NETWORK = 1;
 		constexpr uint8_t IOCP_TYPE_TIMER = 2;
-		constexpr uint8_t IOCP_TYPE_FILE = 3;
+		constexpr uint8_t IOCP_TYPE_FILE_WRITE = 3;
+		constexpr uint8_t IOCP_TYPE_FILE_READ = 4;
 		constexpr uint8_t IOCP_TYPE_INVALID = 255;
 
 		struct PER_IO_DATA
