@@ -39,7 +39,7 @@ namespace game
 				ret.assign(_data, _data + _dataLength);
 			}
 
-			const size_t Packet::Size() const
+			size_t Packet::Size() const
 			{
 				return _dataLength;
 			}
@@ -47,7 +47,7 @@ namespace game
 			// std::string
 			void Packet::Add(const std::string& str)
 			{
-				const char* s = str.c_str();
+				//const char* s = str.c_str();
 				uint16_t size = (uint16_t)str.length();
 				GAME_ASSERT(_AddSizeCheck(sizeof(size)));
 				Add(size);

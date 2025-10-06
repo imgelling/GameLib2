@@ -439,6 +439,7 @@ namespace game
 				std::cout << bytesReceived << " bytes received : \n";
 				std::cout << data << '\n';
 				std::cout << "From socket : " << socket << "\n";
+				std::cout << "On channel  : " << channel << "\n";
 			}
 			void NetworkManager::_OnSendDefault(const SOCKET socket, const uint64_t bytesSent, const NetworkError& error)
 			{
@@ -759,7 +760,7 @@ namespace game
 				SOCKADDR_IN remoteAddress = {};
 				remoteAddress.sin_family = AF_INET;
 				inet_pton(remoteAddress.sin_family, ipstr, &remoteAddress.sin_addr.s_addr);
-				remoteAddress.sin_port = htons(port);
+				remoteAddress.sin_port = htons((uint16_t)port);
 
 				DWORD bytesSent = 0;
 				if (!_lpfnConnectEx(Socket, (sockaddr*)&remoteAddress, sizeof(remoteAddress), nullptr, 0, &bytesSent, &ioData->overlapped))

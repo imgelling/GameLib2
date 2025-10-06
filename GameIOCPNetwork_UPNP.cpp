@@ -128,23 +128,23 @@ namespace game
 						VariantInit(&var);
 						while (pEnumVariant->Next(1, &var, nullptr) == S_OK)
 						{
-							IStaticPortMapping* pMapping = nullptr;
+							IStaticPortMapping* pMapping2 = nullptr;
 							if (var.vt == VT_DISPATCH)
 							{
-								hr = var.pdispVal->QueryInterface(IID_IStaticPortMapping, (void**)&pMapping);
+								hr = var.pdispVal->QueryInterface(IID_IStaticPortMapping, (void**)&pMapping2);
 								if (SUCCEEDED(hr))
 								{
-									long externalPort;
-									BSTR protocol;
-									BSTR description;
-									pMapping->get_ExternalPort(&externalPort);
-									pMapping->get_Protocol(&protocol);
-									pMapping->get_Description(&description);
+									long externalPort2;
+									BSTR protocol2;
+									BSTR description2;
+									pMapping2->get_ExternalPort(&externalPort2);
+									pMapping2->get_Protocol(&protocol2);
+									pMapping2->get_Description(&description2);
 
-									std::wcout << L"Port: " << externalPort << L", Protocol: " << protocol << L", Description : " << description << std::endl;
-									SysFreeString(protocol);
-									SysFreeString(description);
-									pMapping->Release();
+									std::wcout << L"Port: " << externalPort2 << L", Protocol: " << protocol2 << L", Description : " << description2 << std::endl;
+									SysFreeString(protocol2);
+									SysFreeString(description2);
+									pMapping2->Release();
 								}
 							}
 							VariantClear(&var);

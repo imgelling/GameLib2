@@ -8,6 +8,6 @@ namespace game
 	namespace IOCP
 	{
 		// Outputs a error with more detail about it
-		const int32_t ErrorOutput(const std::string& command, const uint32_t line, const bool ignoreIOPending = true);
+		int32_t ErrorOutput(const std::string& command, const uint32_t line, const bool ignoreIOPending = true);
 	}
 }

@@ -15,7 +15,7 @@ namespace game
 				~Packet();
 				Packet(const std::vector<uint8_t>&);
 				void GetVector(std::vector<uint8_t>&);
-				const size_t Size() const;
+				size_t Size() const;
 
 				// std::string	-- Done
 				void Add(const std::string&);

@@ -33,7 +33,7 @@ namespace game
         ~MemoryPool();
 
 
-        const uint64_t GetSize() const;
+        uint64_t GetSize() const;
         void PrintStats(const std::string& name);
 
 
@@ -132,14 +132,15 @@ namespace game
 
         void PrintStats(std::string name)
         {
-            uint64_t capacity = 0;
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-                for (auto& i : _freeVectors)
-                {
-                    capacity += i.capacity();
-                }
-            }
+            std::cout << name << "\n";
+            //uint64_t capacity = 0;
+            //{
+            //    std::lock_guard<std::mutex> lock(_mutex);
+            //    for (auto& i : _freeVectors)
+            //    {
+            //        capacity += i.capacity();
+            //    }
+            //}
             //std::cout << name << " count         : " << _poolSize << "\n";
             //std::cout << name << " capacity      : " << formatDataSize(capacity) << "\n";
             //std::cout << name << " allocations   : " << _allocations.load() << "\n";

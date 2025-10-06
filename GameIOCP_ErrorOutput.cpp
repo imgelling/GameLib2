@@ -113,7 +113,7 @@ namespace game
 			return error;
 		}
 
-		const int32_t ErrorOutput(const std::string& command, const uint32_t line, const bool ignoreIOPending)
+		int32_t ErrorOutput(const std::string& command, const uint32_t line, const bool ignoreIOPending)
 		{
 			std::string errorString;
 			const int32_t error = ErrorToString(errorString);

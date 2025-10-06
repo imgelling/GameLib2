@@ -41,7 +41,7 @@ namespace game
 
 				_address = { 0 };
 				_address.sin_family = AF_INET;
-				_address.sin_port = htons(_multicastPort);
+				_address.sin_port = htons((uint16_t)_multicastPort);
 				inet_pton(_address.sin_family, _multicastIP.c_str(), &_address.sin_addr.s_addr);
 			}
 
@@ -87,7 +87,7 @@ namespace game
 
 				_address = { 0 };
 				_address.sin_family = AF_INET;
-				_address.sin_port = htons(_multicastPort);
+				_address.sin_port = htons((uint16_t)_multicastPort);
 				inet_pton(_address.sin_family, _multicastIP.c_str(), &_address.sin_addr.s_addr);
 
 				_network = &network;
@@ -203,7 +203,7 @@ namespace game
 
 				sockaddr_in localAddr = { 0 };
 				localAddr.sin_family = AF_INET;
-				localAddr.sin_port = htons(_multicastPort);
+				localAddr.sin_port = htons((uint16_t)_multicastPort);
 				localAddr.sin_addr.s_addr = INADDR_ANY;
 				bind(_multicastReceiveSocket, (sockaddr*)&localAddr, sizeof(localAddr));
 				if (game::IOCP::ErrorOutput("bind", __LINE__))

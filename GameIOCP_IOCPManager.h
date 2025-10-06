@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameLib2/GameThreadPool.h"
+#include "GameThreadPool.h"
 #include "GameIOCP_ErrorOutput.h"
 #include <ws2tcpip.h>
 

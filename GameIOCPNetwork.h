@@ -11,7 +11,7 @@
 
 #pragma comment(lib, "ws2_32.lib") 
 
-#include "../GameLib2/GameThreadPool.h"
+#include "GameThreadPool.h"
 #include "Game_MemoryPool.h"
 #include "GameIOCP_IOCPManager.h"
 #include "GameIOCP_ErrorOutput.h"
@@ -103,8 +103,8 @@ namespace game
 					ping = 0;
 				}
 			private:
-				int64_t _bytesSentFrom;		// Bytes sent from connection
-				int64_t _bytesReceivedBy;	// Bytes received by connection
+				uint64_t _bytesSentFrom;		// Bytes sent from connection
+				uint64_t _bytesReceivedBy;	// Bytes received by connection
 			};
 
 			struct NetworkError

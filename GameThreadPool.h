@@ -11,13 +11,14 @@
 
 namespace game
 {
-    class ThreadPool {
+    class ThreadPool 
+    {
     public:
         // Starts the thread pool. If threadsWanted
         // is zero or negative, it will create 
         // std::thread::hardware_concurrency() threads
         // else threadsWanted threads will be created.
-        void Start(const int32_t threadsWanted);
+        void Start(const uint32_t threadsWanted);
         // Queue up work for the threads
         void Queue(const std::function<void()>& work);
         // Tells all threads to stop getting new work.
@@ -33,16 +34,16 @@ namespace game
     private:
         void _ThreadLoop();
 
-        bool _hasStarted = false;                       // Have we started the thread pool?
-        std::atomic_bool _shouldTerminate = false;      // Tells threads to stop looking for jobs
         std::mutex _terminateMutex;                     // Used when terminating the thread pool
         std::condition_variable _terminateCondition;    // Allows threads to wait on new work or termination 
         std::vector<std::thread> _threadPool;           // Threads for work
         concurrency::concurrent_queue<std::function<void()>> _work;  // List of work to do, lockless
+        bool _hasStarted = false;                       // Have we started the thread pool?
+        std::atomic_bool _shouldTerminate = false;      // Tells threads to stop looking for jobs
     };
 
 
-    inline void ThreadPool::Start(const int32_t threadsWanted = 0)
+    inline void ThreadPool::Start(const uint32_t threadsWanted = 0)
     {
         if (_hasStarted) return;
         uint32_t numThreads = 0;

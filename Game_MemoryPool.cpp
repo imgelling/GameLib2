@@ -10,7 +10,7 @@ namespace game
         _poolSize = 0;
         _initialPoolSize = poolSize;
         _grownPoolSize = poolSize;
-        _growthType = _growthType;
+        _growthType = growthType;
         _allocations = 0;
         _deallocations = 0;
         std::lock_guard<std::mutex> lock(_mutex);
@@ -91,7 +91,7 @@ namespace game
         }
     }
 
-    const uint64_t MemoryPool::GetSize() const
+    uint64_t MemoryPool::GetSize() const
     {
         return _poolSize.load();  
     }
