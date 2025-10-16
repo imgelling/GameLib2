@@ -32,13 +32,14 @@ namespace game
 			{
 				WSABUF buffer = { 0 };
 				uint32_t bytesTransferred = 0;
-				uint8_t type = 99;
-				uint8_t channel = 0;
+				uint8_t type = 99; //pad[0]
+				uint8_t channel = 0; //pad[1]
 				SOCKET socket = INVALID_SOCKET;
 				uint32_t expectedTransferLeft = 0;
 				uint32_t expectedTransferTotal = 0;
 				sockaddr_in addr = { 0 };
 				char data[NETWORK_BUFFER_SIZE] = { 0 };
+				// socketType = pad[2]
 			};
 
 			struct ConnectionInfo
