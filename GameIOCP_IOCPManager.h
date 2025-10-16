@@ -16,8 +16,21 @@ namespace game
 		struct PER_IO_DATA
 		{
 			OVERLAPPED overlapped = { 0 };
-			uint8_t ioDataType = IOCP_TYPE_INVALID;  // or a union?
+			uint8_t ioDataType = IOCP_TYPE_INVALID;
 			uint8_t pad[7] = { 0 };
+			// or
+			//union
+			//{
+			//	uint8_t u8[7];
+			//	uint64_t i64;
+			//};
+			// or
+			//union data
+			//{
+			//	uint8_t u8[7];
+			//	uint64_t i64;
+			//};
+			// data d;  // and use a pointer to add data
 		};
 
 		class IOCPManager

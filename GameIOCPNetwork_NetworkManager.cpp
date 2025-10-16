@@ -18,12 +18,12 @@ namespace game
 		namespace Network
 		{
 
-			static constexpr uint8_t SEND_COMPLETION_TYPE = 1;
-			static constexpr uint8_t RECEIVE_COMPLETION_TYPE = 2;
-			static constexpr uint8_t ACCEPT_COMPLETION_TYPE = 3;
-			static constexpr uint8_t CONNECT_COMPLETION_TYPE = 4;
-			static constexpr uint8_t SENDTO_COMPLETION_TYPE = 5;
-			static constexpr uint8_t RECEIVEFROM_COMPLETION_TYPE = 6;
+			static constexpr uint8_t NETWORK_SEND_COMPLETION_TYPE = 1;
+			static constexpr uint8_t NETWORK_RECEIVE_COMPLETION_TYPE = 2;
+			static constexpr uint8_t NETWORK_ACCEPT_COMPLETION_TYPE = 3;
+			static constexpr uint8_t NETWORK_CONNECT_COMPLETION_TYPE = 4;
+			static constexpr uint8_t NETWORK_SENDTO_COMPLETION_TYPE = 5;
+			static constexpr uint8_t NETWORK_RECEIVEFROM_COMPLETION_TYPE = 6;
 			static constexpr uint32_t sizeOfUInt = (uint32_t)sizeof(uint32_t);
 			static constexpr uint32_t sizeOfHeader = sizeOfUInt + 1;
 
@@ -498,7 +498,7 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = RECEIVE_COMPLETION_TYPE;
+					ioData->type = NETWORK_RECEIVE_COMPLETION_TYPE;
 					_stats.MemoryAllocate(ioData->type);
 					ioData->socket = socket;
 					ioData->buffer.buf = ioData->data;
@@ -530,7 +530,7 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = RECEIVEFROM_COMPLETION_TYPE;
+					ioData->type = NETWORK_RECEIVEFROM_COMPLETION_TYPE;
 					_stats.MemoryAllocate(ioData->type);
 					ioData->socket = socket;
 					ioData->buffer.buf = ioData->data;
@@ -571,7 +571,7 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA;
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = SEND_COMPLETION_TYPE;
+					ioData->type = NETWORK_SEND_COMPLETION_TYPE;
 					_stats.MemoryAllocate(ioData->type);
 					ioData->socket = socket;
 					ioData->channel = channel;
@@ -609,7 +609,7 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA;
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = SENDTO_COMPLETION_TYPE;
+					ioData->type = NETWORK_SENDTO_COMPLETION_TYPE;
 					_stats.MemoryAllocate(ioData->type);
 					ioData->socket = socket;
 					ioData->channel = channel;
@@ -641,7 +641,7 @@ namespace game
 				// Allocate I/O data structure
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA();
 				ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-				ioData->type = ACCEPT_COMPLETION_TYPE;
+				ioData->type = NETWORK_ACCEPT_COMPLETION_TYPE;
 				_stats.MemoryAllocate(ioData->type);
 
 				ioData->socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -705,7 +705,7 @@ namespace game
 
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 				ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-				ioData->type = CONNECT_COMPLETION_TYPE;
+				ioData->type = NETWORK_CONNECT_COMPLETION_TYPE;
 				_stats.MemoryAllocate(ioData->type);
 				ioData->socket = Socket;
 				ioData->buffer.buf = ioData->data;
@@ -806,7 +806,7 @@ namespace game
 				} // end GetQueuedCompletionStatus failed
 
 				// If bytes transferred == 0, then the socket a send or receive was used on disconnected 
-				if ((bytesTransferred == 0) && (ioData->type != ACCEPT_COMPLETION_TYPE) && (ioData->type != CONNECT_COMPLETION_TYPE))
+				if ((bytesTransferred == 0) && (ioData->type != NETWORK_ACCEPT_COMPLETION_TYPE) && (ioData->type != NETWORK_CONNECT_COMPLETION_TYPE))
 				{
 					_CloseConnection(ioData, __LINE__);
 					return;
@@ -815,12 +815,12 @@ namespace game
 				// Handle the data depending on data type
 				switch (ioData->type)
 				{
-				case SEND_COMPLETION_TYPE: _HandleSend(ioData, bytesTransferred); return;
-				case SENDTO_COMPLETION_TYPE: _HandleSendTo(ioData, bytesTransferred); return;
-				case RECEIVE_COMPLETION_TYPE: _HandleReceive(ioData, bytesTransferred); return;
-				case RECEIVEFROM_COMPLETION_TYPE: _HandleReceiveFrom(ioData, bytesTransferred); return;
-				case ACCEPT_COMPLETION_TYPE: _HandleAccept(ioData); return;
-				case CONNECT_COMPLETION_TYPE: _HandleConnect(ioData); return;
+				case NETWORK_SEND_COMPLETION_TYPE: _HandleSend(ioData, bytesTransferred); return;
+				case NETWORK_SENDTO_COMPLETION_TYPE: _HandleSendTo(ioData, bytesTransferred); return;
+				case NETWORK_RECEIVE_COMPLETION_TYPE: _HandleReceive(ioData, bytesTransferred); return;
+				case NETWORK_RECEIVEFROM_COMPLETION_TYPE: _HandleReceiveFrom(ioData, bytesTransferred); return;
+				case NETWORK_ACCEPT_COMPLETION_TYPE: _HandleAccept(ioData); return;
+				case NETWORK_CONNECT_COMPLETION_TYPE: _HandleConnect(ioData); return;
 				default: "GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"; break;
 				}
 
@@ -1121,22 +1121,22 @@ namespace game
 			void NetworkInternalStats::MemoryAllocate(const uint32_t type)
 			{
 #if defined(_DEBUG)
-				if (type == RECEIVE_COMPLETION_TYPE || type == RECEIVEFROM_COMPLETION_TYPE)
+				if (type == NETWORK_RECEIVE_COMPLETION_TYPE || type == NETWORK_RECEIVEFROM_COMPLETION_TYPE)
 				{
 					_receiveAllocateCount++;
 					if (verbose) std::cout << "Receive type allocate" << _receiveAllocateCount << "\n";
 				}
-				else if (type == SEND_COMPLETION_TYPE || type == SENDTO_COMPLETION_TYPE)
+				else if (type == NETWORK_SEND_COMPLETION_TYPE || type == NETWORK_SENDTO_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Send type allocate\n";
 					_sendAllocateCount++;
 				}
-				else if (type == ACCEPT_COMPLETION_TYPE)
+				else if (type == NETWORK_ACCEPT_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Accept type allocate\n";
 					_acceptAllocateCount++;
 				}
-				else if (type == CONNECT_COMPLETION_TYPE)
+				else if (type == NETWORK_CONNECT_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Connect type allocate\n";
 					_connectAllocateCount++;
@@ -1146,22 +1146,22 @@ namespace game
 			void NetworkInternalStats::MemoryDeallocate(const uint32_t type)
 			{
 #if defined(_DEBUG)
-				if (type == RECEIVE_COMPLETION_TYPE || type == RECEIVEFROM_COMPLETION_TYPE)
+				if (type == NETWORK_RECEIVE_COMPLETION_TYPE || type == NETWORK_RECEIVEFROM_COMPLETION_TYPE)
 				{
 					_receiveDeallocateCount++;
 					if (verbose) std::cout << "---------------Receive type deallocate" << _receiveDeallocateCount << "\n";
 				}
-				else if (type == SEND_COMPLETION_TYPE || type == SENDTO_COMPLETION_TYPE)
+				else if (type == NETWORK_SEND_COMPLETION_TYPE || type == NETWORK_SENDTO_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Send type deallocate\n";
 					_sendDeallocateCount++;
 				}
-				else if (type == ACCEPT_COMPLETION_TYPE)
+				else if (type == NETWORK_ACCEPT_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Accept type deallocate\n";
 					_acceptDeallocateCount++;
 				}
-				else if (type == CONNECT_COMPLETION_TYPE)
+				else if (type == NETWORK_CONNECT_COMPLETION_TYPE)
 				{
 					if (verbose) std::cout << "Connect type deallocate\n";
 					_connectDeallocateCount++;
