@@ -1,4 +1,4 @@
-#include "GameIOCP_IOCPManager.h"
+#include "GameIOCP.h"
 
 namespace game
 {
@@ -11,6 +11,7 @@ namespace game
 			_numberWorkerThreads = 1;
 			_networkWork = nullptr;
 			_timerWork = nullptr;
+			_fileWork = nullptr;
 		}
 
 		IOCPManager::~IOCPManager()
@@ -80,6 +81,11 @@ namespace game
 			_timerWork = function;
 		}
 
+		void IOCPManager::SetFileFunction(std::function<void(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, PER_IO_DATA* ioDataIn)> function)
+		{
+			_fileWork = function;
+		}
+
 		void IOCPManager::_WorkerThread()
 		{
 			DWORD bytesTransferred = 0;
@@ -98,12 +104,37 @@ namespace game
 					return;
 				}
 
+				// This will break if a type is specified without a function attached
 				switch (ioData->ioDataType)
 				{
-				case IOCP_TYPE_NETWORK: if (_networkWork) _networkWork(result, bytesTransferred, completionKey, ioData); continue;
-				case IOCP_TYPE_TIMER: if (_timerWork) _timerWork(result, ioData); continue;
-				case IOCP_TYPE_FILE_WRITE: std::cout << "Bytes written : " << bytesTransferred << "\n"; delete ioData; continue;
-				case IOCP_TYPE_FILE_READ: std::cout << "Bytes read : " << bytesTransferred << "\n"; delete ioData; continue;
+				case IOCP_TYPE_NETWORK: 
+					if (_networkWork)
+					{
+						_networkWork(result, bytesTransferred, completionKey, ioData);
+						continue;
+					}
+					else
+					{
+						// throw maybe?
+					}
+				case IOCP_TYPE_TIMER: 
+					if (_timerWork)
+					{
+						_timerWork(result, ioData); continue;
+					}
+					else
+					{
+
+					}
+				case IOCP_TYPE_FILE: 
+					if (_fileWork)
+					{
+						_fileWork(result, bytesTransferred, completionKey, ioData); continue;
+					}
+					else
+					{
+
+					}
 				default:
 					std::cout << "Invalid ioDataType\n";
 				}
