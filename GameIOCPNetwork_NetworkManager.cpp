@@ -784,7 +784,7 @@ namespace game
 				}
 			}
 
-			void NetworkManager::_DoWork(int32_t result, DWORD bytesTransferred, ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn)
+			void NetworkManager::_DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn)
 			{
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)ioDataIn;
 				if (!result) // GetQueuedCompletionStatus failed

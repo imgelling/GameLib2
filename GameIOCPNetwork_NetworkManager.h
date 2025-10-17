@@ -38,7 +38,7 @@ namespace game
 				void _HandleSendTo(PER_IO_DATA_NETWORK* ioData, const uint32_t bytesSent);
 				void _HandleAccept(PER_IO_DATA_NETWORK* ioData);
 				void _HandleConnect(PER_IO_DATA_NETWORK* ioData);
-				void _DoWork(int32_t result, DWORD bytesTransferred, ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn);
+				void _DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn);
 
 				void _CloseConnection(PER_IO_DATA_NETWORK* ioData, const uint32_t line = 0, const bool alreadyClosed = false);
 				void _AddConnection(const PER_IO_DATA_NETWORK* ioData);

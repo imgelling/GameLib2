@@ -7,12 +7,6 @@ namespace game
 	{
 		namespace File
 		{
-			static constexpr uint8_t FILE_READ_COMPLETION_TYPE = 1;
-			static constexpr uint8_t FILE_WRITE_COMPLETION_TYPE = 2;
-			static constexpr uint32_t MAX_IO_SIZE = 64 * 1024;
-
-#define FILE_IO_TYPE pad[0]
-#define FILE_PERCENT_DONE pad[1]
 			struct PER_IO_DATA_FILE : game::IOCP::PER_IO_DATA
 			{
 				WSABUF buffer = { 0 };
