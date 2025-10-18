@@ -592,7 +592,6 @@ namespace game
 					ioData->data[4] = channel;
 					// Copy data into buffer offset by header size from header encoding
 					memcpy(ioData->data + sizeOfHeader, data, length);
-
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = (uint32_t)length + sizeOfHeader;
 					ioData->expectedTransferTotal = ioData->buffer.len;
