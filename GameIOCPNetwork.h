@@ -23,23 +23,23 @@ namespace game
 	{
 		namespace Network
 		{
-			constexpr auto MAX_PACKET_SIZE = 64 * 1024; // 64k
+			constexpr uint32_t MAX_PACKET_SIZE = 64 * 1024 - 1; // 64k - 1 
 			//constexpr auto MIN_BUFFER_SIZE = (sizeof(SOCKADDR_IN) + 16) * 2;
-			constexpr auto NETWORK_BUFFER_SIZE = MAX_PACKET_SIZE + (uint32_t)sizeof(uint32_t) + 1; // 64k + 4 bytes of length + 1 byte of channel
+			constexpr uint32_t NETWORK_BUFFER_SIZE = MAX_PACKET_SIZE + (uint32_t)sizeof(uint32_t) + 1; // 64k + 4 bytes of length + 1 byte of channel
 
 
-			struct PER_IO_DATA_NETWORK : game::IOCP::PER_IO_DATA
+			struct PER_IO_DATA_NETWORK : game::IOCP::PER_IO_DATA 
 			{
 				WSABUF buffer = { 0 };
-				uint32_t bytesTransferred = 0;
-				uint8_t type = 99; //pad[0]
-				uint8_t channel = 0; //pad[1]
+				//uint8_t NETWORK_COMPLETION_TYPE pad[0]	defined in cpp
+				//uint8_t NETWORK_CHANNEL = pad[1]			defined in cpp
 				SOCKET socket = INVALID_SOCKET;
 				uint32_t expectedTransferLeft = 0;
 				uint32_t expectedTransferTotal = 0;
+				uint32_t bytesTransferred = 0;
 				sockaddr_in addr = { 0 };
 				char data[NETWORK_BUFFER_SIZE] = { 0 };
-				// socketType = pad[2]
+				// uint8_t NETWORK_SOCKET_TYPE = pad[2]		defined in cpp
 			};
 
 			struct ConnectionInfo

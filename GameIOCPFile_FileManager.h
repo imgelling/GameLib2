@@ -41,7 +41,6 @@ namespace game
 				void _DeleteIoData(PER_IO_DATA_FILE* ioData);
 
 				void _HandleWrite(PER_IO_DATA_FILE* ioData, const DWORD bytesTransferred);
-
 				void _HandleRead(PER_IO_DATA_FILE* ioData, const DWORD bytesTransferred);
 
 				void _DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, const game::IOCP::PER_IO_DATA* ioDataIn);

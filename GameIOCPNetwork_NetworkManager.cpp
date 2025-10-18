@@ -1,16 +1,20 @@
 #include "GameIOCP.h"
 
-static const int32_t checkSocketType(const SOCKET socketFD)
-{
-	int32_t type = 0;
-	int32_t length = sizeof(type);
+//static const int32_t checkSocketType(const SOCKET socketFD)
+//{
+//	int32_t type = 0;
+//	int32_t length = sizeof(type);
+//
+//	// Get the socket type
+//	getsockopt(socketFD, SOL_SOCKET, SO_TYPE, (char*)&type, &length);
+//	game::IOCP::ErrorOutput("getsockopt", __LINE__);
+//	return type;
+//}
 
-	// Get the socket type
-	getsockopt(socketFD, SOL_SOCKET, SO_TYPE, (char*)&type, &length);
-	game::IOCP::ErrorOutput("getsockopt", __LINE__);
-	return type;
-}
 
+#define NETWORK_COMPLETION_TYPE pad[0]
+#define NETWORK_CHANNEL pad[1]
+#define NETWORK_SOCKET_TYPE pad[2]
 namespace game
 {
 	namespace IOCP
@@ -47,7 +51,7 @@ namespace game
 					uint8_t encodedHeader[5] = { 0 };
 					uint32_t bytesFromConnection = 0;
 					uint32_t sizeOfConnection = 0;
-					if (checkSocketType(ioData->socket) == SOCK_STREAM)
+					if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
 						sizeOfConnection = (uint32_t)_connections[ioData->socket].receiveData.size();
@@ -58,7 +62,7 @@ namespace game
 						}
 						if (sizeOfConnection >= sizeOfHeader)
 						{
-							ioData->channel = _connections[ioData->socket].receiveData[5];
+							ioData->NETWORK_CHANNEL = _connections[ioData->socket].receiveData[5];
 							bytesFromConnection++;
 						}
 					}
@@ -89,7 +93,7 @@ namespace game
 						else
 						{
 							std::cout << "Not enough data to extract header.\n";
-							if (checkSocketType(ioData->socket) == SOCK_STREAM)
+							if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 							{
 								std::lock_guard<std::mutex> lock(_connectionsMutex);
 								_connections[ioData->socket].AddBytesReceivedBy(bytesReceived);
@@ -111,7 +115,7 @@ namespace game
 					ioData->expectedTransferTotal = decodedLength - sizeOfHeader;
 					ioData->bytesTransferred = (uint32_t)(sizeOfConnection - bytesFromConnection);
 					ioData->expectedTransferLeft = ioData->expectedTransferTotal - ioData->bytesTransferred;
-					ioData->channel = encodedHeader[4];
+					ioData->NETWORK_CHANNEL = encodedHeader[4];
 					//std::cout << "Expected data length is : " << ioData->expectedTransferTotal << "\n";
 					//std::cout << "Data transferred is : " << ioData->bytesTransferred << "\n";
 					//std::cout << "Expected data left is : " << ioData->expectedTransferLeft << "\n";
@@ -134,7 +138,7 @@ namespace game
 				}
 				ioData->expectedTransferLeft = 0;
 				ioData->bytesTransferred = 0;
-				if (checkSocketType(ioData->socket) == SOCK_STREAM)
+				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
 					_connections[ioData->socket].receiveData.clear();
@@ -145,7 +149,7 @@ namespace game
 
 			void NetworkManager::_HandleNotEnoughDataReceived(PER_IO_DATA_NETWORK* ioData, const uint32_t bytesReceived)
 			{
-				if (checkSocketType(ioData->socket) == SOCK_STREAM)
+				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
 					_connections[ioData->socket].AddBytesReceivedBy(bytesReceived);
@@ -162,7 +166,7 @@ namespace game
 			{
 				NetworkError error;
 				std::vector<unsigned char> temp = _vectorPool.Allocate();
-				if (checkSocketType(ioData->socket) == SOCK_STREAM)
+				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
 					_connections[ioData->socket].AddBytesReceivedBy(ioData->expectedTransferLeft);
@@ -181,7 +185,7 @@ namespace game
 
 				temp.emplace_back('\0');
 
-				_OnReceive(ioData->socket, temp.data(), temp.size() - 1, ioData->channel, error);
+				_OnReceive(ioData->socket, temp.data(), temp.size() - 1, ioData->NETWORK_CHANNEL, error);
 				_vectorPool.Deallocate(temp);
 				ioData->bytesTransferred = ioData->expectedTransferLeft;
 				return true;
@@ -277,7 +281,7 @@ namespace game
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
 					ioData->buffer.buf = ioData->data + ioData->bytesTransferred;
 					ioData->buffer.len = (uint32_t)(sizeof(ioData->data) - ioData->bytesTransferred);
-					SendTo(ioData->socket, ioData->addr, NULL, 0, ioData->channel, ioData);
+					SendTo(ioData->socket, ioData->addr, NULL, 0, ioData->NETWORK_CHANNEL, ioData);
 					return;
 				}
 
@@ -300,7 +304,7 @@ namespace game
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
 					ioData->buffer.buf = ioData->data + ioData->bytesTransferred;
 					ioData->buffer.len = (uint32_t)(sizeof(ioData->data) - ioData->bytesTransferred);
-					Send(ioData->socket, NULL, 0, ioData->channel, ioData);
+					Send(ioData->socket, NULL, 0, ioData->NETWORK_CHANNEL, ioData);
 					return;
 				}
 
@@ -498,9 +502,10 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = NETWORK_RECEIVE_COMPLETION_TYPE;
-					_stats.MemoryAllocate(ioData->type);
+					ioData->NETWORK_COMPLETION_TYPE = NETWORK_RECEIVE_COMPLETION_TYPE;
+					_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 					ioData->socket = socket;
+					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_STREAM;
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = (u_long)sizeof(ioData->data);
 					ioData->expectedTransferLeft = 0;
@@ -522,6 +527,7 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 				}
 			}
+			// UDP ONLY
 			void NetworkManager::ReceiveFrom(const SOCKET socket, PER_IO_DATA_NETWORK* ioData_in)
 			{
 				PER_IO_DATA_NETWORK* ioData = ioData_in;
@@ -530,19 +536,20 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = NETWORK_RECEIVEFROM_COMPLETION_TYPE;
-					_stats.MemoryAllocate(ioData->type);
+					ioData->NETWORK_COMPLETION_TYPE = NETWORK_RECEIVEFROM_COMPLETION_TYPE;
+					_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 					ioData->socket = socket;
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = (u_long)sizeof(ioData->data);
 					ioData->expectedTransferLeft = 0;
 					ioData->expectedTransferTotal = ioData->expectedTransferLeft;
 					ioData->addr = { 0 };
-					if (checkSocketType(ioData->socket) == SOCK_STREAM)
-					{
-						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						_connections[ioData->socket].receiveData.clear();
-					}
+					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_DGRAM;
+					//if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
+					//{
+					//	std::lock_guard<std::mutex> lock(_connectionsMutex);
+					//	_connections[ioData->socket].receiveData.clear();
+					//}
 				}
 				else
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
@@ -571,10 +578,11 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA;
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = NETWORK_SEND_COMPLETION_TYPE;
-					_stats.MemoryAllocate(ioData->type);
+					ioData->NETWORK_COMPLETION_TYPE = NETWORK_SEND_COMPLETION_TYPE;
+					_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 					ioData->socket = socket;
-					ioData->channel = channel;
+					ioData->NETWORK_CHANNEL = channel;
+					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_STREAM;
 					// Make length network byte order
 					uint32_t pre = (uint32_t)(length + sizeOfHeader);
 					uint32_t networkdata = htonl(pre);
@@ -597,6 +605,7 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 				}
 			}
+			// UDP ONLY
 			void NetworkManager::SendTo(const SOCKET socket, const sockaddr_in& addr, const unsigned char* data, const uint64_t length, uint8_t channel, PER_IO_DATA_NETWORK* ioData_in)
 			{
 				PER_IO_DATA_NETWORK* ioData = ioData_in;
@@ -609,10 +618,11 @@ namespace game
 				{
 					ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA;
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-					ioData->type = NETWORK_SENDTO_COMPLETION_TYPE;
-					_stats.MemoryAllocate(ioData->type);
+					ioData->NETWORK_COMPLETION_TYPE = NETWORK_SENDTO_COMPLETION_TYPE;
+					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_DGRAM;
+					_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 					ioData->socket = socket;
-					ioData->channel = channel;
+					ioData->NETWORK_CHANNEL = channel;
 					ioData->addr = addr;
 					// Make length network byte order
 					uint32_t pre = (uint32_t)(length + sizeOfHeader);
@@ -641,8 +651,8 @@ namespace game
 				// Allocate I/O data structure
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate(); //new PER_IO_DATA();
 				ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-				ioData->type = NETWORK_ACCEPT_COMPLETION_TYPE;
-				_stats.MemoryAllocate(ioData->type);
+				ioData->NETWORK_COMPLETION_TYPE = NETWORK_ACCEPT_COMPLETION_TYPE;
+				_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 
 				ioData->socket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 				if (ioData->socket == INVALID_SOCKET)
@@ -705,8 +715,8 @@ namespace game
 
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)_ioDataPool.Allocate();
 				ioData->ioDataType = game::IOCP::IOCP_TYPE_NETWORK;
-				ioData->type = NETWORK_CONNECT_COMPLETION_TYPE;
-				_stats.MemoryAllocate(ioData->type);
+				ioData->NETWORK_COMPLETION_TYPE = NETWORK_CONNECT_COMPLETION_TYPE;
+				_stats.MemoryAllocate(ioData->NETWORK_COMPLETION_TYPE);
 				ioData->socket = Socket;
 				ioData->buffer.buf = ioData->data;
 				ioData->buffer.len = (u_long)sizeof(ioData->data);
@@ -806,14 +816,14 @@ namespace game
 				} // end GetQueuedCompletionStatus failed
 
 				// If bytes transferred == 0, then the socket a send or receive was used on disconnected 
-				if ((bytesTransferred == 0) && (ioData->type != NETWORK_ACCEPT_COMPLETION_TYPE) && (ioData->type != NETWORK_CONNECT_COMPLETION_TYPE))
+				if ((bytesTransferred == 0) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_ACCEPT_COMPLETION_TYPE) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_CONNECT_COMPLETION_TYPE))
 				{
 					_CloseConnection(ioData, __LINE__);
 					return;
 				}
 
 				// Handle the data depending on data type
-				switch (ioData->type)
+				switch (ioData->NETWORK_COMPLETION_TYPE)
 				{
 				case NETWORK_SEND_COMPLETION_TYPE: _HandleSend(ioData, bytesTransferred); return;
 				case NETWORK_SENDTO_COMPLETION_TYPE: _HandleSendTo(ioData, bytesTransferred); return;
@@ -914,7 +924,7 @@ namespace game
 
 			void NetworkManager::_DeleteIoData(PER_IO_DATA_NETWORK* ioData)
 			{
-				_stats.MemoryDeallocate(ioData->type);
+				_stats.MemoryDeallocate(ioData->NETWORK_COMPLETION_TYPE);
 				_ioDataPool.Deallocate(ioData);
 			}
 
@@ -1172,3 +1182,7 @@ namespace game
 		}
 	}
 }
+
+#undef NETWORK_COMPLETION_TYPE
+#undef NETWORK_CHANNEL
+#undef NETWORK_SOCKET_TYPE
