@@ -196,7 +196,7 @@ namespace game
 				_stats.AddBytesReceived(bytesReceived);
 
 				//std::cout << "NEW Data received, " << bytesReceived << " bytes.\n";
-
+				// -------- comment below to web serve
 				uint32_t totalReceivedData = bytesReceived;
 				do
 				{
@@ -225,6 +225,9 @@ namespace game
 				std::cout << "Data done processing!!!!!\n";
 				if (ioData->expectedTransferLeft)
 					std::cout << "Left over data to get!\n";
+				// comment above to webserve
+				//ioData->expectedTransferLeft = bytesReceived; // used for web serve
+				//_DoOnReceive(ioData); // used for web serve
 
 				Receive(ioData->socket);
 				_DeleteIoData(ioData);
@@ -583,6 +586,7 @@ namespace game
 					ioData->socket = socket;
 					ioData->NETWORK_CHANNEL = channel;
 					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_STREAM;
+					// --- comment below to web serve
 					// Make length network byte order
 					uint32_t pre = (uint32_t)(length + sizeOfHeader);
 					uint32_t networkdata = htonl(pre);
@@ -592,8 +596,10 @@ namespace game
 					ioData->data[4] = channel;
 					// Copy data into buffer offset by header size from header encoding
 					memcpy(ioData->data + sizeOfHeader, data, length);
+					// --- comment above to webserve
+					//memcpy(ioData->data, data, length); // to webserve
 					ioData->buffer.buf = ioData->data;
-					ioData->buffer.len = (uint32_t)length + sizeOfHeader;
+					ioData->buffer.len = (uint32_t)length + sizeOfHeader; // remove + sizeofHeader for webserve
 					ioData->expectedTransferTotal = ioData->buffer.len;
 					ioData->expectedTransferLeft = ioData->buffer.len;
 				}

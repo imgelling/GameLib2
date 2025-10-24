@@ -31,6 +31,7 @@ namespace game
 			switch (error)
 			{
 			case 0: errorString = "NONE"; return error;
+			case ERROR_SEM_TIMEOUT: errorString = "ERROR_SEM_TIMEOUT"; break;
 			case ERROR_CONNECTION_REFUSED: errorString = "ERROR_CONNECTION_REFUSED"; break;
 			case ERROR_SEM_NOT_FOUND: errorString = "ERROR_SEM_NOT_FOUND"; break;
 			case ERROR_NETNAME_DELETED: errorString = "ERROR_NETNAME_DELETED"; break;

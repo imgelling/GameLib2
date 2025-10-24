@@ -1,4 +1,5 @@
 #include "GameIOCP.h"
+#define FILE_IO_TYPE pad[0]
 
 namespace game
 {
@@ -8,18 +9,23 @@ namespace game
 		{
 			static constexpr uint8_t FILE_READ_COMPLETION_TYPE = 1;
 			static constexpr uint8_t FILE_WRITE_COMPLETION_TYPE = 2;
-			static constexpr uint32_t MAX_IO_SIZE = 64 * 1024;
+			static constexpr uint32_t MAX_IO_SIZE = 1024;// 64 * 1024;
 
-#define FILE_IO_TYPE pad[0]
-#define FILE_PERCENT_DONE pad[1]
+
 
 			FileManager::FileManager()
 			{
 				_iocpHandle = INVALID_HANDLE_VALUE;
+				_onRead = nullptr;
 			}
 			FileManager::~FileManager()
 			{
 
+			}
+
+			void FileManager::SetOnRead(std::function<void(const int32_t result, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data)> function)
+			{
+				_onRead = function;
 			}
 
 			bool FileManager::Initialize(game::IOCP::IOCPManager& iocpManager)
@@ -231,8 +237,8 @@ namespace game
 			{
 				//std::cout << "Bytes written : " << bytesTransferred << "\n";
 				ioData->bytesTransferred += bytesTransferred;
-				ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
-				std::cout << "Percent done  : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
+				//ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
+				//std::cout << "Percent done  : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
 				{
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
@@ -252,19 +258,20 @@ namespace game
 			}
 			void FileManager::_HandleRead(PER_IO_DATA_FILE* ioData, const DWORD bytesTransferred)
 			{
-				//std::cout << "Bytes read   : " << bytesTransferred << "\n";
 				ioData->bytesTransferred += bytesTransferred;
+				//std::cout << "Bytes read   : " << bytesTransferred << "\n";
 				//std::cout << "Bytes left : " << ioData->bytesToTransfer - ioData->bytesTransferred << "\n";
-				ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
-				std::cout << "Percent done : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
-				if ((ioData->bytesTransferred * 100) / ioData->bytesToTransfer == 100)
-				{
-					for (uint32_t i = 0; i < ioData->bytesTransferred; i++)
-					{
-						std::cout << ioData->data[i];
-					}
-					std::cout << "\n";
-				}
+				//ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
+				//std::cout << "Percent done : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
+				//if ((ioData->bytesTransferred * 100) / ioData->bytesToTransfer == 100)
+				//{
+				//	for (uint32_t i = 0; i < ioData->bytesTransferred; i++)
+				//	{
+				//		std::cout << ioData->data[i];
+				//	}
+				//	std::cout << "\n";
+				//}
+				_onRead(0, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
 
 				// Check if all the bytes requested were read
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
@@ -317,3 +324,5 @@ namespace game
 		}
 	}
 }
+#undef FILE_IO_TYPE 
+#undef FILE_PERCENT_DONE
