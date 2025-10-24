@@ -18,7 +18,7 @@ namespace game
 				size_t Size() const;
 
 				// uint8_t*
-				void Add(uint8_t* data, uint16_t size)
+				void Add(const uint8_t* data, uint16_t size)
 				{
 					(_AddSizeCheck(size));
 					memcpy(_dataWritePosition, data, size);
