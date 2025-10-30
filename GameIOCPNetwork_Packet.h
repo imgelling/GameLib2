@@ -20,7 +20,7 @@ namespace game
 				// uint8_t*
 				void Add(const uint8_t* data, uint16_t size)
 				{
-					(_AddSizeCheck(size));
+					_AddSizeCheck(size);
 					memcpy(_dataWritePosition, data, size);
 					_IncreaseWritePos((uint32_t)size);
 				}
