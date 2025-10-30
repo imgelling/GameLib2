@@ -1,17 +1,5 @@
 #include "GameIOCP.h"
 
-//static const int32_t checkSocketType(const SOCKET socketFD)
-//{
-//	int32_t type = 0;
-//	int32_t length = sizeof(type);
-//
-//	// Get the socket type
-//	getsockopt(socketFD, SOL_SOCKET, SO_TYPE, (char*)&type, &length);
-//	game::IOCP::ErrorOutput("getsockopt", __LINE__);
-//	return type;
-//}
-
-
 #define NETWORK_COMPLETION_TYPE pad[0]
 #define NETWORK_CHANNEL pad[1]
 #define NETWORK_SOCKET_TYPE pad[2]
@@ -33,9 +21,6 @@ namespace game
 
 			NetworkManager::NetworkManager()
 			{
-				_port = NULL;
-				_numberWorkThreads = 1;
-				_numberAcceptsToStart = 1;
 				_stopping.store(0);
 				_completionPort = INVALID_HANDLE_VALUE;
 				_listenSocket = INVALID_SOCKET;
@@ -386,7 +371,7 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 					return;
 				}
-				if (_port == NULL)
+				if (_attributes.port == NULL)
 				{
 					_AddConnection(ioData);
 					_stats.AddConnection();
@@ -936,17 +921,16 @@ namespace game
 			bool NetworkManager::Initialize(const NetworkAttributes& attributes, game::IOCP::IOCPManager& ioHandler)
 			{
 				_stats.verbose = attributes.verboseOutputDEBUG;
-				_port = attributes.port;
-				_numberAcceptsToStart = attributes.numberOfAcceptors;
+				_attributes = attributes;
 
 				// If port is set, then it will need atleast 1 accept
-				if (_port)
+				if (_attributes.port)
 				{
-					_numberAcceptsToStart = max(1, _numberAcceptsToStart);
+					_attributes.numberOfAcceptors = max(1, _attributes.numberOfAcceptors);
 				}
 				else
 				{
-					_numberAcceptsToStart = max(0, _numberAcceptsToStart);
+					_attributes.numberOfAcceptors = max(0, _attributes.numberOfAcceptors);
 				}
 
 				_ioDataPool.Initialize(sizeof(PER_IO_DATA_NETWORK), attributes.initialIoDataPoolSize);
@@ -979,7 +963,7 @@ namespace game
 					};
 				ioHandler.SetNetworkFunction(callback);
 
-				if (_port != NULL)
+				if (_attributes.port != NULL)
 				{
 					// Create the listen socket
 					_listenSocket = WSASocketW(AF_INET, SOCK_STREAM, 0, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -992,7 +976,7 @@ namespace game
 					// Assign address and port to listen socket
 					SOCKADDR_IN serverAddr = { 0 };
 					serverAddr.sin_family = AF_INET;
-					serverAddr.sin_port = htons(_port);
+					serverAddr.sin_port = htons(_attributes.port);
 					serverAddr.sin_addr.S_un.S_addr = INADDR_ANY;
 					if (bind(_listenSocket, (sockaddr*)&serverAddr, sizeof(serverAddr)) == SOCKET_ERROR)
 					{
@@ -1032,7 +1016,7 @@ namespace game
 					}
 
 					// Start the accepting
-					for (uint32_t i = 0; i < _numberAcceptsToStart; i++)
+					for (uint32_t i = 0; i < _attributes.numberOfAcceptors; i++)
 						Accept();
 				}
 				return true;

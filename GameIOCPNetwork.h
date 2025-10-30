@@ -120,6 +120,7 @@ namespace game
 			{
 				uint16_t port = NULL;
 				bool verboseOutputDEBUG = false;
+				bool TCPNoDelay = false;
 				uint32_t numberOfAcceptors = 1;
 				uint32_t initialIoDataPoolSize = 1;
 				uint32_t initialVectorPoolSize = 1;
