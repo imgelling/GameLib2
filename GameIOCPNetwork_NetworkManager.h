@@ -9,9 +9,6 @@ namespace game
 		{
 			class NetworkManager
 			{
-				//uint16_t _port;
-				//uint32_t _numberWorkThreads;
-				//uint32_t _numberAcceptsToStart;
 				std::atomic<uint32_t> _stopping;
 				HANDLE _completionPort;
 				SOCKET _listenSocket;

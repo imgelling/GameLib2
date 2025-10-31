@@ -371,6 +371,18 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 					return;
 				}
+
+				if (_attributes.tcpNoDelay)
+				{
+					int32_t flag = 1;
+					if (setsockopt(ioData->socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag)) == SOCKET_ERROR)
+					{
+						game::IOCP::ErrorOutput("setsockopt", __LINE__);
+						_CloseConnection(ioData, __LINE__);
+						return;
+					}
+				}
+
 				if (_attributes.port == NULL)
 				{
 					_AddConnection(ioData);
@@ -650,6 +662,17 @@ namespace game
 					game::IOCP::ErrorOutput("WSASocket", __LINE__);
 					_DeleteIoData(ioData);
 					return;
+				}
+
+				if (_attributes.tcpNoDelay)
+				{
+					int32_t flag = 1; 
+					if (setsockopt(ioData->socket, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(flag)) == SOCKET_ERROR) 
+					{
+						game::IOCP::ErrorOutput("setsockopt", __LINE__);
+						_CloseConnection(ioData, __LINE__);
+						return;
+					}
 				}
 
 				DWORD bytesReceived = 0;
