@@ -22,7 +22,7 @@ namespace game
 			err = GetLastError();
 			if (err)
 			{
-				std::cout << "GetStdHandle() error " << err;
+				if (err != ERROR_IO_PENDING) std::cout << "GetStdHandle() error " << err;
 			}
 
 			// Get the current console mode
@@ -30,7 +30,8 @@ namespace game
 			err = GetLastError();
 			if (err)
 			{
-				std::cout << "GetConsoleMode() error " << err;
+
+				if (err != ERROR_IO_PENDING) std::cout << "GetConsoleMode() error " << err;
 			}
 
 			// Add the virtual terminal processing flag to the console mode
@@ -51,7 +52,7 @@ namespace game
 			err = GetLastError();
 			if (err)
 			{
-				std::cout << "SetConsoleMode() error " << err;
+				if (err != ERROR_IO_PENDING) std::cout << "SetConsoleMode() error " << err;
 			}
 #endif
 		}
