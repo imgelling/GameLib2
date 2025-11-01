@@ -86,6 +86,14 @@ namespace game
 		const std::string SavePosition = "\0337";
 		const std::string RestorePosition = "\0338";
 
+		const std::string CursorDefault = "\033[0 q";
+		const std::string CursorBlinkingBox = "\033[1 q";
+		const std::string CursorSteadyBox = "\033[2 q";
+		const std::string CursorBlinkUnderline = "\033[3 q";
+		const std::string CursorSteadyUnderline = "\033[4 q";
+		const std::string CursorBlinkingBar = "\033[5 q";
+		const std::string CursorSteadyBar = "\033[6 q";
+
 #pragma endregion	
 
 		// Erase codes

@@ -854,7 +854,7 @@ namespace game
 				break;
 			}
 			// Tell the application the window changed size
-			enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
+			//enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
 
 			return 0;
 		}
