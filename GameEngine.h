@@ -811,6 +811,7 @@ namespace game
 		{
 		case WM_MOUSEMOVE: 	enginePointer->geMouse.HandleMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); return 0;
 		case WM_MOUSEWHEEL:	enginePointer->geMouse.HandleMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam)); return 0;
+		//case WM_ERASEBKGND: return 1;
 			//case WM_MOUSELEAVE: ptrPGE->olc_UpdateMouseFocus(false);                                    return 0;
 			//case WM_SETFOCUS:	ptrPGE->olc_UpdateKeyFocus(true);                                       return 0;
 			//case WM_KILLFOCUS:	ptrPGE->olc_UpdateKeyFocus(false);                                      return 0;
