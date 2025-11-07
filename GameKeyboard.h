@@ -27,7 +27,8 @@ namespace game
 		void SetTabSize(const uint32_t tabSize);
 		uint32_t GetCursorPosition() const;
 		void SetTextInputText(const std::string& text) noexcept;
-		bool TextInputTextChange() noexcept { return _textInputTextChange; } 
+		void ResetTextInputTextChange() noexcept { _textInputTextChange = false; }
+		bool TextInputTextChange() const noexcept { return _textInputTextChange; }
 	private:
 		bool _textInputTextChange;
 		void _UpdateText(uint8_t key, uint8_t shiftedKey);
@@ -153,8 +154,6 @@ namespace game
 			return;
 		}
 
-		_textInputTextChange = false;
-
 		// Save the states
 		_keyOldState[key] = _keyCurrentState[key];
 		_keyCurrentState[key] = state;
@@ -231,10 +230,10 @@ namespace game
 			// in the history/buffer and give a new line
 			if (key == geK_RETURN)
 			{
-				if (_textInput.size() == 0)
-				{
-					return;
-				}
+				//if (_textInput.size() == 0)
+				//{
+				//	return;
+				//}
 				_completedText = _textInput;
 				//_textBuffer.emplace_back(_textInput);
 				_textInput = "";
