@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
-
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
 
 namespace game
 {
@@ -18,7 +19,7 @@ namespace game
 			// Set output mode to handle virtual terminal sequences
 
 			// Get the handle
-			consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+			_consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 			err = GetLastError();
 			if (err)
 			{
@@ -26,7 +27,7 @@ namespace game
 			}
 
 			// Get the current console mode
-			GetConsoleMode(consoleHandle, &initialConsoleMode);
+			GetConsoleMode(_consoleHandle, &_initialConsoleMode);
 			err = GetLastError();
 			if (err)
 			{
@@ -36,19 +37,22 @@ namespace game
 
 			// Add the virtual terminal processing flag to the console mode
 			// if it already isn't enabled.
-			if (initialConsoleMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING)
+			if (_initialConsoleMode & ENABLE_VIRTUAL_TERMINAL_PROCESSING)
 			{
 				// It is already set, just copy it over
-				consoleMode = initialConsoleMode;
+				consoleMode = _initialConsoleMode;
 			}
 			else
 			{
 				// Not set, so we add the flag
-				consoleMode = initialConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+				consoleMode = _initialConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 			}
 
+			SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+
+
 			// Set the new console mode
-			SetConsoleMode(consoleHandle, consoleMode);
+			SetConsoleMode(_consoleHandle, consoleMode);
 			err = GetLastError();
 			if (err)
 			{
@@ -60,9 +64,10 @@ namespace game
 		{
 #if _WIN32
 			// Try to reset the console back to initial state
-			SetConsoleMode(consoleHandle, initialConsoleMode);
+			SetConsoleMode(_consoleHandle, _initialConsoleMode);
 #endif
 		}
+
 
 		// Screen management codes
 #pragma region Management
@@ -81,8 +86,8 @@ namespace game
 		const std::string MoveDownToBegining(const uint16_t); // needs better name
 		const std::string MoveUpToBegining(const uint16_t);// needs better name
 		const std::string MoveToColumn(const uint16_t);
-		const std::string HideCursor = "\33[?25l";
-		const std::string ShowCursor = "\33[?25h";
+		const std::string HideCursor = "\033[?25l";
+		const std::string ShowCursor = "\033[?25h";
 		const std::string SavePosition = "\0337";
 		const std::string RestorePosition = "\0338";
 
@@ -104,7 +109,7 @@ namespace game
 		const std::string EraseScreenToCursor = "\033[1J";
 		const std::string EraseScreenFromCursor = "\033[0J";
 		const std::string EraseScreen = "\033[2J";
-		const std::string EraseBackScroll = "\033[3J";
+		const std::string EraseScreenNoScroll = "\033[3J";
 #pragma endregion
 
 		// Text color changing codes
@@ -147,9 +152,9 @@ namespace game
 	private:
 #ifdef _WIN32
 		// Holds the intial (at startup) mode of the console to reset with at shutdown
-		DWORD initialConsoleMode = 0;
+		DWORD _initialConsoleMode = 0;
 		// Holds the Windows handle of the console
-		HANDLE consoleHandle = NULL;
+		HANDLE _consoleHandle = NULL;
 #endif
 	};
 
