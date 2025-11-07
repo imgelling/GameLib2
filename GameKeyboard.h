@@ -1,7 +1,6 @@
-#if !defined(GAMEKEYBOARD_H)
-#define GAMEKEYBOARD_H
+#pragma once
 #include <iostream>
-#include <vector>
+//#include <vector>
 
 #define GAME_TEXT_INPUT_ALL 0
 #define GAME_TEXT_INPUT_ALPHA 1
@@ -474,5 +473,4 @@ namespace game
 	}
 }
 
-#endif
 
