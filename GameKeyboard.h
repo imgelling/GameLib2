@@ -28,7 +28,7 @@ namespace game
 		void SetTabSize(const uint32_t tabSize);
 		uint32_t GetCursorPosition() const;
 		void SetTextInputText(const std::string& text) noexcept;
-		bool TextInputTextChange() noexcept;
+		bool TextInputTextChange() noexcept { return _textInputTextChange; } 
 	private:
 		bool _textInputTextChange;
 		void _UpdateText(uint8_t key, uint8_t shiftedKey);
@@ -51,7 +51,7 @@ namespace game
 		const uint64_t size = text.size();
 		for (uint32_t len = 0; len < size; len++)
 		{
-			_cursorPosition++;
+			_cursorPosition++; // lol just add it
 		}
 	}
 
@@ -143,6 +143,7 @@ namespace game
 			}
 		}
 		_cursorPosition++;
+		_textInputTextChange = true;
 	}
 
 	inline void Keyboard::SetKeyState(const uint8_t key, const bool state)
@@ -152,6 +153,8 @@ namespace game
 		{
 			return;
 		}
+
+		_textInputTextChange = false;
 
 		// Save the states
 		_keyOldState[key] = _keyCurrentState[key];
@@ -173,6 +176,7 @@ namespace game
 				{
 					_cursorPosition--;
 				}
+				_textInputTextChange = true;
 				return;
 			}
 
@@ -183,6 +187,7 @@ namespace game
 				{
 					_cursorPosition++;
 				}
+				_textInputTextChange = true;
 				return;
 			}
 
@@ -236,16 +241,18 @@ namespace game
 				_textInput = "";
 				_cursorPosition = 0;
 				//_textBufferPosition = (uint32_t)_textBuffer.size();
+				_textInputTextChange = true;
 				return;
 			}
 
 			// Backspace key
 			if (key == geK_BACK)
 			{
-				if (_textInput.length())
+				if (_textInput.size() > 0 && _cursorPosition > 0)
 				{
 					_textInput.erase((size_t)_cursorPosition - 1, 1);
 					_cursorPosition--;
+					_textInputTextChange = true;
 				}
 				return;
 			}
@@ -253,7 +260,11 @@ namespace game
 			// Delete
 			if (key == geK_DELETE)
 			{
-				_textInput.erase(_cursorPosition, 1);
+				if (_cursorPosition < _textInput.size())
+				{
+					_textInput.erase(_cursorPosition, 1);
+					_textInputTextChange = true;
+				}
 				return;
 			}
 
@@ -315,6 +326,7 @@ namespace game
 						_textInput += key;
 					}
 					_cursorPosition++;
+					_textInputTextChange = true;
 				}
 
 			}
