@@ -359,6 +359,7 @@ namespace game
 			// Tab key
 			if (key == VK_TAB)
 			{
+				if (GetAsyncKeyState(VK_MENU) & 0x8000) return;
 				for (uint32_t count = 0; count < _tabSize; count++)
 				{
 					_UpdateText(' ', ' ');

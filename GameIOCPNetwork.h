@@ -130,6 +130,21 @@ namespace game
 			class NetworkInternalStats
 			{
 			public:
+				enum statName
+				{
+					CONNECT_ALLOCATE_COUNT,
+					CONNECT_DEALLOCATE_COUNT,
+					RECEIVE_ALLOCATE_COUNT,
+					RECEIVE_DEALLOCATE_COUNT,
+					SEND_ALLOCATE_COUNT,
+					SEND_DEALLOCATE_COUNT,
+					ACCEPT_ALLOCATE_COUNT,
+					ACCEPT_DEALLOCATE_COUNT,
+					BYTES_SENT,
+					BYTES_RECEIVED,
+					NUMBER_OF_CONNECTIONS
+				};
+
 				bool verbose;
 				NetworkInternalStats();
 				void AddConnection();
@@ -138,18 +153,19 @@ namespace game
 				void PrintStats();
 				void MemoryAllocate(const uint32_t type);
 				void MemoryDeallocate(const uint32_t type);
+				uint64_t GetStat(const uint32_t stat) const;
 			private:
-				std::atomic_int64_t _connectAllocateCount;
-				std::atomic_int64_t _connectDeallocateCount;
-				std::atomic_int64_t _receiveAllocateCount;
-				std::atomic_int64_t _receiveDeallocateCount;
-				std::atomic_int64_t _sendAllocateCount;
-				std::atomic_int64_t _sendDeallocateCount;
-				std::atomic_int64_t _acceptAllocateCount;
-				std::atomic_int64_t _acceptDeallocateCount;
-				std::atomic_int64_t _bytesSent;
-				std::atomic_int64_t _bytesReceived;
-				std::atomic_int64_t _numberOfConnections;
+				std::atomic_uint64_t _connectAllocateCount;
+				std::atomic_uint64_t _connectDeallocateCount;
+				std::atomic_uint64_t _receiveAllocateCount;
+				std::atomic_uint64_t _receiveDeallocateCount;
+				std::atomic_uint64_t _sendAllocateCount;
+				std::atomic_uint64_t _sendDeallocateCount;
+				std::atomic_uint64_t _acceptAllocateCount;
+				std::atomic_uint64_t _acceptDeallocateCount;
+				std::atomic_uint64_t _bytesSent;
+				std::atomic_uint64_t _bytesReceived;
+				std::atomic_uint64_t _numberOfConnections;
 			};
 		}
 	}

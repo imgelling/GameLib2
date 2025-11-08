@@ -62,6 +62,8 @@ namespace game
 				std::mutex _connectionsMutex;
 				std::unordered_map<SOCKET, Connection> _connections;
 
+
+
 				// Returns true if it could extract header of size and channel
 				// Returns false if it could not extract header
 				bool _ExtractHeaderForReceive(PER_IO_DATA_NETWORK* ioData, uint32_t& bytesReceived);
@@ -96,6 +98,7 @@ namespace game
 				void SetOnDisconnect(std::function<void(const SOCKET socket, const NetworkError& error)> func);
 
 				void PrintStats();
+				uint64_t GetDataReceived() const;
 			};
 		}
 	}

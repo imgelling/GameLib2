@@ -1094,6 +1094,12 @@ namespace game
 				}
 			}
 
+			uint64_t NetworkManager::GetDataReceived() const
+			{
+				//NetworkInternalStats::statName::bytesReceived
+				return _stats.GetStat(NetworkInternalStats::statName::BYTES_RECEIVED);
+			}
+
 			void NetworkManager::PrintStats()
 			{
 				std::cout << "<--------------------------------------->\n";
@@ -1116,6 +1122,17 @@ namespace game
 				verbose = true;
 				_numberOfConnections = 0;
 			}
+
+			uint64_t NetworkInternalStats::GetStat(const uint32_t stat) const
+			{
+				switch (stat)
+				{
+				case statName::BYTES_RECEIVED: return _bytesReceived;
+				default: return 0;
+				}
+				return 0;
+			}
+
 			void NetworkInternalStats::AddConnection()
 			{
 				_numberOfConnections++;
