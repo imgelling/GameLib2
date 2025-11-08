@@ -127,24 +127,24 @@ namespace game
 				uint32_t vectorPoolReserveSize = 0;
 			};
 
+			enum statName
+			{
+				CONNECT_ALLOCATE_COUNT,
+				CONNECT_DEALLOCATE_COUNT,
+				RECEIVE_ALLOCATE_COUNT,
+				RECEIVE_DEALLOCATE_COUNT,
+				SEND_ALLOCATE_COUNT,
+				SEND_DEALLOCATE_COUNT,
+				ACCEPT_ALLOCATE_COUNT,
+				ACCEPT_DEALLOCATE_COUNT,
+				BYTES_SENT,
+				BYTES_RECEIVED,
+				NUMBER_OF_CONNECTIONS
+			};
+
 			class NetworkInternalStats
 			{
 			public:
-				enum statName
-				{
-					CONNECT_ALLOCATE_COUNT,
-					CONNECT_DEALLOCATE_COUNT,
-					RECEIVE_ALLOCATE_COUNT,
-					RECEIVE_DEALLOCATE_COUNT,
-					SEND_ALLOCATE_COUNT,
-					SEND_DEALLOCATE_COUNT,
-					ACCEPT_ALLOCATE_COUNT,
-					ACCEPT_DEALLOCATE_COUNT,
-					BYTES_SENT,
-					BYTES_RECEIVED,
-					NUMBER_OF_CONNECTIONS
-				};
-
 				bool verbose;
 				NetworkInternalStats();
 				void AddConnection();

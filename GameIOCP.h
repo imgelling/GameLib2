@@ -35,6 +35,6 @@ static const std::string formatDataSize(const uint64_t bytes)
     }
 
     std::ostringstream formattedSize;
-    formattedSize << std::fixed << std::setprecision(2) << bytesLeft << " " << units[unitIndex];
+    formattedSize << std::fixed << std::setprecision(2) << bytesLeft << " " << units[unitIndex] << std::defaultfloat;
     return formattedSize.str();
 }

@@ -207,7 +207,7 @@ namespace game
 					totalReceivedData = _RemoveProcessedData(ioData, totalReceivedData);
 					//std::cout << "New Data size is " << totalReceivedData << "\n";
 				} while (totalReceivedData > 0);
-				std::cout << "Data done processing!!!!!\n";
+				//std::cout << "Data done processing!!!!!\n";
 				if (ioData->expectedTransferLeft)
 					std::cout << "Left over data to get!\n";
 				// comment above to webserve
@@ -1094,10 +1094,10 @@ namespace game
 				}
 			}
 
-			uint64_t NetworkManager::GetDataReceived() const
+			uint64_t NetworkManager::GetStat(statName name) const
 			{
 				//NetworkInternalStats::statName::bytesReceived
-				return _stats.GetStat(NetworkInternalStats::statName::BYTES_RECEIVED);
+				return _stats.GetStat(name);
 			}
 
 			void NetworkManager::PrintStats()
@@ -1128,6 +1128,7 @@ namespace game
 				switch (stat)
 				{
 				case statName::BYTES_RECEIVED: return _bytesReceived;
+				case statName::BYTES_SENT: return _bytesSent;
 				default: return 0;
 				}
 				return 0;

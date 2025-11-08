@@ -98,7 +98,7 @@ namespace game
 				void SetOnDisconnect(std::function<void(const SOCKET socket, const NetworkError& error)> func);
 
 				void PrintStats();
-				uint64_t GetDataReceived() const;
+				uint64_t GetStat(statName name) const;
 			};
 		}
 	}
