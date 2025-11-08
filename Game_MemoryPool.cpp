@@ -74,6 +74,17 @@ namespace game
         //block = nullptr;
     }
 
+    void MemoryPool::Shrink()
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        for (void* block : _freeBlocks)
+        {
+            operator delete(block);
+        }
+        _poolSize -= _freeBlocks.size();
+        _freeBlocks.clear();
+    }
+
     void MemoryPool::_AllocatePool()
     {
         for (uint64_t i = 0; i < _grownPoolSize; ++i)
@@ -94,6 +105,19 @@ namespace game
     uint64_t MemoryPool::GetSize() const
     {
         return _poolSize.load();  
+    }
+
+    uint64_t MemoryPool::GetStat(uint32_t name) const
+    {
+        switch (name)
+        {
+        case game::IOCP::Network::StatName::MEMORY_POOL_COUNT: return _poolSize.load();
+        case game::IOCP::Network::StatName::MEMORY_POOL_SIZE: return _poolSize.load() * _blockSize;
+        case game::IOCP::Network::StatName::MEMORY_POOL_ALLOCATION: return _allocations.load() * _blockSize;
+        case game::IOCP::Network::StatName::MEMORY_POOL_DEALLOCATION: return _deallocations.load() * _blockSize;
+        default: return 0;
+        }
+        return 0;
     }
 
     void MemoryPool::PrintStats(const std::string &name)

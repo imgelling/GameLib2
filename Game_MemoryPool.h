@@ -5,6 +5,7 @@
 #include <mutex>
 #include <sstream>
 #include <iomanip>
+//#include "GameIOCPNetwork.h"
 
 namespace game
 {
@@ -43,6 +44,10 @@ namespace game
         void* Allocate();
 
         void Deallocate(void* block);
+
+        void Shrink();
+
+        uint64_t GetStat(uint32_t name) const;
 
     private:
         void _AllocatePool();

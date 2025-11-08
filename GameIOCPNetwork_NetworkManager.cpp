@@ -28,6 +28,11 @@ namespace game
 				_lpfnConnectEx = nullptr;
 			}
 
+			void NetworkManager::Shrink()
+			{
+				_ioDataPool.Shrink();
+			}
+
 			bool NetworkManager::_ExtractHeaderForReceive(PER_IO_DATA_NETWORK* ioData, uint32_t& bytesReceived)
 			{
 				// If expectedTransferTotal is zero, then we need to extract a header
@@ -1094,10 +1099,15 @@ namespace game
 				}
 			}
 
-			uint64_t NetworkManager::GetStat(statName name) const
+			uint64_t NetworkManager::GetStat(StatName name) const
 			{
 				//NetworkInternalStats::statName::bytesReceived
-				return _stats.GetStat(name);
+				uint64_t ret = _stats.GetStat(name);
+				if (ret == UINT64_MAX)
+				{
+					ret = _ioDataPool.GetStat(name);
+				}
+				return ret;
 			}
 
 			void NetworkManager::PrintStats()
@@ -1127,9 +1137,17 @@ namespace game
 			{
 				switch (stat)
 				{
-				case statName::BYTES_RECEIVED: return _bytesReceived;
-				case statName::BYTES_SENT: return _bytesSent;
-				default: return 0;
+				case StatName::BYTES_RECEIVED: return _bytesReceived;
+				case StatName::BYTES_SENT: return _bytesSent;
+				case StatName::ACCEPT_ALLOCATE_COUNT: return _acceptAllocateCount;
+				case StatName::ACCEPT_DEALLOCATE_COUNT: return _acceptDeallocateCount;
+				case StatName::CONNECT_ALLOCATE_COUNT: return _connectAllocateCount;
+				case StatName::CONNECT_DEALLOCATE_COUNT: return _connectDeallocateCount;
+				case StatName::RECEIVE_ALLOCATE_COUNT: return _receiveAllocateCount;
+				case StatName::RECEIVE_DEALLOCATE_COUNT: return _receiveDeallocateCount;
+				case StatName::SEND_ALLOCATE_COUNT: return _sendAllocateCount;
+				case StatName::SEND_DEALLOCATE_COUNT: return _sendDeallocateCount;
+				default: return UINT64_MAX;
 				}
 				return 0;
 			}
