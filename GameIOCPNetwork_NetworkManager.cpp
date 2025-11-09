@@ -1149,7 +1149,6 @@ namespace game
 				case StatName::SEND_DEALLOCATE_COUNT: return _sendDeallocateCount;
 				default: return UINT64_MAX;
 				}
-				return 0;
 			}
 
 			void NetworkInternalStats::AddConnection()

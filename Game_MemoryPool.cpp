@@ -80,6 +80,7 @@ namespace game
         for (void* block : _freeBlocks)
         {
             operator delete(block);
+            block = nullptr;
         }
         _poolSize -= _freeBlocks.size();
         _freeBlocks.clear();
@@ -117,7 +118,6 @@ namespace game
         case game::IOCP::Network::StatName::MEMORY_POOL_DEALLOCATION: return _deallocations.load() * _blockSize;
         default: return 0;
         }
-        return 0;
     }
 
     void MemoryPool::PrintStats(const std::string &name)

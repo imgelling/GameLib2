@@ -169,6 +169,7 @@ namespace game
 
 			void TimerManager::_DoWork(const int32_t result, game::IOCP::PER_IO_DATA* ioDataIn)
 			{
+				// TODO: not checking result for errors
 				PER_IO_DATA_TIMER* task = (PER_IO_DATA_TIMER*)ioDataIn;
 				if ((task->currentExecution <= task->maxExecutions) && !task->cancelled)
 				{
