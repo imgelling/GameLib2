@@ -23,7 +23,7 @@
 #endif
 
 // TODO: Needs to go somewhere else game helpers?
-static const std::string formatDataSize(const uint64_t bytes)
+static const std::string FormatDataSize(const uint64_t bytes)
 {
     const char* units[] = { "B", "KB", "MB", "GB", "TB" };
     uint32_t unitIndex = 0;

@@ -88,8 +88,8 @@ namespace game
 		const std::string MoveToColumn(const uint16_t);
 		const std::string HideCursor = "\033[?25l";
 		const std::string ShowCursor = "\033[?25h";
-		const std::string SavePosition = "\0337";
-		const std::string RestorePosition = "\0338";
+		const std::string SavePosition = "\033[s";
+		const std::string RestorePosition = "\033[u8";
 
 		const std::string CursorDefault = "\033[0 q";
 		const std::string CursorBlinkingBox = "\033[1 q";

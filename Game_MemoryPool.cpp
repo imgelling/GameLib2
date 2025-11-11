@@ -125,8 +125,8 @@ namespace game
         // TODO:: calculate % reuse
         std::lock_guard<std::mutex> lock(_mutex);
         std::cout << name << " count         : " << _poolSize.load()  << "\n";
-        std::cout << name << " size          : " << formatDataSize(_poolSize * _blockSize) << "\n";
-        std::cout << name << " allocations   : " << formatDataSize(_allocations.load() * _blockSize) << "\n";
-        std::cout << name << " deallocations : " << formatDataSize(_deallocations.load() * _blockSize) << "\n";
+        std::cout << name << " size          : " << FormatDataSize(_poolSize * _blockSize) << "\n";
+        std::cout << name << " allocations   : " << FormatDataSize(_allocations.load() * _blockSize) << "\n";
+        std::cout << name << " deallocations : " << FormatDataSize(_deallocations.load() * _blockSize) << "\n";
     }
 }

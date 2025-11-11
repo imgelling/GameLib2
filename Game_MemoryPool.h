@@ -28,26 +28,18 @@ namespace game
 
 
         MemoryPool(const uint64_t blockSize, const uint64_t poolSize, const PoolGrowthType growthType = PoolGrowthType::Linear);
-
         MemoryPool();
-
         ~MemoryPool();
-
-
-        uint64_t GetSize() const;
-        void PrintStats(const std::string& name);
-
 
         void Initialize(const uint64_t blockSize, const uint64_t poolSize, const PoolGrowthType growthType = PoolGrowthType::Linear);
 
-
         void* Allocate();
-
         void Deallocate(void* block);
-
         void Shrink();
 
+        uint64_t GetSize() const;
         uint64_t GetStat(uint32_t name) const;
+        void PrintStats(const std::string& name);
 
     private:
         void _AllocatePool();

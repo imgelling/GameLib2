@@ -53,8 +53,8 @@ namespace game
 				std::function<void(const SOCKET socket, const NetworkError& error)> _OnAccept;
 				void _OnAcceptDefault(const SOCKET socket, const NetworkError& error);
 
-				std::function<void(const SOCKET socket, const uint64_t, const NetworkError&)> _OnSend;
-				void _OnSendDefault(const SOCKET socket, const uint64_t bytesSent, const NetworkError& error);
+				std::function<void(const SOCKET socket, const uint64_t, const uint32_t channel, const NetworkError&)> _OnSend;
+				void _OnSendDefault(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error);
 
 				std::function<void(const SOCKET socket, const NetworkError& error)> _OnDisconnect;
 				void _OnDisconnectDefault(const SOCKET socket, const NetworkError& error);
@@ -94,7 +94,7 @@ namespace game
 				void SetOnReceive(std::function<void(const SOCKET socket, const unsigned char*, const uint64_t, const uint32_t, const NetworkError&)> func);
 				void SetOnConnect(std::function<void(const SOCKET socket, const NetworkError& error)> func);
 				void SetOnAccept(std::function<void(const SOCKET socket, const NetworkError& error)> func);
-				void SetOnSend(std::function<void(const SOCKET socket, const uint64_t, const NetworkError&)> func);
+				void SetOnSend(std::function<void(const SOCKET socket, const uint64_t, const uint32_t, const NetworkError&)> func);
 				void SetOnDisconnect(std::function<void(const SOCKET socket, const NetworkError& error)> func);
 
 				void PrintStats();

@@ -279,7 +279,7 @@ namespace game
 				}
 
 				NetworkError error;
-				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfHeader, error);
+				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfHeader, (uint32_t)ioData->NETWORK_CHANNEL, error);
 				_DeleteIoData(ioData);
 			}
 			void NetworkManager::_HandleSend(PER_IO_DATA_NETWORK* ioData, const uint32_t bytesSent)
@@ -307,7 +307,7 @@ namespace game
 					_connections[ioData->socket].AddBytesSentFrom(bytesSent);
 				}
 				NetworkError error;
-				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfUInt, error);
+				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfUInt, (uint32_t)ioData->NETWORK_CHANNEL, error);
 				_DeleteIoData(ioData);
 			}
 			void NetworkManager::_HandleAccept(PER_IO_DATA_NETWORK* ioData)
@@ -444,16 +444,16 @@ namespace game
 			void NetworkManager::_OnReceiveDefault(const SOCKET socket, const unsigned char* data, const uint64_t bytesReceived, const uint32_t channel, const NetworkError& error)
 			{
 				std::cout << "Default OnReceive function! Create your own with the signature of\n";
-				std::cout << "void(const SOCKET, const std::vector<unsigned char>&, const uint64_t, const game::Network::NetworkError&)\n";
+				std::cout << "void(const SOCKET socket, const unsigned char* data, const uint64_t bytesReceived, const uint32_t channel, const NetworkError& error)\n";
 				std::cout << bytesReceived << " bytes received : \n";
 				std::cout << data << '\n';
 				std::cout << "From socket : " << socket << "\n";
 				std::cout << "On channel  : " << channel << "\n";
 			}
-			void NetworkManager::_OnSendDefault(const SOCKET socket, const uint64_t bytesSent, const NetworkError& error)
+			void NetworkManager::_OnSendDefault(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error)
 			{
 				std::cout << "Default OnSend function! Create your own with the signature of\n";
-				std::cout << "void(const SOCKET, const uint64_t, const game::Network::NetworkError&)\n";
+				std::cout << "void(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error)\n";
 				std::cout << "Sent " << bytesSent << " bytes to socket : " << socket << "\n";
 			}
 			void NetworkManager::_OnConnectDefault(const SOCKET socket, const NetworkError& error)
@@ -490,7 +490,7 @@ namespace game
 			{
 				_OnAccept = func;
 			}
-			void NetworkManager::SetOnSend(std::function<void(const SOCKET socket, const uint64_t, const NetworkError&)> func)
+			void NetworkManager::SetOnSend(std::function<void(const SOCKET socket, const uint64_t, const uint32_t, const NetworkError&)> func)
 			{
 				_OnSend = func;
 			}
@@ -968,7 +968,7 @@ namespace game
 				_OnReceive = std::bind(&NetworkManager::_OnReceiveDefault, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5);
 				_OnConnect = std::bind(&NetworkManager::_OnConnectDefault, this, std::placeholders::_1, std::placeholders::_2);
 				_OnAccept = std::bind(&NetworkManager::_OnAcceptDefault, this, std::placeholders::_1, std::placeholders::_2);
-				_OnSend = std::bind(&NetworkManager::_OnSendDefault, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+				_OnSend = std::bind(&NetworkManager::_OnSendDefault, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 				_OnDisconnect = std::bind(&NetworkManager::_OnDisconnectDefault, this, std::placeholders::_1, std::placeholders::_2);
 
 				// Start WinSock 2.2
@@ -1171,8 +1171,8 @@ namespace game
 				std::cout << "Send Allocs/Deallocs     : " << _sendAllocateCount.load() << "/" << _sendDeallocateCount.load() << "\n";
 				std::cout << "Accept Allocs/Deallocs   : " << _acceptAllocateCount.load() << "/" << _acceptDeallocateCount.load() << "\n";
 #endif
-				std::cout << "Total Data Sent     : " << formatDataSize(_bytesSent.load()) << "\n";
-				std::cout << "Total Data Received : " << formatDataSize(_bytesReceived.load()) << "\n";
+				std::cout << "Total Data Sent     : " << FormatDataSize(_bytesSent.load()) << "\n";
+				std::cout << "Total Data Received : " << FormatDataSize(_bytesReceived.load()) << "\n";
 				std::cout << "Total # of connections : " << _numberOfConnections.load() << "\n";
 			}
 			void NetworkInternalStats::MemoryAllocate(const uint32_t type)
