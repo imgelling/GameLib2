@@ -47,11 +47,11 @@ namespace game
 				SOCKET socket = INVALID_SOCKET;
 				std::string remoteIpAddress;
 				std::string localIpAddress;
-				uint32_t remotePort = 0;
-				uint32_t localPort = 0;
+				uint16_t remotePort = 0;
+				uint16_t localPort = 0;
+				int32_t ping = 0;
 				int64_t bytesSentFrom = 0;		// Bytes sent from connection
 				int64_t bytesReceivedBy = 0;	// Bytes received by connection
-				int32_t ping = 0;
 			};
 
 			class Connection
@@ -60,15 +60,15 @@ namespace game
 				SOCKET socket;		// Getters and setters for this stuff?	
 				std::string remoteIpAddress;
 				std::string localIpAddress;
-				uint32_t remotePort;
-				uint32_t localPort;
+				uint16_t remotePort;
+				uint16_t localPort;
 				uint32_t ping;
 				const ConnectionInfo GetInfo() const noexcept
 				{
 					ConnectionInfo info;
 					info.socket = socket;
 					info.bytesReceivedBy = _bytesReceivedBy;
-					info.bytesSentFrom = _bytesSentFrom;
+					info.bytesSentFrom = _bytesSentTo;
 					info.remoteIpAddress = remoteIpAddress;
 					info.remotePort = remotePort;
 					info.localIpAddress = localIpAddress;
@@ -76,9 +76,9 @@ namespace game
 					info.ping = 0;
 					return info;
 				}
-				const uint64_t BytesSentFrom() const noexcept
+				const uint64_t BytesSentTo() const noexcept
 				{
-					return _bytesSentFrom;
+					return _bytesSentTo;
 				}
 				const uint64_t BytesReceivedBy() const noexcept
 				{
@@ -90,13 +90,13 @@ namespace game
 				}
 				void AddBytesSentFrom(const uint64_t count) noexcept
 				{
-					_bytesSentFrom += count;
+					_bytesSentTo += count;
 				}
 				std::vector<unsigned char> receiveData; // Full data received
 				Connection()
 				{
 					socket = INVALID_SOCKET;
-					_bytesSentFrom = 0;
+					_bytesSentTo = 0;
 					_bytesReceivedBy = 0;
 					receiveData.reserve(NETWORK_BUFFER_SIZE);
 					remotePort = 0;
@@ -104,16 +104,16 @@ namespace game
 					ping = 0;
 				}
 			private:
-				uint64_t _bytesSentFrom;		// Bytes sent from connection
+				uint64_t _bytesSentTo;		// Bytes sent to connection
 				uint64_t _bytesReceivedBy;	// Bytes received by connection
 			};
 
 			struct NetworkError
 			{
-				std::string errorString;
-				uint32_t errorNumber = 0;
-				std::string errorName;
-				std::string errorDetail;
+				//std::string errorString;
+				//uint32_t errorNumber = 0;
+				//std::string errorName;
+				//std::string errorDetail;
 			};
 
 			struct NetworkAttributes

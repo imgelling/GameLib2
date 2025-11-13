@@ -912,7 +912,7 @@ namespace game
 				if (a != _connections.end())
 				{
 					receivedFrom = _connections[socket].BytesReceivedBy();
-					sentTo = _connections[socket].BytesSentFrom();
+					sentTo = _connections[socket].BytesSentTo();
 				}
 				else
 				{
