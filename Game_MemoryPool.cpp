@@ -108,7 +108,7 @@ namespace game
         return _poolSize.load();  
     }
 
-    uint64_t MemoryPool::GetStat(uint32_t name) const
+    uint64_t MemoryPool::GetStat(const uint32_t name) const
     {
         switch (name)
         {

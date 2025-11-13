@@ -28,7 +28,7 @@ namespace game
 				_lpfnConnectEx = nullptr;
 			}
 
-			void NetworkManager::Shrink()
+			void NetworkManager::ShrinkMemoryPool()
 			{
 				_ioDataPool.Shrink();
 			}

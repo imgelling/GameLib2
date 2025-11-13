@@ -38,7 +38,7 @@ namespace game
         void Shrink();
 
         uint64_t GetSize() const;
-        uint64_t GetStat(uint32_t name) const;
+        uint64_t GetStat(const uint32_t name) const;
         void PrintStats(const std::string& name);
 
     private:

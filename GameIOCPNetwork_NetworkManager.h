@@ -100,7 +100,7 @@ namespace game
 				void PrintStats();
 				uint64_t GetStat(StatName name) const;
 
-				void Shrink();
+				void ShrinkMemoryPool();
 			};
 		}
 	}
