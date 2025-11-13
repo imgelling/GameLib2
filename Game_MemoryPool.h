@@ -87,7 +87,7 @@ namespace game
         {
         }
 
-        const uint64_t GetSize() const
+        uint64_t GetSize() const
         {
             return _poolSize;
         }

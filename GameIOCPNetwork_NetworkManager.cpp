@@ -63,7 +63,7 @@ namespace game
 						{
 							for (uint64_t byte = bytesFromConnection; byte < sizeOfHeader; byte++)
 							{
-								encodedHeader[byte] = ioData->buffer.buf[byte - bytesFromConnection];
+								encodedHeader[byte] = (uint8_t)ioData->buffer.buf[byte - bytesFromConnection];
 							}
 							// Remove the bytes we got from new data from the buffer
 							GAME_ASSERT(ioData->buffer.buf + bytesFromNewData <= ioData->data + NETWORK_BUFFER_SIZE);
@@ -133,7 +133,7 @@ namespace game
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
 					_connections[ioData->socket].receiveData.clear();
 				}
-				GAME_ASSERT(bytesReceived - bytesToRemove >= 0);
+				GAME_ASSERT((int32_t)bytesReceived - (int32_t)bytesToRemove >= 0);
 				return bytesReceived - bytesToRemove;
 			}
 
@@ -595,7 +595,7 @@ namespace game
 					// Copy length to front of buffer
 					memcpy(ioData->data, &networkdata, sizeOfUInt);
 					// Copy channel into data
-					ioData->data[4] = channel;
+					ioData->data[4] = (char)channel;
 					// Copy data into buffer offset by header size from header encoding
 					memcpy(ioData->data + sizeOfHeader, data, length);
 					// --- comment above to webserve
@@ -637,7 +637,7 @@ namespace game
 					// Copy length to front of buffer
 					memcpy(ioData->data, &networkdata, sizeOfUInt);
 					// Copy channel into data
-					ioData->data[4] = channel;
+					ioData->data[4] = (char)channel;
 					// Copy data into buffer offset by uint32_t size for length encoding
 					memcpy(ioData->data + sizeOfHeader, data, length);
 
@@ -849,7 +849,8 @@ namespace game
 				case NETWORK_RECEIVEFROM_COMPLETION_TYPE: _HandleReceiveFrom(ioData, bytesTransferred); return;
 				case NETWORK_ACCEPT_COMPLETION_TYPE: _HandleAccept(ioData); return;
 				case NETWORK_CONNECT_COMPLETION_TYPE: _HandleConnect(ioData); return;
-				default: "GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"; break;
+					// TODO: this should do something
+				default: /*"GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"*/; break;
 				}
 
 				// Only called if bad data type was given
@@ -869,7 +870,7 @@ namespace game
 			{
 				if (ioData)
 				{
-					int64_t connectionConnected = 0;
+					uint64_t connectionConnected = 0;
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
 						connectionConnected = _connections.erase(ioData->socket);
@@ -935,7 +936,7 @@ namespace game
 				}
 			}
 
-			const HANDLE NetworkManager::GetCompletionPort() const
+			HANDLE NetworkManager::GetCompletionPort() const
 			{
 				return _completionPort;
 			}
@@ -952,7 +953,7 @@ namespace game
 				_attributes = attributes;
 
 				// If port is set, then it will need atleast 1 accept
-				if (_attributes.port)
+				if (_attributes.port != 0)
 				{
 					_attributes.numberOfAcceptors = max(1, _attributes.numberOfAcceptors);
 				}

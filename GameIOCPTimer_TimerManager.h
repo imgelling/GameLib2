@@ -46,7 +46,7 @@ namespace game
 				uint64_t AddTimer(const std::chrono::milliseconds interval, const uint32_t executions = 1, const std::function<void(const PER_IO_DATA_TIMER& task)> callback = nullptr, const TimerMode mode = TimerMode::FixedRate);
 				void CancelTimer(const uint64_t id);
 
-				const uint64_t GetSize();
+				uint64_t GetSize();
 
 				void SetOnTimer(std::function<void(const PER_IO_DATA_TIMER &task)> OnTimer);
 

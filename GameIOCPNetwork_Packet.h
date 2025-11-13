@@ -97,8 +97,8 @@ namespace game
 				uint8_t* _dataReadPosition;
 				uint32_t _dataLength;
 
-				const bool _GetPeekSizeCheck(const size_t size) const;
-				const bool _AddSizeCheck(const size_t size) const;
+				bool _GetPeekSizeCheck(const size_t size) const;
+				bool _AddSizeCheck(const size_t size) const;
 				void _IncreaseReadPos(const uint32_t amount);
 				void _IncreaseWritePos(const uint32_t amount);
 

@@ -113,7 +113,7 @@ namespace game
 				}
 			}
 
-			const uint64_t TimerManager::GetSize()
+			uint64_t TimerManager::GetSize()
 			{
 				std::lock_guard<std::mutex> lock(_mtx);
 				return _timers.size();

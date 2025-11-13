@@ -49,9 +49,9 @@ namespace game
 				std::string localIpAddress;
 				uint16_t remotePort = 0;
 				uint16_t localPort = 0;
-				int32_t ping = 0;
-				int64_t bytesSentFrom = 0;		// Bytes sent from connection
-				int64_t bytesReceivedBy = 0;	// Bytes received by connection
+				uint32_t ping = 0;
+				uint64_t bytesSentFrom = 0;		// Bytes sent from connection
+				uint64_t bytesReceivedBy = 0;	// Bytes received by connection
 			};
 
 			class Connection
@@ -76,11 +76,11 @@ namespace game
 					info.ping = 0;
 					return info;
 				}
-				const uint64_t BytesSentTo() const noexcept
+				uint64_t BytesSentTo() const noexcept
 				{
 					return _bytesSentTo;
 				}
-				const uint64_t BytesReceivedBy() const noexcept
+				uint64_t BytesReceivedBy() const noexcept
 				{
 					return _bytesReceivedBy;
 				}

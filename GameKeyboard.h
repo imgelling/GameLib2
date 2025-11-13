@@ -1,10 +1,12 @@
 #pragma once
 #include <iostream>
-//#include <vector>
+#include "GameWindowsKeys.h"
 
 #define GAME_TEXT_INPUT_ALL 0
 #define GAME_TEXT_INPUT_ALPHA 1
 #define GAME_TEXT_INPUT_DIGIT 2
+
+
 
 namespace game
 {
@@ -98,7 +100,7 @@ namespace game
 	inline void Keyboard::TextInputMode(const bool textInputMode, const uint32_t restrictions)
 	{
 		_isTextInputMode = textInputMode;
-		if ((restrictions < GAME_TEXT_INPUT_ALL) || (restrictions > GAME_TEXT_INPUT_DIGIT))
+		if (restrictions > GAME_TEXT_INPUT_DIGIT)
 		{
 			_restrictedInput = GAME_TEXT_INPUT_ALL;
 		}
@@ -124,22 +126,22 @@ namespace game
 		{
 			if (_cursorPosition < _textInput.length())
 			{
-				_textInput[_cursorPosition] = shiftedKey;
+				_textInput[_cursorPosition] = (char)shiftedKey;
 			}
 			else
 			{
-				_textInput += shiftedKey;
+				_textInput += (char)shiftedKey;
 			}
 		}
 		else
 		{
 			if (_cursorPosition < _textInput.length())
 			{
-				_textInput[_cursorPosition] = key;
+				_textInput[_cursorPosition] = (char)key;
 			}
 			else
 			{
-				_textInput += key;
+				_textInput += (char)key;
 			}
 		}
 		_cursorPosition++;
@@ -276,7 +278,7 @@ namespace game
 				{
 					return;
 				}
-				_UpdateText(key + 32, key);
+				_UpdateText(key + (uint8_t)32, key);
 				return;
 			}
 			if (_restrictedInput == GAME_TEXT_INPUT_ALPHA)
@@ -317,11 +319,11 @@ namespace game
 					}
 					if (_cursorPosition < _textInput.length())
 					{
-						_textInput[_cursorPosition] = key;
+						_textInput[_cursorPosition] = (char)key;
 					}
 					else
 					{
-						_textInput += key;
+						_textInput += (char)key;
 					}
 					_cursorPosition++;
 					_textInputTextChange = true;

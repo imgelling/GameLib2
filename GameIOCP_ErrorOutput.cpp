@@ -25,9 +25,9 @@ namespace game
 			LocalFree(messageBuffer);
 		}
 
-		static const int32_t ErrorToString(std::string& errorString)
+		static int32_t ErrorToString(std::string& errorString)
 		{
-			const uint32_t error = WSAGetLastError();
+			const int32_t error = WSAGetLastError();
 			switch (error)
 			{
 			case 0: errorString = "NONE"; return error;

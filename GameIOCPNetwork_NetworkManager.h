@@ -84,7 +84,7 @@ namespace game
 			public:
 				NetworkManager();
 
-				const HANDLE GetCompletionPort() const;
+				HANDLE GetCompletionPort() const;
 				void GetConnections(std::vector<SOCKET>& connections);
 				void GetConnectionStats(const SOCKET socket, uint64_t& receivedFrom, uint64_t& sentTo);
 				const ConnectionInfo GetConnectionInfo(const SOCKET socket);
