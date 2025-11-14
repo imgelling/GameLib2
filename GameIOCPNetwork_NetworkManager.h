@@ -19,7 +19,6 @@ namespace game
 		{
 			class NetworkManager
 			{
-				std::atomic<uint32_t> _stopping;
 				HANDLE _completionPort;
 				SOCKET _listenSocket;
 				LPFN_ACCEPTEX _lpfnAcceptEx;
@@ -28,10 +27,11 @@ namespace game
 				VectorPool<unsigned char> _vectorPool;
 				NetworkInternalStats _stats;
 				NetworkAttributes _attributes;
+				std::atomic<uint32_t> _stopping;
 
 
 				/// <summary>
-				/// Handles full and partial receives. Also handles receiving multiple sends at once. 
+				/// Handles full and partial receives.
 				/// </summary>
 				/// <param name="ioData">: Per IO data being processed</param>
 				/// <param name="bytesReceived">: Number of bytes received</param>
@@ -48,7 +48,7 @@ namespace game
 				void _HandleConnect(PER_IO_DATA_NETWORK* ioData);
 				void _DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn);
 
-				void _CloseConnection(PER_IO_DATA_NETWORK* ioData, const uint32_t line = 0, const bool alreadyClosed = false);
+				void _CloseConnection(PER_IO_DATA_NETWORK* ioData, const int32_t line = 0, const bool alreadyClosed = false);
 				void _AddConnection(const PER_IO_DATA_NETWORK* ioData);
 
 				void _DeleteIoData(PER_IO_DATA_NETWORK* ioData);

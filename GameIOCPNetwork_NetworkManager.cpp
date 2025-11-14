@@ -866,7 +866,7 @@ namespace game
 				if (!t.second)
 					std::cout << "Connection is already connected!\n";
 			}
-			void NetworkManager::_CloseConnection(PER_IO_DATA_NETWORK* ioData, const uint32_t line, const bool alreadyClosed)
+			void NetworkManager::_CloseConnection(PER_IO_DATA_NETWORK* ioData, const int32_t line, const bool alreadyClosed)
 			{
 				if (ioData)
 				{
@@ -949,7 +949,6 @@ namespace game
 
 			bool NetworkManager::Initialize(const NetworkAttributes& attributes, game::IOCP::IOCPManager& ioHandler)
 			{
-				_stats.verbose = attributes.verboseOutputDEBUG;
 				_attributes = attributes;
 
 				// If port is set, then it will need atleast 1 accept
@@ -959,6 +958,7 @@ namespace game
 				}
 				else
 				{
+					// TODO: Will always be false because of unsigned
 					_attributes.numberOfAcceptors = max(0, _attributes.numberOfAcceptors);
 				}
 
@@ -1130,7 +1130,6 @@ namespace game
 				_acceptDeallocateCount.store(0);
 				_bytesSent.store(0);
 				_bytesReceived.store(0);
-				verbose = true;
 				_numberOfConnections = 0;
 			}
 
@@ -1182,21 +1181,17 @@ namespace game
 				if (type == NETWORK_RECEIVE_COMPLETION_TYPE || type == NETWORK_RECEIVEFROM_COMPLETION_TYPE)
 				{
 					_receiveAllocateCount++;
-					if (verbose) std::cout << "Receive type allocate" << _receiveAllocateCount << "\n";
 				}
 				else if (type == NETWORK_SEND_COMPLETION_TYPE || type == NETWORK_SENDTO_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Send type allocate\n";
 					_sendAllocateCount++;
 				}
 				else if (type == NETWORK_ACCEPT_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Accept type allocate\n";
 					_acceptAllocateCount++;
 				}
 				else if (type == NETWORK_CONNECT_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Connect type allocate\n";
 					_connectAllocateCount++;
 				}
 #endif
@@ -1207,21 +1202,17 @@ namespace game
 				if (type == NETWORK_RECEIVE_COMPLETION_TYPE || type == NETWORK_RECEIVEFROM_COMPLETION_TYPE)
 				{
 					_receiveDeallocateCount++;
-					if (verbose) std::cout << "---------------Receive type deallocate" << _receiveDeallocateCount << "\n";
 				}
 				else if (type == NETWORK_SEND_COMPLETION_TYPE || type == NETWORK_SENDTO_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Send type deallocate\n";
 					_sendDeallocateCount++;
 				}
 				else if (type == NETWORK_ACCEPT_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Accept type deallocate\n";
 					_acceptDeallocateCount++;
 				}
 				else if (type == NETWORK_CONNECT_COMPLETION_TYPE)
 				{
-					if (verbose) std::cout << "Connect type deallocate\n";
 					_connectDeallocateCount++;
 				}
 #endif

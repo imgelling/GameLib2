@@ -4,10 +4,9 @@ namespace game
 {
 	namespace IOCP
 	{
-		static void GetErrorDetail(const int32_t error, std::string& errorDetailString)
+		static void GetErrorDetail(const uint32_t error, std::string& errorDetailString)
 		{
 			char* messageBuffer = nullptr;
-
 			// Use FormatMessage to get the error message string
 			FormatMessageA(
 				FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -114,7 +113,7 @@ namespace game
 			return error;
 		}
 
-		int32_t ErrorOutput(const std::string& command, const uint32_t line, const bool ignoreIOPending)
+		int32_t ErrorOutput(const std::string& command, const int32_t line, const bool ignoreIOPending)
 		{
 			std::string errorString;
 			const int32_t error = ErrorToString(errorString);

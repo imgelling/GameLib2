@@ -278,7 +278,7 @@ namespace game
 				{
 					return;
 				}
-				_UpdateText(key + (uint8_t)32, key);
+				_UpdateText((uint8_t)(key + 32), key);
 				return;
 			}
 			if (_restrictedInput == GAME_TEXT_INPUT_ALPHA)

@@ -50,8 +50,8 @@ namespace game
 				uint16_t remotePort = 0;
 				uint16_t localPort = 0;
 				uint32_t ping = 0;
-				uint64_t bytesSentFrom = 0;		// Bytes sent from connection
-				uint64_t bytesReceivedBy = 0;	// Bytes received by connection
+				uint64_t bytesSentTo = 0;		// Bytes sent to connection
+				uint64_t bytesReceivedFrom = 0;	// Bytes received from connection
 			};
 
 			class Connection
@@ -67,8 +67,8 @@ namespace game
 				{
 					ConnectionInfo info;
 					info.socket = socket;
-					info.bytesReceivedBy = _bytesReceivedBy;
-					info.bytesSentFrom = _bytesSentTo;
+					info.bytesReceivedFrom = _bytesReceivedFrom;
+					info.bytesSentTo = _bytesSentTo;
 					info.remoteIpAddress = remoteIpAddress;
 					info.remotePort = remotePort;
 					info.localIpAddress = localIpAddress;
@@ -82,11 +82,11 @@ namespace game
 				}
 				uint64_t BytesReceivedBy() const noexcept
 				{
-					return _bytesReceivedBy;
+					return _bytesReceivedFrom;
 				}
 				void AddBytesReceivedBy(const uint64_t count) noexcept// should minus the 4 bytes because length, maybe
 				{
-					_bytesReceivedBy += count;
+					_bytesReceivedFrom += count;
 				}
 				void AddBytesSentFrom(const uint64_t count) noexcept
 				{
@@ -97,15 +97,15 @@ namespace game
 				{
 					socket = INVALID_SOCKET;
 					_bytesSentTo = 0;
-					_bytesReceivedBy = 0;
+					_bytesReceivedFrom = 0;
 					receiveData.reserve(NETWORK_BUFFER_SIZE);
 					remotePort = 0;
 					localPort = 0;
 					ping = 0;
 				}
 			private:
-				uint64_t _bytesSentTo;		// Bytes sent to connection
-				uint64_t _bytesReceivedBy;	// Bytes received by connection
+				uint64_t _bytesSentTo;			// Bytes sent to connection
+				uint64_t _bytesReceivedFrom;	// Bytes received by connection
 			};
 
 			struct NetworkError
@@ -119,7 +119,6 @@ namespace game
 			struct NetworkAttributes
 			{
 				uint16_t port = NULL;
-				bool verboseOutputDEBUG = false;
 				bool tcpNoDelay = false;
 				uint32_t numberOfAcceptors = 1;
 				uint32_t initialIoDataPoolSize = 1;
@@ -127,7 +126,7 @@ namespace game
 				uint32_t vectorPoolReserveSize = 0;
 			};
 
-			enum StatName
+			enum StatName : uint8_t
 			{
 				CONNECT_ALLOCATE_COUNT,
 				CONNECT_DEALLOCATE_COUNT,
@@ -149,7 +148,6 @@ namespace game
 			class NetworkInternalStats
 			{
 			public:
-				bool verbose;
 				NetworkInternalStats();
 				void AddConnection();
 				void AddBytesReceived(const uint64_t count);

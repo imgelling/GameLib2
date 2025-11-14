@@ -20,9 +20,9 @@ namespace game
 
 			private:
 				uint8_t _multicastTTL;
+				uint32_t _multicastPort;
 				std::string _multicastMessage;
 				std::string _multicastIP;
-				uint32_t _multicastPort;
 				SOCKET _multicastSendSocket;
 				game::IOCP::Network::NetworkManager* _network;
 				sockaddr_in _address;
@@ -40,9 +40,9 @@ namespace game
 			private:
 				std::string _multicastIP;
 				uint32_t _multicastPort;
+				bool _isMember;
 				//ip_mreq _multicastRequest;
 				SOCKET _multicastReceiveSocket;
-				bool _isMember;
 			};
 		}
 	}

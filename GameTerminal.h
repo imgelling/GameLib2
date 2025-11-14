@@ -68,6 +68,90 @@ namespace game
 #endif
 		}
 
+		HANDLE GetHandle()
+		{
+			return _consoleHandle;
+		}
+
+		bool IsFocused()
+		{
+			return _isFocused;
+		}
+
+		void CheckEvents()
+		{
+			INPUT_RECORD inBuf[32];
+			DWORD events = 0;
+			// TODO: save the input handle
+			if (!GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE), &events))
+			{
+				std::cout << GetLastError();
+
+			}
+			if (events > 0)
+				ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), inBuf, events, &events);
+
+			for (uint32_t i = 0; i < events; i++)
+			{
+				switch (inBuf[i].EventType)
+				{
+					//case KEY_EVENT:
+
+				case FOCUS_EVENT:
+				{
+					//m_bConsoleInFocus = inBuf[i].Event.FocusEvent.bSetFocus;
+					if (inBuf[i].Event.FocusEvent.bSetFocus)
+					{
+						//std::cout << term.SetPosition(2, 3) << "Focused";
+						_isFocused = true;
+					}
+					else
+					{
+						//std::cout << term.SetPosition(2, 3) << "NOT Focused";
+						_isFocused = false;
+					}
+				}
+				break;
+				//WINDOW_BUFFER_SIZE_EVENT
+				//VOID ResizeEventProc(WINDOW_BUFFER_SIZE_RECORD wbsr)
+				//{
+				//	printf("Resize event\n");
+				//	printf("Console screen buffer is %d columns by %d rows.\n", wbsr.dwSize.X, wbsr.dwSize.Y);
+				//}
+				//case MOUSE_EVENT:
+				//{
+				//	switch (inBuf[i].Event.MouseEvent.dwEventFlags)
+				//	{
+				//	case MOUSE_MOVED:
+				//	{
+				//		//SHORT m_mousePosX = inBuf[i].Event.MouseEvent.dwMousePosition.X;
+				//		//SHORT m_mousePosY = inBuf[i].Event.MouseEvent.dwMousePosition.Y;
+				//		//std::cout << term.SetPosition(2, 2) << term.EraseLineFromCursor << inBuf[i].Event.MouseEvent.dwMousePosition.X << "," << inBuf[i].Event.MouseEvent.dwMousePosition.Y;
+
+				//	}
+				//	break;
+
+				//	//case 0:
+				//	//{
+				//	//	for (int m = 0; m < 5; m++)
+				//	//		m_mouseNewState[m] = (inBuf[i].Event.MouseEvent.dwButtonState & (1 << m)) > 0;
+
+				//	//}
+				//	//break;
+
+				//	default:
+				//		break;
+				//	}
+				//}
+				//break;
+
+				default:
+					break;
+					// We don't care just at the moment
+				}
+			}
+		}
+
 
 		// Screen management codes
 #pragma region Management
@@ -78,7 +162,7 @@ namespace game
 #pragma region Cursor	
 		const std::string MoveToHome = "\033[H";
 		const std::string SetPosition(const uint16_t, const uint16_t);
-		const void GetPosition(uint16_t&, uint16_t&);
+		void GetPosition(uint16_t&, uint16_t&);
 		const std::string MoveUp(const uint16_t);
 		const std::string MoveDown(const uint16_t);
 		const std::string MoveRight(const uint16_t);
@@ -89,7 +173,7 @@ namespace game
 		const std::string HideCursor = "\033[?25l";
 		const std::string ShowCursor = "\033[?25h";
 		const std::string SavePosition = "\033[s";
-		const std::string RestorePosition = "\033[u8";
+		const std::string RestorePosition = "\033[u";
 
 		const std::string CursorDefault = "\033[0 q";
 		const std::string CursorBlinkingBox = "\033[1 q";
@@ -106,10 +190,10 @@ namespace game
 		const std::string EraseLineToCursor = "\033[1K";
 		const std::string EraseLineFromCursor = "\033[0K";
 		const std::string EraseLine = "\033[2K";
-		const std::string EraseScreenToCursor = "\033[1J";
 		const std::string EraseScreenFromCursor = "\033[0J";
+		const std::string EraseScreenToCursor = "\033[1J";
 		const std::string EraseScreen = "\033[2J";
-		const std::string EraseScreenNoScroll = "\033[3J";
+		const std::string EraseScreenNoScroll = "\033[3J"; // may just clear scroll buffer
 #pragma endregion
 
 		// Text color changing codes
@@ -155,6 +239,8 @@ namespace game
 		DWORD _initialConsoleMode = 0;
 		// Holds the Windows handle of the console
 		HANDLE _consoleHandle = NULL;
+		// Is the console focused or not
+		bool _isFocused = true;
 #endif
 	};
 
@@ -168,14 +254,15 @@ namespace game
 #endif
 	}
 
-	inline const void Terminal::GetPosition(uint16_t& column, uint16_t& row)
+	inline void Terminal::GetPosition(uint16_t& column, uint16_t& row)
 	{
 #ifdef _WIN32
+		// TODO: this could use the saved handle
 		HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 		CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 		GetConsoleScreenBufferInfo(h, &bufferInfo);
-		column = bufferInfo.dwCursorPosition.X;
-		row = bufferInfo.dwCursorPosition.Y;
+		column = (uint16_t)bufferInfo.dwCursorPosition.X;
+		row = (uint16_t)bufferInfo.dwCursorPosition.Y;
 #else
 		column = 0;
 		row = 0;

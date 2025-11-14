@@ -30,7 +30,7 @@ static const std::string FormatDataSize(const uint64_t bytes)
     double_t bytesLeft = (double_t)bytes;
     while (bytesLeft >= 1024 && unitIndex < 4)
     {
-        bytesLeft /= 1024.0f;
+        bytesLeft /= 1024.0;
         ++unitIndex;
     }
 
