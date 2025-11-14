@@ -23,9 +23,14 @@ namespace game
 
 			}
 
-			void FileManager::SetOnRead(std::function<void(const int32_t result, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data)> function)
+			void FileManager::SetOnRead(std::function<void(FILE_ONREAD_SIGNATURE)> function)
 			{
 				_onRead = function;
+			}
+
+			void FileManager::SetOnWrite(std::function<void(FILE_ONWRITE_SIGNATURE)> function)
+			{
+				_onWrite = function;
 			}
 
 			bool FileManager::Initialize(game::IOCP::IOCPManager& iocpManager)
@@ -89,12 +94,12 @@ namespace game
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = ioData->bytesToTransfer > MAX_IO_SIZE ? MAX_IO_SIZE : (uint32_t)ioData->bytesToTransfer;
 
-					std::cout << "Bytes to read : " << ioData->bytesToTransfer << "\n";
+					//std::cout << "Bytes to read : " << ioData->bytesToTransfer << "\n";
 
 					// Error checks
 					if (WSAGetLastError() == ERROR_ALREADY_EXISTS) // not really an error with OPEN_ALWAYS, truncate will not have
 					{
-						std::cout << "File exists!\n";
+						//std::cout << "File exists!\n";
 					}
 
 					// Associate the file handle with IOCP
@@ -137,7 +142,7 @@ namespace game
 					ioData->FILE_IO_TYPE = FILE_WRITE_COMPLETION_TYPE;
 
 					ioData->bytesToTransfer = size;
-					std::cout << "Bytes to write = " << ioData->bytesToTransfer << "\n"; // not needed	
+					//std::cout << "Bytes to write = " << ioData->bytesToTransfer << "\n"; // not needed	
 
 					try
 					{
@@ -176,7 +181,7 @@ namespace game
 					// Error checks
 					if (WSAGetLastError() == ERROR_ALREADY_EXISTS) // not really an error with OPEN_ALWAYS, truncate will not have
 					{
-						std::cout << "File exsists and will be over written!\n";
+						//std::cout << "File exsists and will be over written!\n";
 						//ioData->wasOverwritten = true;
 					}
 
@@ -239,6 +244,8 @@ namespace game
 				ioData->bytesTransferred += bytesTransferred;
 				//ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
 				//std::cout << "Percent done  : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
+				_onWrite(0, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
+
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
 				{
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
@@ -253,7 +260,7 @@ namespace game
 					Write("", nullptr, 0, ioData);
 					return;
 				}
-				std::cout << "Write done!\n";
+				//std::cout << "Write done!\n";
 				_DeleteIoData(ioData);
 			}
 			void FileManager::_HandleRead(PER_IO_DATA_FILE* ioData, const DWORD bytesTransferred)
@@ -292,7 +299,7 @@ namespace game
 					return;
 				}
 				// Read done, delete and close file
-				std::cout << "Read done!\n";
+				//std::cout << "Read done!\n";
 				_DeleteIoData(ioData);
 			}
 			void FileManager::_DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, const game::IOCP::PER_IO_DATA* ioDataIn)

@@ -441,7 +441,7 @@ namespace game
 				_DeleteIoData(ioData);
 			}
 
-			void NetworkManager::_OnReceiveDefault(ONRECEIVE_SIGNATURE)
+			void NetworkManager::_OnReceiveDefault(NETWORK_ONRECEIVE_SIGNATURE)
 			{
 				std::cout << "Default OnReceive function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const unsigned char* data, const uint64_t bytesReceived, const uint32_t channel, const NetworkError& error)\n";
@@ -450,7 +450,7 @@ namespace game
 				std::cout << "From socket : " << socket << "\n";
 				std::cout << "On channel  : " << channel << "\n";
 			}
-			void NetworkManager::_OnSendDefault(ONSEND_SIGNATURE)
+			void NetworkManager::_OnSendDefault(NETWORK_ONSEND_SIGNATURE)
 			{
 				std::cout << "Default OnSend function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error)\n";
@@ -463,14 +463,14 @@ namespace game
 				std::cout << "Connected to Remote!\n";
 				std::cout << "Connected with socket : " << socket << "\n";
 			}
-			void NetworkManager::_OnAcceptDefault(ONACCEPT_SIGNATURE)
+			void NetworkManager::_OnAcceptDefault(NETWORK_ONACCEPT_SIGNATURE)
 			{
 				std::cout << "Default OnAccept function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
 				std::cout << "Incoming Connection Connected!\n";
 				std::cout << "Connected with socket : " << socket << "\n";
 			}
-			void NetworkManager::_OnDisconnectDefault(ONDISCONNECT_SIGNATURE)
+			void NetworkManager::_OnDisconnectDefault(NETWORK_ONDISCONNECT_SIGNATURE)
 			{
 				std::cout << "Default OnDisconnect function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
@@ -478,7 +478,7 @@ namespace game
 				std::cout << "Socket : " << socket << "\n";
 			}
 
-			void NetworkManager::SetOnReceive(std::function<void(ONRECEIVE_SIGNATURE)> func)
+			void NetworkManager::SetOnReceive(std::function<void(NETWORK_ONRECEIVE_SIGNATURE)> func)
 			{
 				_OnReceive = func;
 			}
@@ -486,15 +486,15 @@ namespace game
 			{
 				_OnConnect = func;
 			}
-			void NetworkManager::SetOnAccept(std::function<void(ONACCEPT_SIGNATURE)> func)
+			void NetworkManager::SetOnAccept(std::function<void(NETWORK_ONACCEPT_SIGNATURE)> func)
 			{
 				_OnAccept = func;
 			}
-			void NetworkManager::SetOnSend(std::function<void(ONSEND_SIGNATURE)> func)
+			void NetworkManager::SetOnSend(std::function<void(NETWORK_ONSEND_SIGNATURE)> func)
 			{
 				_OnSend = func;
 			}
-			void NetworkManager::SetOnDisconnect(std::function<void(ONDISCONNECT_SIGNATURE)> func)
+			void NetworkManager::SetOnDisconnect(std::function<void(NETWORK_ONDISCONNECT_SIGNATURE)> func)
 			{
 				_OnDisconnect = func;
 			}
