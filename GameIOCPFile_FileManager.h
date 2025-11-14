@@ -31,7 +31,8 @@ namespace game
 
 				bool Initialize(game::IOCP::IOCPManager& iocpManager);
 				void ShutDown();
-
+				// TODO: add defaults to explaing signatures and prevent crashes
+				
 				// Will open a file, creating if it doesn't exist, and read the whole file in
 				bool Read(const std::string& filename, PER_IO_DATA_FILE* ioDataIn = nullptr);
 
