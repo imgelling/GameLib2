@@ -95,19 +95,30 @@ namespace game
 			{
 				switch (inBuf[i].EventType)
 				{
-					//case KEY_EVENT:
+				case KEY_EVENT:
+				{
+					// KEY_EVENT == 0x0001
+					KEY_EVENT_RECORD ker = inBuf[i].Event.KeyEvent;
 
+					if (ker.bKeyDown)
+					{ // Key pressed
+						std::cout << ker.wVirtualKeyCode;
+						//std::cout << "Key pressed: " << ker.uChar.AsciiChar << "\n";
+						//if (ker.wVirtualKeyCode == VK_ESCAPE) {
+						//	std::cout << "ESC pressed. Exiting...\n";
+						//	return 0;
+						//}
+					}
+				}
+				break;
 				case FOCUS_EVENT:
 				{
-					//m_bConsoleInFocus = inBuf[i].Event.FocusEvent.bSetFocus;
 					if (inBuf[i].Event.FocusEvent.bSetFocus)
 					{
-						//std::cout << term.SetPosition(2, 3) << "Focused";
 						_isFocused = true;
 					}
 					else
 					{
-						//std::cout << term.SetPosition(2, 3) << "NOT Focused";
 						_isFocused = false;
 					}
 				}
