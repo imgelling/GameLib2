@@ -49,7 +49,8 @@ namespace game
 				consoleMode = _initialConsoleMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 			}
 
-			SetConsoleMode(GetStdHandle(STD_INPUT_HANDLE), ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+			_consoleInputHandle = GetStdHandle(STD_INPUT_HANDLE);
+			SetConsoleMode(_consoleInputHandle, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
 
 
 			// Set the new console mode
@@ -69,12 +70,12 @@ namespace game
 #endif
 		}
 
-		HANDLE GetHandle()
+		HANDLE GetHandle() const
 		{
 			return _consoleHandle;
 		}
 
-		bool IsFocused()
+		bool IsFocused() const
 		{
 			return _isFocused;
 		}
@@ -84,13 +85,13 @@ namespace game
 			INPUT_RECORD inBuf[32];
 			DWORD events = 0;
 			// TODO: save the input handle
-			if (!GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE), &events))
+			if (!GetNumberOfConsoleInputEvents(_consoleInputHandle, &events))
 			{
 				std::cout << GetLastError();
 
 			}
 			if (events > 0)
-				ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), inBuf, events, &events);
+				ReadConsoleInput(_consoleInputHandle, inBuf, events, &events);
 
 			if (_isFocused)
 				keyboard.ResetTextInputTextChange();
@@ -276,7 +277,8 @@ namespace game
 		// Holds the intial (at startup) mode of the console to reset with at shutdown
 		DWORD _initialConsoleMode = 0;
 		// Holds the Windows handle of the console
-		HANDLE _consoleHandle = NULL;
+		HANDLE _consoleHandle = INVALID_HANDLE_VALUE;
+		HANDLE _consoleInputHandle = INVALID_HANDLE_VALUE;
 		// Is the console focused or not
 		bool _isFocused = true;
 #endif
@@ -295,10 +297,8 @@ namespace game
 	inline void Terminal::GetPosition(uint16_t& column, uint16_t& row)
 	{
 #ifdef _WIN32
-		// TODO: this could use the saved handle
-		HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 		CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-		GetConsoleScreenBufferInfo(h, &bufferInfo);
+		GetConsoleScreenBufferInfo(_consoleHandle, &bufferInfo);
 		column = (uint16_t)bufferInfo.dwCursorPosition.X;
 		row = (uint16_t)bufferInfo.dwCursorPosition.Y;
 #else
