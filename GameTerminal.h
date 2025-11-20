@@ -3,6 +3,7 @@
 #include <string>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include "GameKeyboard.h"
 
 namespace game
 {
@@ -78,7 +79,7 @@ namespace game
 			return _isFocused;
 		}
 
-		void CheckEvents()
+		void CheckInputEvents(game::Keyboard &keyboard)
 		{
 			INPUT_RECORD inBuf[32];
 			DWORD events = 0;
@@ -91,24 +92,50 @@ namespace game
 			if (events > 0)
 				ReadConsoleInput(GetStdHandle(STD_INPUT_HANDLE), inBuf, events, &events);
 
+			if (_isFocused)
+				keyboard.ResetTextInputTextChange();
+
 			for (uint32_t i = 0; i < events; i++)
 			{
 				switch (inBuf[i].EventType)
 				{
 				case KEY_EVENT:
 				{
-					// KEY_EVENT == 0x0001
 					KEY_EVENT_RECORD ker = inBuf[i].Event.KeyEvent;
-
+					
 					if (ker.bKeyDown)
-					{ // Key pressed
-						std::cout << ker.wVirtualKeyCode;
-						//std::cout << "Key pressed: " << ker.uChar.AsciiChar << "\n";
-						//if (ker.wVirtualKeyCode == VK_ESCAPE) {
-						//	std::cout << "ESC pressed. Exiting...\n";
-						//	return 0;
-						//}
+					{ 
+						for (int i = 0; i < ker.wRepeatCount; i++)
+						{
+							keyboard.SetKeyState((uint8_t)ker.wVirtualKeyCode, false);
+							keyboard.SetKeyState((uint8_t)ker.wVirtualKeyCode, true);
+						}
+						continue;
 					}
+					else
+					{
+						keyboard.SetKeyState((uint8_t)ker.wVirtualKeyCode, false);
+					}
+				}
+				break;
+				case MOUSE_EVENT: 
+				{
+					//MOUSE_EVENT_RECORD mer = inBuf[i].Event.MouseEvent;
+
+					//std::wcout << L"Mouse at (" << mer.dwMousePosition.X
+					//	<< L"," << mer.dwMousePosition.Y << L")\n";
+
+					//if (mer.dwButtonState & FROM_LEFT_1ST_BUTTON_PRESSED)
+					//	std::wcout << L"  Left button pressed\n";
+					//if (mer.dwButtonState & RIGHTMOST_BUTTON_PRESSED)
+					//	std::wcout << L"  Right button pressed\n";
+
+					//if (mer.dwEventFlags == DOUBLE_CLICK)
+					//	std::wcout << L"  Double click detected\n";
+					//else if (mer.dwEventFlags == MOUSE_MOVED)
+					//	std::wcout << L"  Mouse moved\n";
+					//else if (mer.dwEventFlags == MOUSE_WHEELED)
+					//	std::wcout << L"  Mouse wheel scrolled\n";
 				}
 				break;
 				case FOCUS_EVENT:
