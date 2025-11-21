@@ -58,6 +58,7 @@ namespace game
 				if (ioData == nullptr)
 				{
 					ioData = new PER_IO_DATA_FILE();
+					ZeroMemory(ioData, sizeof(ioData));
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_FILE;
 					ioData->hFile = INVALID_HANDLE_VALUE;
 					ioData->FILE_IO_TYPE = FILE_READ_COMPLETION_TYPE;
@@ -91,6 +92,7 @@ namespace game
 						_DeleteIoData(ioData);
 						return false;
 					}
+					ZeroMemory(ioData->data, ioData->bytesToTransfer);
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = ioData->bytesToTransfer > MAX_IO_SIZE ? MAX_IO_SIZE : (uint32_t)ioData->bytesToTransfer;
 
