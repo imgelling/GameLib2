@@ -106,7 +106,7 @@ namespace game
 					
 					if (ker.bKeyDown)
 					{ 
-						for (int i = 0; i < ker.wRepeatCount; i++)
+						for (int repeat = 0; repeat < ker.wRepeatCount; repeat++)
 						{
 							keyboard.SetKeyState((uint8_t)ker.wVirtualKeyCode, false);
 							keyboard.SetKeyState((uint8_t)ker.wVirtualKeyCode, true);
