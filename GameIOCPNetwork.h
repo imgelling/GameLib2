@@ -80,15 +80,15 @@ namespace game
 				{
 					return _bytesSentTo;
 				}
-				uint64_t BytesReceivedBy() const noexcept
+				uint64_t BytesReceivedFrom() const noexcept
 				{
 					return _bytesReceivedFrom;
 				}
-				void AddBytesReceivedBy(const uint64_t count) noexcept// should minus the 4 bytes because length, maybe
+				void AddBytesReceivedFrom(const uint64_t count) noexcept// should minus the 4 bytes because length, maybe
 				{
 					_bytesReceivedFrom += count;
 				}
-				void AddBytesSentFrom(const uint64_t count) noexcept
+				void AddBytesSentTo(const uint64_t count) noexcept
 				{
 					_bytesSentTo += count;
 				}

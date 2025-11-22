@@ -86,7 +86,7 @@ namespace game
 							if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 							{
 								std::lock_guard<std::mutex> lock(_connectionsMutex);
-								_connections[ioData->socket].AddBytesReceivedBy(bytesReceived);
+								_connections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
 								_connections[ioData->socket].receiveData.insert(_connections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
 							}
 							ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
@@ -142,7 +142,7 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesReceivedBy(bytesReceived);
+					_connections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
 					_connections[ioData->socket].receiveData.insert(_connections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
 				}
 				ioData->buffer.buf = ioData->data;
@@ -159,7 +159,7 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesReceivedBy(ioData->expectedTransferLeft);
+					_connections[ioData->socket].AddBytesReceivedFrom(ioData->expectedTransferLeft);
 					if (_connections[ioData->socket].receiveData.size())
 					{
 						temp.assign(_connections[ioData->socket].receiveData.begin(), _connections[ioData->socket].receiveData.end());
@@ -304,7 +304,7 @@ namespace game
 				// All data was sent
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesSentFrom(bytesSent);
+					_connections[ioData->socket].AddBytesSentTo(bytesSent);
 				}
 				NetworkError error;
 				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfUInt, (uint32_t)ioData->NETWORK_CHANNEL, error);
@@ -912,7 +912,7 @@ namespace game
 				auto a = _connections.find(socket);
 				if (a != _connections.end())
 				{
-					receivedFrom = _connections[socket].BytesReceivedBy();
+					receivedFrom = _connections[socket].BytesReceivedFrom();
 					sentTo = _connections[socket].BytesSentTo();
 				}
 				else
