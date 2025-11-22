@@ -338,12 +338,12 @@ namespace game
 				std::cout << std::endl;
 			}
 
-			const bool Packet::_GetPeekSizeCheck(const size_t size) const
+			bool Packet::_GetPeekSizeCheck(const size_t size) const
 			{
 				return size <= _dataLength ? true : false;
 			}
 
-			const bool Packet::_AddSizeCheck(const size_t size) const
+			bool Packet::_AddSizeCheck(const size_t size) const
 			{
 				return (_dataLength + size) <= MAX_PACKET_SIZE ? true : false;
 			}
