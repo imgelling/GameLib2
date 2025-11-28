@@ -30,6 +30,10 @@ namespace game
         bool hasWork();
         // Number of worker threads total
         uint32_t NumberOfThreads() const noexcept { return (uint32_t)_threadPool.size(); }
+        ~ThreadPool()
+        {
+            Stop();
+        }
 
     private:
         void _ThreadLoop();
