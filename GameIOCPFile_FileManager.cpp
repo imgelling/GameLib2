@@ -50,7 +50,7 @@ namespace game
 
 			}
 
-			bool FileManager::Read(const std::string& filename, PER_IO_DATA_FILE* ioDataIn)
+			bool FileManager::Read(const std::string& filename, uint64_t& id, PER_IO_DATA_FILE* ioDataIn)
 			{
 				PER_IO_DATA_FILE* ioData = ioDataIn;
 
@@ -111,6 +111,9 @@ namespace game
 						_DeleteIoData(ioData);
 						return false;
 					}
+					ioData->id = fileID;
+					id = ioData->id;
+					fileID++;
 				}
 
 				BOOL res = ReadFile(ioData->hFile, ioData->buffer.buf, (DWORD)ioData->buffer.len, nullptr, (LPOVERLAPPED)ioData);
@@ -123,14 +126,15 @@ namespace game
 						return false;
 					}
 				}
-
+				//id = readID.load();
+				//readID++;
 				return true;
 			}
-			bool FileManager::Append(const std::string& filename, const char* data, const uint64_t size)
+			bool FileManager::Append(const std::string& filename, const char* data, const uint64_t size, uint64_t &id)
 			{
-				return Write(filename, data, size, nullptr, true);
+				return Write(filename, data, size, id, nullptr, true);
 			}
-			bool FileManager::Write(const std::string& filename, const char* data, const uint64_t size, PER_IO_DATA_FILE* ioDataIn, const bool append)
+			bool FileManager::Write(const std::string& filename, const char* data, const uint64_t size, uint64_t& id, PER_IO_DATA_FILE* ioDataIn, const bool append)
 			{
 				PER_IO_DATA_FILE* ioData = ioDataIn;
 
@@ -194,6 +198,9 @@ namespace game
 						_DeleteIoData(ioData);
 						return false;
 					}
+					ioData->id = fileID;
+					id = ioData->id;
+					fileID++;
 				}
 
 				WriteFile(ioData->hFile, ioData->buffer.buf, (DWORD)ioData->buffer.len, NULL, (LPOVERLAPPED)ioData);
@@ -202,7 +209,8 @@ namespace game
 					_DeleteIoData(ioData);
 					return false;
 				}
-
+				//id = writeID.load();
+				//writeID++;
 				return true;
 			}
 
@@ -246,7 +254,7 @@ namespace game
 				ioData->bytesTransferred += bytesTransferred;
 				//ioData->FILE_PERCENT_DONE = (uint8_t)((ioData->bytesTransferred * 100) / ioData->bytesToTransfer);
 				//std::cout << "Percent done  : " << (uint32_t)ioData->FILE_PERCENT_DONE << "%\n";
-				_onWrite(0, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
+				_onWrite(0, ioData->id, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
 
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
 				{
@@ -258,8 +266,8 @@ namespace game
 					ioData->buffer.buf = ioData->data + ioData->bytesTransferred;
 					ioData->buffer.len = (ioData->bytesToTransfer - ioData->bytesTransferred) > MAX_IO_SIZE ? MAX_IO_SIZE : (uint32_t)(ioData->bytesToTransfer - ioData->bytesTransferred);
 
-
-					Write("", nullptr, 0, ioData);
+					uint64_t id = 0;
+					Write("", nullptr, 0, id, ioData);
 					return;
 				}
 				//std::cout << "Write done!\n";
@@ -280,7 +288,7 @@ namespace game
 				//	}
 				//	std::cout << "\n";
 				//}
-				_onRead(0, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
+				_onRead(0, ioData->id, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
 
 				// Check if all the bytes requested were read
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
@@ -297,7 +305,8 @@ namespace game
 					ioData->buffer.len = (ioData->bytesToTransfer - ioData->bytesTransferred) > MAX_IO_SIZE ? MAX_IO_SIZE : (uint32_t)(ioData->bytesToTransfer - ioData->bytesTransferred);
 
 					// Read more
-					Read("", ioData);
+					uint64_t id = 0;
+					Read("", id, ioData);
 					return;
 				}
 				// Read done, delete and close file
