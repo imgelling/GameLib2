@@ -3,7 +3,39 @@
 #include <string>
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <atomic>
+#include <thread>
+#include <chrono>
+#include <cstdint>
 #include "GameKeyboard.h"
+
+
+std::atomic_bool userClosedWindow = false;
+BOOL WINAPI ConsoleHandler(DWORD ctrlType)
+{
+	switch (ctrlType) {
+	case CTRL_C_EVENT:
+		//std::cout << "CTRL+C detected. Ignoring...\n";
+		return TRUE; // Ignore CTRL+C
+
+	case CTRL_CLOSE_EVENT:
+		//std::cout << "Console is closing. Performing cleanup...\n";
+		// Perform cleanup tasks here
+		// Example: Save data, release resources, etc.
+		userClosedWindow = true;
+		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+		return TRUE;
+
+	case CTRL_LOGOFF_EVENT:
+	case CTRL_SHUTDOWN_EVENT:
+		//std::cout << "System is shutting down or user is logging off. Performing cleanup...\n";
+		// Perform cleanup tasks here
+		return TRUE;
+
+	default:
+		return FALSE; // Pass other signals to the next handler
+	}
+}
 
 namespace game
 {
@@ -16,6 +48,13 @@ namespace game
 #if _WIN32
 			DWORD consoleMode = 0;
 			DWORD err = 0;
+
+			// Set the console control handler
+			if (!SetConsoleCtrlHandler(ConsoleHandler, TRUE))
+			{
+				std::cerr << "Error: Could not set control handler.\n";
+				return;
+			}
 
 			// Set output mode to handle virtual terminal sequences
 
