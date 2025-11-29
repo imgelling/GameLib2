@@ -42,6 +42,10 @@ namespace game
 				// read write exists methods
 				bool Append(const std::string& filename, const char* data, const uint64_t size, uint64_t& id);
 
+				uint64_t GetNextID()
+				{
+					return fileID;
+				}
 
 				void SetOnWrite(std::function<void(FILE_ONWRITE_SIGNATURE)>);
 				// Will create the file, if it does not exsist.  Will truncate a file if it does exsist. Copies the data,
