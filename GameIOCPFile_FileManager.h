@@ -35,12 +35,12 @@ namespace game
 				// TODO: add defaults to explaing signatures and prevent crashes
 				
 				// Will open a file, creating if it doesn't exist, and read the whole file in
-				bool Read(const std::string& filename, uint64_t& id,PER_IO_DATA_FILE* ioDataIn = nullptr);
+				bool Read(const std::string& filename, uint64_t * id = nullptr ,PER_IO_DATA_FILE* ioDataIn = nullptr);
 
 				void SetOnRead(std::function<void(FILE_ONREAD_SIGNATURE)>);
 
 				// read write exists methods
-				bool Append(const std::string& filename, const char* data, const uint64_t size, uint64_t& id);
+				bool Append(const std::string& filename, const char* data, const uint64_t size, uint64_t* id = nullptr);
 
 				uint64_t GetNextID()
 				{
@@ -49,7 +49,7 @@ namespace game
 
 				void SetOnWrite(std::function<void(FILE_ONWRITE_SIGNATURE)>);
 				// Will create the file, if it does not exsist.  Will truncate a file if it does exsist. Copies the data,
-				bool Write(const std::string& filename, const char* data, const uint64_t size, uint64_t& id, PER_IO_DATA_FILE* ioDataIn = nullptr, const bool append = false);
+				bool Write(const std::string& filename, const char* data, const uint64_t size, uint64_t* id = nullptr, PER_IO_DATA_FILE* ioDataIn = nullptr, const bool append = false);
 				//void SetOnWrite
 			private:
 				HANDLE _OpenFile(const std::string& filename, DWORD access, DWORD share, DWORD creation);
