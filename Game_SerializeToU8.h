@@ -2,6 +2,9 @@
 #include <vector>
 #include <string>
 #include <intrin.h>
+#include <string.h>
+#include <cmath>
+#include <cstdint>
 
 namespace game
 {
