@@ -3,7 +3,7 @@
 #include "GameIOCP_IOCPManager.h"
 #include "GameIOCPNetwork.h"
 #include "GameIOCPNetwork_NetworkManager.h"
-#include "GameIOCPNetwork_Packet.h"
+#include "Game_SerializeToU8.h"
 #include "GameIOCPNetwork_Multicast.h"
 #include "GameIOCPNetwork_UPNPPortForward.h"
 #include "GameIOCPTimer_TimerManager.h"
