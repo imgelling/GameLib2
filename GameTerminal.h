@@ -10,8 +10,8 @@
 #include "GameKeyboard.h"
 
 
-std::atomic_bool userClosedWindow = false;
-BOOL WINAPI ConsoleHandler(DWORD ctrlType)
+static std::atomic_bool userClosedWindow = false;
+static BOOL WINAPI ConsoleHandler(DWORD ctrlType)
 {
 	switch (ctrlType) {
 	case CTRL_C_EVENT:
