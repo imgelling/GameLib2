@@ -3,6 +3,8 @@
 #include "Game_MemoryPool.h"
 #include <queue>
 
+#define TIMER_TICK_SIGNATURE const game::IOCP::Timer::PER_IO_DATA_TIMER& task
+
 namespace game
 {
 	namespace IOCP

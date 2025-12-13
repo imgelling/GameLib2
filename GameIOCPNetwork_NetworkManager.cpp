@@ -959,8 +959,8 @@ namespace game
 				}
 				else
 				{
-					// TODO: Will always be false because of unsigned
-					_attributes.numberOfAcceptors = max(0, _attributes.numberOfAcceptors);
+					// TODO: Will always be false because of unsigned -- Done
+					_attributes.numberOfAcceptors = _attributes.numberOfAcceptors;// max(0, _attributes.numberOfAcceptors);
 				}
 
 				_ioDataPool.Initialize(sizeof(PER_IO_DATA_NETWORK), attributes.initialIoDataPoolSize);
