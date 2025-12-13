@@ -1,4 +1,13 @@
 #pragma once
+#pragma warning(disable : 4100) // unused variable
+#pragma warning(disable : 4505) // external linkage
+#include <intrin.h>
+#include <cmath>
+#include <cstdint>
+#include <iomanip>
+#include <ios>
+#include <sstream>
+#include <string>
 #include "GameIOCP_ErrorOutput.h"
 #include "GameIOCP_IOCPManager.h"
 #include "GameIOCPNetwork.h"

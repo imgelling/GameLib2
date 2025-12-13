@@ -1,3 +1,4 @@
+#pragma warning(disable : 4100)
 #include "GameIOCP.h"
 #include <string.h>
 #include <Windows.h>

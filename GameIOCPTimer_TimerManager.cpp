@@ -1,3 +1,4 @@
+#pragma warning(disable : 4100)
 #include "GameIOCP.h" //Timer_TimerManager.h"
 
 namespace game
