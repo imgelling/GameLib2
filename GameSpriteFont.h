@@ -42,8 +42,8 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		uint32_t Length(std::string text);
-		bool Load(const std::string filename, const std::string& texture);
+		uint32_t Length(const std::string &text);
+		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
 		Charset _characterSet;
@@ -63,7 +63,7 @@ namespace game
 		UnLoad();
 	}
 
-	inline bool SpriteFont::Load(const std::string fileName, const std::string& texture)
+	inline bool SpriteFont::Load(const std::string &fileName, const std::string& texture)
 	{
 
 		std::string line;
@@ -171,7 +171,7 @@ namespace game
 		enginePointer->geUnLoadTexture(_texture);
 	}
 
-	inline uint32_t SpriteFont::Length(std::string text)
+	inline uint32_t SpriteFont::Length(const std::string& text)
 	{
 		return 0;
 	}
