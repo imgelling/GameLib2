@@ -48,8 +48,8 @@ namespace game
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color);
 
-		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
-		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
+		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() noexcept;
 	private:
@@ -2330,8 +2330,10 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
-	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
+	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
 	{
+		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
+		const float_t _scaleX = scaleX;
 		float_t currentX = (float_t)x;
 		float_t currentY = (float_t)y;
 		//uint32_t widthOfLetter = 0;
@@ -2342,7 +2344,7 @@ namespace game
 		const uint64_t size = Str.size();
 		for (unsigned int i = 0; i < size; ++i)
 		{
-			const int16_t letter = Str[i];
+			const uint8_t letter = Str[i];
 			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
 			const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
 
@@ -2351,15 +2353,15 @@ namespace game
 			source.right = source.left + widthOfLetter;
 			source.bottom = source.top + heightOfLetter;
 
-			destination.left = currentX + (font._characterSet.letters[letter].xOffset * scale);
-			destination.top = currentY + (font._characterSet.letters[letter].yOffset * scale);
-			destination.right = destination.left + (widthOfLetter * scale);
-			destination.bottom = destination.top + (heightOfLetter * scale);
+			destination.left = currentX + (font._characterSet.letters[letter].xOffset * _scaleX);
+			destination.top = currentY + (font._characterSet.letters[letter].yOffset * _scaleY);
+			destination.right = destination.left + (widthOfLetter * _scaleX);
+			destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
 			// make a draw for Rectf
 			Draw(font.Texture(), destination, source, color);
 
-			currentX += (font._characterSet.letters[letter].xAdvance * scale);
+			currentX += (font._characterSet.letters[letter].xAdvance * _scaleX);
 		}
 	}
 
@@ -2458,8 +2460,11 @@ namespace game
 		}
 	}
 
-	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
+	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
 	{
+		//if (scaleY == -99999) scaleY = scaleX;
+		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
+		const float_t _scaleX = scaleX;
 		float_t currentX = (float)x;
 		float_t currentY = (float)y;
 		//uint32_t widthOfLetter = 0;
@@ -2473,7 +2478,7 @@ namespace game
 			const uint64_t size = s.text.size();
 			for (uint64_t i = 0; i < size; ++i)
 			{
-				const int16_t letter = s.text[i];
+				const uint8_t letter = s.text[i];
 				const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
 				const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
 
@@ -2482,14 +2487,14 @@ namespace game
 				source.right = source.left + widthOfLetter;
 				source.bottom = source.top + heightOfLetter;
 
-				destination.left = currentX+(font._characterSet.letters[letter].xOffset * scale);
-				destination.top = currentY+(font._characterSet.letters[letter].yOffset * scale);
-				destination.right = destination.left + (widthOfLetter * scale);
-				destination.bottom = destination.top + (heightOfLetter * scale);
+				destination.left = currentX+(font._characterSet.letters[letter].xOffset * _scaleX);
+				destination.top = currentY+(font._characterSet.letters[letter].yOffset * _scaleY);
+				destination.right = destination.left + (widthOfLetter * _scaleX);
+				destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
 				Draw(font.Texture(), destination, source, s.color);
 
-				currentX += (font._characterSet.letters[letter].xAdvance * scale);
+				currentX += (font._characterSet.letters[letter].xAdvance * _scaleX);
 
 			}
 		}
