@@ -368,7 +368,8 @@ namespace game
 			return false;
 		}
 
-		_d3d10Device->GenerateMips(texture.textureSRV10.Get());
+		if (texture.isMipMapped)
+			_d3d10Device->GenerateMips(texture.textureSRV10.Get());
 
 		return true;
 	}

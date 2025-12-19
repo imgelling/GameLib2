@@ -186,6 +186,11 @@ namespace game
 
 	inline void RendererDX11::DestroyDevice()
 	{
+		_d3d11Device.Reset();
+		_d3d11SwapChain.Reset();
+		_d3d11RenderTargetView.Reset();
+		//_d3d11DepthStencilBuffer.Reset();
+		_d3d11DepthStencilView.Reset();
 	}
 
 	inline void RendererDX11::Swap()
@@ -341,7 +346,9 @@ namespace game
 			lastError = { GameErrors::GameDirectX11Specific, "Could not create texture SRV, \"" + fileName + "\"." };
 			return false;
 		}
-
+		if (texture.isMipMapped)
+			_d3d11DeviceContext->GenerateMips(texture.textureSRV11.Get());
+		//_d3d10Device->GenerateMips(texture.textureSRV10.Get());
 		return true;
 	}
 

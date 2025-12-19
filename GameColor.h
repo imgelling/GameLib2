@@ -37,10 +37,30 @@ namespace game
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
 
+		std::string ToHex() const;
+		std::string hexidecimal;
+
 		float_t oneOver255 = 1.0f / 255.0f;
 	private:
 	};
 #pragma pack(pop)
+
+	inline std::string Color::ToHex() const
+	{
+		char hexColor[9] = { 0 }; // "#RRGGBBAA"
+		auto byteToHex = [&](const uint8_t byte, char* out) 
+			{
+			const char hexDigits[] = "0123456789ABCDEF";
+			out[0] = hexDigits[(byte >> 4) & 0x0F]; // high nibble
+			out[1] = hexDigits[byte & 0x0F];        // low nibble)
+			};
+		hexColor[0] = '#';
+		byteToHex(r, &hexColor[1]);
+		byteToHex(g, &hexColor[3]);
+		byteToHex(b, &hexColor[5]);
+		byteToHex(a, &hexColor[7]);
+		return std::string(hexColor);
+	}
 
 	inline Color::Color()
 	{
@@ -64,6 +84,7 @@ namespace game
 		rgba[2] = 0.0f;
 		rgba[3] = 0.0f;
 #endif
+		hexidecimal = ToHex();
 	}
 
 	// ----- Begin float_t
@@ -102,6 +123,7 @@ namespace game
 		rgba[2] = bf;
 		rgba[3] = af;
 #endif
+		hexidecimal = ToHex();
 	}
 	// End float_t
 
@@ -140,6 +162,7 @@ namespace game
 		rgba[2] = bf;
 		rgba[3] = af;
 #endif
+		hexidecimal = ToHex();
 	}
 	// End double_t
 
@@ -178,6 +201,7 @@ namespace game
 		rgba[2] = bf;
 		rgba[3] = af;
 #endif
+		hexidecimal = ToHex();
 	}
 	// End uint32_t
 
