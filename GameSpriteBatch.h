@@ -45,6 +45,9 @@ namespace game
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color);
 		// Will draw a specified rectangle portion of a texture to location x,y
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color);
+		// Draws using floating point
+		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color);
+
 		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
 		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
 		// How many sprites did it draw last frame
@@ -1995,41 +1998,373 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
+	inline void SpriteBatch::Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color)
+	{
+		if (_numberOfSpritesUsed + 1 >= _maxSprites)
+		{
+			Render();
+		}
+#if defined(GAME_OPENGL)
+		if (enginePointer->geIsUsing(GAME_OPENGL))
+		{
+			Vector2i windowSize = enginePointer->geGetWindowSize();
+			if (texture.bind != _currentTexture.bind)
+			{
+				Render();
+				_currentTexture = texture;
+			}
+			_spriteVertexGL* access = &_spriteVertices[_numberOfSpritesUsed * 4];
+
+			// Bottom left
+			access->x = (float_t)destination.left - texture.oneOverWidth;
+			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->u = (float_t)portion.left * texture.oneOverWidth;
+			access->v = (float_t)portion.bottom * texture.oneOverHeight;
+			access->color = color.packedABGR;
+			access++;
+
+			// Bottom right
+			access->x = (float_t)destination.right - texture.oneOverWidth;
+			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->u = (float_t)portion.right * texture.oneOverWidth;
+			access->v = (float_t)portion.bottom * texture.oneOverHeight;
+			access->color = color.packedABGR;
+			access++;
+
+			// Top right
+			access->x = (float_t)destination.right - texture.oneOverWidth;
+			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->u = (float_t)portion.right * texture.oneOverWidth;
+			access->v = (float_t)portion.top * texture.oneOverHeight;
+			access->color = color.packedABGR;
+			access++;
+
+			// Top left
+			access->x = (float_t)destination.left - texture.oneOverWidth;
+			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->u = (float_t)portion.left * texture.oneOverWidth;
+			access->v = (float_t)portion.top * texture.oneOverHeight;
+			access->color = color.packedABGR;
+			//access++;
+		}
+#endif
+#if defined(GAME_DIRECTX9)
+		if (enginePointer->geIsUsing(GAME_DIRECTX9))
+		{
+			if (texture.textureInterface9 != _currentTexture.textureInterface9)
+			{
+				Render();
+				_currentTexture = texture;
+				enginePointer->d3d9Device->SetTexture(0, _currentTexture.textureInterface9);
+			}
+
+			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
+			// Top left
+			access->x = (float_t)destination.left - texture.oneOverWidth;
+			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->u = (float_t)portion.left * texture.oneOverWidth;
+			access->v = (float_t)portion.top * texture.oneOverHeight;
+			access->color = color.packedARGB;
+			access++;
+
+			// Top right
+			access->x = (float_t)destination.right - texture.oneOverWidth;
+			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->u = (float_t)portion.right * texture.oneOverWidth;// 1.0f;
+			access->v = (float_t)portion.top * texture.oneOverHeight;
+			access->color = color.packedARGB;
+			access++;
+
+			// Bottom left
+			access->x = (float_t)destination.left - texture.oneOverWidth;
+			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->u = (float_t)portion.left * texture.oneOverWidth;
+			access->v = (float_t)portion.bottom * texture.oneOverHeight;
+			access->color = color.packedARGB;
+			access++;
+
+			// Bottom right
+			access->x = (float_t)destination.right - texture.oneOverWidth;
+			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->u = (float_t)portion.right * texture.oneOverWidth;
+			access->v = (float_t)portion.bottom * texture.oneOverHeight;
+			access->color = color.packedARGB;
+			access++;
+		}
+#endif
+#if defined (GAME_DIRECTX10)
+		if (enginePointer->geIsUsing(GAME_DIRECTX10))
+		{
+			_spriteVertex10* access = nullptr;
+			Vector2i window;
+			Rectf scaledPosition;
+			Rectf scaledUV;
+
+			// If texture changed, render and change texture/SRV
+			if (texture.name != _currentTexture.name)
+			{
+				Render();
+				_currentTexture = texture;
+				enginePointer->d3d10Device->PSSetShaderResources(0, 1, _currentTexture.textureSRV10.GetAddressOf());
+			}
+
+			access = &_spriteVertices10[_numberOfSpritesUsed * 4];
+			window = enginePointer->geGetWindowSize();
+			// Homogenise coordinates to -1.0f to 1.0f
+			scaledPosition.left = ((float_t)(destination.left) * 2.0f / (float_t)window.width) - 1.0f;
+			scaledPosition.top = 1.0f - ((float_t)(destination.top) * 2.0f / (float_t)window.height);// -1.0f;
+			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
+			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
+			// Homogenise UV coords to 0.0f - 1.0f
+			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
+			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
+			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
+			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
+
+			// Fill vertices
+
+			// Top left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.left;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Top right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.right;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.left;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.right;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+		}
+#endif
+#if defined (GAME_DIRECTX11)
+		if (enginePointer->geIsUsing(GAME_DIRECTX11))
+		{
+			_spriteVertex11* access = nullptr;
+			Vector2i window;
+			Rectf scaledPosition;
+			Rectf scaledUV;
+
+			// If texture changed, render and change texture/SRV
+			if (texture.name != _currentTexture.name)
+			{
+				Render();
+				_currentTexture = texture;
+				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
+			}
+
+			access = &_spriteVertices11[_numberOfSpritesUsed * 4];
+			window = enginePointer->geGetWindowSize();
+			// Homogenise coordinates to -1.0f to 1.0f
+			scaledPosition.left = ((float_t)destination.left * 2.0f / (float_t)window.width) - 1.0f;
+			scaledPosition.top = 1.0f - ((float_t)destination.top * 2.0f / (float_t)window.height);// -1.0f;
+			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
+			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
+			// Homogenise UV coords to 0.0f - 1.0f
+			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
+			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
+			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
+			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
+
+			// Fill vertices
+
+			// Top left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.left;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+
+			access++;
+
+			// Top right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.right;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.left;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.right;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+		}
+#endif
+#if defined (GAME_DIRECTX12)
+		if (enginePointer->geIsUsing(GAME_DIRECTX12))
+		{
+			_spriteVertex12* access = nullptr;
+			Vector2i windowSize;
+			Rectf scaledPosition;
+			Rectf scaledUV;
+
+			// If texture changed, render and change SRV
+			if (texture.name != _currentTexture.name)
+			{
+				Render();
+				_currentTexture = texture;
+				_currentSRVIndex++;
+				if (_currentSRVIndex >= _maxSRVIndex)
+				{
+					_currentSRVIndex = 0;
+				}
+				_spritesUsed = _numberOfSpritesUsed;
+			}
+
+			access = &_spriteVertices12[_numberOfSpritesUsed * 4];
+			windowSize = enginePointer->geGetWindowSize();
+			// Homogenise coordinates to -1.0f to 1.0f
+			scaledPosition.left = ((float_t)destination.left * 2.0f / (float_t)windowSize.width) - 1.0f;
+			scaledPosition.top = 1.0f - ((float_t)destination.top * 2.0f / (float_t)windowSize.height);
+			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)windowSize.width) - 1.0f;
+			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)windowSize.height);
+			// Homogenise UV coords to 0.0f - 1.0f
+			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
+			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
+			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
+			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
+
+			// Fill vertices
+
+			// Top left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.left;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+
+			access++;
+
+			// Top right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.top;
+			access->u = scaledUV.right;
+			access->v = scaledUV.top;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom left
+			access->x = scaledPosition.left;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.left;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+
+			// Bottom right
+			access->x = scaledPosition.right;
+			access->y = scaledPosition.bottom;
+			access->u = scaledUV.right;
+			access->v = scaledUV.bottom;
+			access->r = color.rf;
+			access->g = color.gf;
+			access->b = color.bf;
+			access->a = color.af;
+			access++;
+		}
+#endif
+
+		_numberOfSpritesUsed++;
+	}
+
 	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
 	{
-		int32_t currentX = x;
-		int32_t currentY = y;
-		uint32_t widthOfLetter = 0;
-		uint32_t heightOfLetter = 0;
-		Recti source, destination;
-		int16_t letter;
+		float_t currentX = (float_t)x;
+		float_t currentY = (float_t)y;
+		//uint32_t widthOfLetter = 0;
+		//uint32_t heightOfLetter = 0;
+		Rectf source, destination;
+		//int16_t letter;
 
 		const uint64_t size = Str.size();
 		for (unsigned int i = 0; i < size; ++i)
 		{
-			letter = Str[i];
-			widthOfLetter = font._characterSet.letters[letter].width;
-			heightOfLetter = font._characterSet.letters[letter].height;
+			const int16_t letter = Str[i];
+			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+			const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
 
 			source.left = font._characterSet.letters[letter].x;
 			source.top = font._characterSet.letters[letter].y;
 			source.right = source.left + widthOfLetter;
 			source.bottom = source.top + heightOfLetter;
 
-			destination.left = (int32_t)(currentX + font._characterSet.letters[letter].xOffset * scale);
-			destination.top = (int32_t)(currentY + font._characterSet.letters[letter].yOffset * scale);
-			destination.right = (int32_t)(widthOfLetter * scale + destination.left);
-			destination.bottom = (int32_t)(heightOfLetter * scale + destination.top);
+			destination.left = currentX + (font._characterSet.letters[letter].xOffset * scale);
+			destination.top = currentY + (font._characterSet.letters[letter].yOffset * scale);
+			destination.right = destination.left + (widthOfLetter * scale);
+			destination.bottom = destination.top + (heightOfLetter * scale);
 
 			// make a draw for Rectf
 			Draw(font.Texture(), destination, source, color);
 
-			currentX += (uint32_t)(font._characterSet.letters[letter].xAdvance * scale);
+			currentX += (font._characterSet.letters[letter].xAdvance * scale);
 		}
 	}
 
 
-
+	// Font tag helpers
 	namespace
 	{
 		// Structure to hold a text segment and its color
@@ -2123,38 +2458,35 @@ namespace game
 		}
 	}
 
-
-
 	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
 	{
 		float_t currentX = (float)x;
 		float_t currentY = (float)y;
-		uint32_t widthOfLetter = 0;
-		uint32_t heightOfLetter = 0;
-		Recti source, destination;
-		int16_t letter = 0;
+		//uint32_t widthOfLetter = 0;
+		//uint32_t heightOfLetter = 0;
+		Rectf source, destination;
+		//int16_t letter = 0;
 
 		auto segments = parseColoredString(Str, color);
 		for (auto &s:segments)
 		{
 			const uint64_t size = s.text.size();
-			for (unsigned int i = 0; i < size; ++i)
+			for (uint64_t i = 0; i < size; ++i)
 			{
-				letter = s.text[i];
-				widthOfLetter = font._characterSet.letters[letter].width;
-				heightOfLetter = font._characterSet.letters[letter].height;
+				const int16_t letter = s.text[i];
+				const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+				const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
 
 				source.left = font._characterSet.letters[letter].x;
 				source.top = font._characterSet.letters[letter].y;
 				source.right = source.left + widthOfLetter;
 				source.bottom = source.top + heightOfLetter;
 
-				destination.left = (int32_t)(currentX + font._characterSet.letters[letter].xOffset * scale);
-				destination.top = (int32_t)(currentY + font._characterSet.letters[letter].yOffset * scale);
-				destination.right = (int32_t)(widthOfLetter * scale + destination.left);
-				destination.bottom = (int32_t)(heightOfLetter * scale + destination.top);
+				destination.left = currentX+(font._characterSet.letters[letter].xOffset * scale);
+				destination.top = currentY+(font._characterSet.letters[letter].yOffset * scale);
+				destination.right = destination.left + (widthOfLetter * scale);
+				destination.bottom = destination.top + (heightOfLetter * scale);
 
-				// Make a Rectf draw
 				Draw(font.Texture(), destination, source, s.color);
 
 				currentX += (font._characterSet.letters[letter].xAdvance * scale);
