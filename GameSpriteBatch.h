@@ -2004,7 +2004,8 @@ namespace game
 		Recti source, destination;
 		int16_t letter;
 
-		for (unsigned int i = 0; i < Str.size(); i++)
+		const uint64_t size = Str.size();
+		for (unsigned int i = 0; i < size; ++i)
 		{
 			letter = Str[i];
 			widthOfLetter = font._characterSet.letters[letter].width;
@@ -2020,6 +2021,7 @@ namespace game
 			destination.right = (int32_t)(widthOfLetter * scale + destination.left);
 			destination.bottom = (int32_t)(heightOfLetter * scale + destination.top);
 
+			// make a draw for Rectf
 			Draw(font.Texture(), destination, source, color);
 
 			currentX += (uint32_t)(font._characterSet.letters[letter].xAdvance * scale);
@@ -2125,17 +2127,18 @@ namespace game
 
 	void SpriteBatch::DrawStringColorEncoded(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
 	{
-		int32_t currentX = x;
-		int32_t currentY = y;
+		float_t currentX = (float)x;
+		float_t currentY = (float)y;
 		uint32_t widthOfLetter = 0;
 		uint32_t heightOfLetter = 0;
 		Recti source, destination;
-		int16_t letter;
+		int16_t letter = 0;
 
 		auto segments = parseColoredString(Str, color);
 		for (auto &s:segments)
 		{
-			for (unsigned int i = 0; i < s.text.size(); i++)
+			const uint64_t size = s.text.size();
+			for (unsigned int i = 0; i < size; ++i)
 			{
 				letter = s.text[i];
 				widthOfLetter = font._characterSet.letters[letter].width;
@@ -2146,23 +2149,15 @@ namespace game
 				source.right = source.left + widthOfLetter;
 				source.bottom = source.top + heightOfLetter;
 
-				//destination.left = (int32_t)(currentX + font._characterSet.letters[letter].xOffset * scale);
-				//destination.top = (int32_t)(currentY + font._characterSet.letters[letter].yOffset * scale);
-				//destination.right = (int32_t)(widthOfLetter * scale + destination.left);
-				//destination.bottom = (int32_t)(heightOfLetter * scale + destination.top);
-
-				//Draw(font.Texture(), destination, source, color);
-
-				//currentX += (uint32_t)(font._characterSet.letters[letter].xAdvance * scale);
-
 				destination.left = (int32_t)(currentX + font._characterSet.letters[letter].xOffset * scale);
 				destination.top = (int32_t)(currentY + font._characterSet.letters[letter].yOffset * scale);
 				destination.right = (int32_t)(widthOfLetter * scale + destination.left);
 				destination.bottom = (int32_t)(heightOfLetter * scale + destination.top);
 
+				// Make a Rectf draw
 				Draw(font.Texture(), destination, source, s.color);
 
-				currentX += (int32_t)(font._characterSet.letters[letter].xAdvance * scale);
+				currentX += (font._characterSet.letters[letter].xAdvance * scale);
 
 			}
 		}

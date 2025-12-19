@@ -187,6 +187,7 @@ namespace game
 	inline void RendererDX11::DestroyDevice()
 	{
 		_d3d11Device.Reset();
+		_d3d11DeviceContext.Reset();
 		_d3d11SwapChain.Reset();
 		_d3d11RenderTargetView.Reset();
 		//_d3d11DepthStencilBuffer.Reset();
