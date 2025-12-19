@@ -46,7 +46,7 @@ namespace game
 		// Will draw a specified rectangle portion of a texture to location x,y
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color);
 		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
-		void DrawStringColorEncoded(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
+		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale = 1.0f);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() noexcept;
 	private:
@@ -2125,7 +2125,7 @@ namespace game
 
 
 
-	void SpriteBatch::DrawStringColorEncoded(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
+	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scale)
 	{
 		float_t currentX = (float)x;
 		float_t currentY = (float)y;
