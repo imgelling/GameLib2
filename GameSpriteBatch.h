@@ -2330,8 +2330,39 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
+	void scaleRectangle(game::Rectf &rect, float scaleFactorx, float scaleFactory) {
+		if (scaleFactorx <= 0) {
+			scaleFactorx = 0;
+			return;
+		}
+
+		// Find center before scaling
+		float w = (rect.right - rect.left);
+		float h = (rect.bottom - rect.top);
+		float centerX = rect.left + w / 2.0f;
+		float centerY = rect.top + h / 2.0f;
+
+		// translate to center around the origin
+		// and find the center again
+		rect.left -= centerX;
+		rect.top -= centerY;
+		centerX = rect.left + w / 2.0f;
+		centerY = rect.top + h / 2.0f;
+
+		// Scale width and height
+		w *= scaleFactorx;
+		h *= scaleFactory;
+
+		// Recalculate top-left so center stays the same
+		rect.left = centerX - w / 2.0f;
+		rect.top = centerY - h / 2.0f;
+		rect.right = centerX + w / 2.0f;
+		rect.bottom = centerY + h / 2.0f;
+	}
+
 	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
 	{
+		bool centered = true;
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float_t)x;
@@ -2342,7 +2373,38 @@ namespace game
 		//int16_t letter;
 
 		const uint64_t size = Str.size();
-		for (unsigned int i = 0; i < size; ++i)
+		float width = 0;
+		float height = 0;
+		Rectf box(20000,20000,-20000,-20000);
+		for (uint64_t i = 0; i < size; ++i)
+		{
+			const uint8_t letter = Str[i];
+			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+			const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+
+			destination.left = currentX + (font._characterSet.letters[letter].xOffset);
+			destination.top = currentY + (font._characterSet.letters[letter].yOffset);
+			destination.right = destination.left + (widthOfLetter);
+			destination.bottom = destination.top + (heightOfLetter);
+			
+			if (destination.left < box.left)
+				box.left = destination.left;
+			if (destination.top < box.top)
+				box.top = destination.top;
+			if (destination.bottom > box.bottom)
+				box.bottom = destination.bottom;
+			if (destination.right > box.right)
+				box.right = destination.right;
+			currentX += (font._characterSet.letters[letter].xAdvance);
+		}
+		scaleRectangle(box, _scaleX, _scaleY);
+		currentX = box.left + (float)x;
+		currentY = box.top + (float)y;
+		//source.right = 512;
+		//source.bottom = 512;
+		//Draw(font.Texture(), box, source, Colors::White);
+
+		for (uint64_t i = 0; i < size; ++i)
 		{
 			const uint8_t letter = Str[i];
 			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
@@ -2355,10 +2417,10 @@ namespace game
 
 			destination.left = currentX + (font._characterSet.letters[letter].xOffset * _scaleX);
 			destination.top = currentY + (font._characterSet.letters[letter].yOffset * _scaleY);
+
 			destination.right = destination.left + (widthOfLetter * _scaleX);
 			destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
-			// make a draw for Rectf
 			Draw(font.Texture(), destination, source, color);
 
 			currentX += (font._characterSet.letters[letter].xAdvance * _scaleX);
