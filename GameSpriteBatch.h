@@ -2330,11 +2330,12 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
-	void scaleRectangle(game::Rectf &rect, float scaleFactorx, float scaleFactory) {
-		if (scaleFactorx <= 0) {
-			scaleFactorx = 0;
-			return;
-		}
+	// Maybe put in rect
+	void scaleRectangle(game::Rectf &rect, float scaleFactorX, float scaleFactorY) 
+	{
+		// Negative scaling bad m'kay!
+		scaleFactorX = scaleFactorX < 0 ? 0 : scaleFactorX;
+		scaleFactorY = scaleFactorY < 0 ? 0 : scaleFactorY;
 
 		// Find center before scaling
 		float halfWidth = (rect.right - rect.left) * 0.5f;
@@ -2350,8 +2351,8 @@ namespace game
 		centerY = rect.top + halfHeight;// / 2.0f;
 
 		// Scale width and height
-		halfWidth *= scaleFactorx;
-		halfHeight *= scaleFactory;
+		halfWidth *= scaleFactorX;
+		halfHeight *= scaleFactorY;
 
 		// Recalculate top-left so center stays the same
 		rect.left = centerX - halfWidth;// / 2.0f;
@@ -2371,34 +2372,35 @@ namespace game
 		Rectf source, destination;
 
 		const uint64_t size = Str.size();
-		float width = 0;
-		float height = 0;
-		Rectf box(20000,20000,-20000,-20000);
-		for (uint64_t i = 0; i < size; ++i)
+		if (centered)
 		{
-			const uint8_t letter = Str[i];
-			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
-			const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+			Rectf box(20000, 20000, -20000, -20000);
+			for (uint64_t i = 0; i < size; ++i)
+			{
+				const uint8_t letter = Str[i];
+				const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+				const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
 
-			destination.left = currentX + (font._characterSet.letters[letter].xOffset);
-			destination.top = currentY + (font._characterSet.letters[letter].yOffset);
-			destination.right = destination.left + (widthOfLetter);
-			destination.bottom = destination.top + (heightOfLetter);
-			
-			// Find the bounding box
-			if (destination.left < box.left)
-				box.left = destination.left;
-			if (destination.top < box.top)
-				box.top = destination.top;
-			if (destination.bottom > box.bottom)
-				box.bottom = destination.bottom;
-			if (destination.right > box.right)
-				box.right = destination.right;
-			currentX += (font._characterSet.letters[letter].xAdvance);
+				destination.left = currentX + (font._characterSet.letters[letter].xOffset);
+				destination.top = currentY + (font._characterSet.letters[letter].yOffset);
+				destination.right = destination.left + (widthOfLetter);
+				destination.bottom = destination.top + (heightOfLetter);
+
+				// Find the bounding box
+				if (destination.left < box.left)
+					box.left = destination.left;
+				if (destination.top < box.top)
+					box.top = destination.top;
+				if (destination.bottom > box.bottom)
+					box.bottom = destination.bottom;
+				if (destination.right > box.right)
+					box.right = destination.right;
+				currentX += (font._characterSet.letters[letter].xAdvance);
+			}
+			scaleRectangle(box, _scaleX, _scaleY);
+			currentX = box.left + (float)x;
+			currentY = box.top + (float)y;
 		}
-		scaleRectangle(box, _scaleX, _scaleY);
-		currentX = box.left + (float)x;
-		currentY = box.top + (float)y;
 		//source.right = 512;
 		//source.bottom = 512;
 		//Draw(font.Texture(), box, source, Colors::White);
