@@ -2337,27 +2337,27 @@ namespace game
 		}
 
 		// Find center before scaling
-		float w = (rect.right - rect.left);
-		float h = (rect.bottom - rect.top);
-		float centerX = rect.left + w / 2.0f;
-		float centerY = rect.top + h / 2.0f;
+		float halfWidth = (rect.right - rect.left) * 0.5f;
+		float halfHeight = (rect.bottom - rect.top) * 0.5f;
+		float centerX = rect.left + halfWidth;// / 2.0f;
+		float centerY = rect.top + halfHeight;// / 2.0f;
 
 		// translate to center around the origin
 		// and find the center again
 		rect.left -= centerX;
 		rect.top -= centerY;
-		centerX = rect.left + w / 2.0f;
-		centerY = rect.top + h / 2.0f;
+		centerX = rect.left + halfWidth;// / 2.0f;
+		centerY = rect.top + halfHeight;// / 2.0f;
 
 		// Scale width and height
-		w *= scaleFactorx;
-		h *= scaleFactory;
+		halfWidth *= scaleFactorx;
+		halfHeight *= scaleFactory;
 
 		// Recalculate top-left so center stays the same
-		rect.left = centerX - w / 2.0f;
-		rect.top = centerY - h / 2.0f;
-		rect.right = centerX + w / 2.0f;
-		rect.bottom = centerY + h / 2.0f;
+		rect.left = centerX - halfWidth;// / 2.0f;
+		rect.top = centerY - halfHeight;// / 2.0f;
+		rect.right = centerX + halfWidth;// / 2.0f;
+		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
 	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
@@ -2367,10 +2367,8 @@ namespace game
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float_t)x;
 		float_t currentY = (float_t)y;
-		//uint32_t widthOfLetter = 0;
-		//uint32_t heightOfLetter = 0;
+
 		Rectf source, destination;
-		//int16_t letter;
 
 		const uint64_t size = Str.size();
 		float width = 0;
@@ -2387,6 +2385,7 @@ namespace game
 			destination.right = destination.left + (widthOfLetter);
 			destination.bottom = destination.top + (heightOfLetter);
 			
+			// Find the bounding box
 			if (destination.left < box.left)
 				box.left = destination.left;
 			if (destination.top < box.top)
