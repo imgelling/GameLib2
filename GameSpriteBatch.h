@@ -48,8 +48,8 @@ namespace game
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color);
 
-		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() noexcept;
 	private:
@@ -2361,9 +2361,8 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
+	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		bool centered = true;
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float_t)x;
@@ -2401,9 +2400,6 @@ namespace game
 			currentX = box.left + (float)x;
 			currentY = box.top + (float)y;
 		}
-		//source.right = 512;
-		//source.bottom = 512;
-		//Draw(font.Texture(), box, source, Colors::White);
 
 		for (uint64_t i = 0; i < size; ++i)
 		{
@@ -2523,19 +2519,51 @@ namespace game
 		}
 	}
 
-	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const float_t scaleX, const float scaleY)
+	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		//if (scaleY == -99999) scaleY = scaleX;
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float)x;
 		float_t currentY = (float)y;
-		//uint32_t widthOfLetter = 0;
-		//uint32_t heightOfLetter = 0;
-		Rectf source, destination;
-		//int16_t letter = 0;
+		Rectf source;
+		Rectf destination;
 
 		auto segments = parseColoredString(Str, color);
+
+		if (centered)
+		{
+			Rectf box(20000, 20000, -20000, -20000);
+			for (auto& s : segments)
+			{
+				const uint64_t size = s.text.size();
+				for (uint64_t i = 0; i < size; ++i)
+				{
+					const uint8_t letter = Str[i];
+					const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+					const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+
+					destination.left = currentX + (font._characterSet.letters[letter].xOffset);
+					destination.top = currentY + (font._characterSet.letters[letter].yOffset);
+					destination.right = destination.left + (widthOfLetter);
+					destination.bottom = destination.top + (heightOfLetter);
+
+					// Find the bounding box
+					if (destination.left < box.left)
+						box.left = destination.left;
+					if (destination.top < box.top)
+						box.top = destination.top;
+					if (destination.bottom > box.bottom)
+						box.bottom = destination.bottom;
+					if (destination.right > box.right)
+						box.right = destination.right;
+					currentX += (font._characterSet.letters[letter].xAdvance);
+				}
+			}
+			scaleRectangle(box, _scaleX, _scaleY);
+			currentX = box.left + (float)x;
+			currentY = box.top + (float)y;
+		}
+
 		for (auto &s:segments)
 		{
 			const uint64_t size = s.text.size();
