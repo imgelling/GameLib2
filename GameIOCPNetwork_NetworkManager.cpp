@@ -457,7 +457,7 @@ namespace game
 				std::cout << "void(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error)\n";
 				std::cout << "Sent " << bytesSent << " bytes to socket : " << socket << "\n";
 			}
-			void NetworkManager::_OnConnectDefault(const SOCKET socket, const NetworkError& error)
+			void NetworkManager::_OnConnectDefault(NETWORK_ONCONNECT_SIGNATURE)
 			{
 				std::cout << "Default OnConnect function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
@@ -483,7 +483,7 @@ namespace game
 			{
 				_OnReceive = func;
 			}
-			void NetworkManager::SetOnConnect(std::function<void(const SOCKET socket, const NetworkError& error)> func)
+			void NetworkManager::SetOnConnect(std::function<void(NETWORK_ONCONNECT_SIGNATURE)> func)
 			{
 				_OnConnect = func;
 			}

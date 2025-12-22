@@ -3,13 +3,16 @@
 
 // TODO: add ONCONNECT
 #define NETWORK_ONACCEPT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
-#define NETWORK_ONACCEPT_PARAMETERS socket,error
+#define NETWORK_ONACCEPT_PARAMETERS socket , error
 #define NETWORK_ONDISCONNECT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
-#define NETWORK_ONDISCONNECT_PARAMETERS socket,error
+#define NETWORK_ONDISCONNECT_PARAMETERS socket , error
 #define NETWORK_ONRECEIVE_SIGNATURE const SOCKET socket, const unsigned char* data, const uint64_t bytesReceived, const uint32_t channel, const game::IOCP::Network::NetworkError& error
 #define NETWORK_ONRECEIVE_PARAMETERS socket, data, bytesReceived, channel, error
 #define NETWORK_ONSEND_SIGNATURE const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const game::IOCP::Network::NetworkError& error
 #define NETWORK_ONSEND_PARAMETERS socket, bytesSent, channel, error
+#define NETWORK_ONCONNECT_SIGNATURE const SOCKET socket, const NetworkError& error
+#define NETWORK_ONCONNECT_PARAMETERS socket, error
+
 
 namespace game
 {
@@ -57,8 +60,8 @@ namespace game
 				std::function<void(NETWORK_ONRECEIVE_SIGNATURE)> _OnReceive;
 				void _OnReceiveDefault(NETWORK_ONRECEIVE_SIGNATURE);
 
-				std::function<void(const SOCKET socket, const NetworkError& error)> _OnConnect;
-				void _OnConnectDefault(const SOCKET socket, const NetworkError& error);
+				std::function<void(NETWORK_ONCONNECT_SIGNATURE)> _OnConnect;
+				void _OnConnectDefault(NETWORK_ONCONNECT_SIGNATURE);
 
 				std::function<void(NETWORK_ONACCEPT_SIGNATURE)> _OnAccept;
 				void _OnAcceptDefault(NETWORK_ONACCEPT_SIGNATURE);
