@@ -1,5 +1,11 @@
 #pragma once
-
+#include <ws2def.h>
+#include <Windows.h>
+#include <atomic>
+#include <cstdint>
+#include <functional>
+#include <string>
+#include "GameIOCP_IOCPManager.h"
 
 #define FILE_ONWRITE_SIGNATURE const int32_t result, uint64_t id, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
 #define FILE_ONWRITE_PARAMETERS result, id, bytesTransferred, bytesToTransfer, data

@@ -1,8 +1,11 @@
 #pragma once
+#include <cstdint>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 #include "GameEngine.h"
 #include "GameErrors.h"
-#include "GameImageLoader.h"
 #include "GameTexture2D.h"
 
 namespace game
