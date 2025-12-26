@@ -31,8 +31,8 @@ namespace game
 		Pointi _position;
 		Pointi _positionOld;
 		Pointi _positionRelative;
-		bool* _currentButtonState;
-		bool* _oldButtonState;
+		bool _currentButtonState[10];
+		bool _oldButtonState[10];
 		int32_t _userMouseParams[3];
 	};
 
@@ -42,8 +42,8 @@ namespace game
 		SystemParametersInfo(SPI_GETMOUSE, 0, _userMouseParams, 0);
 
 		_wheelDelta = 0;
-		_currentButtonState = new bool[10];
-		_oldButtonState = new bool[10];
+		//_currentButtonState = new bool[10];
+		//_oldButtonState = new bool[10];
 		for (uint8_t button = 0; button < 10; button++)
 		{
 			_currentButtonState[button] = false;
@@ -53,8 +53,8 @@ namespace game
 
 	inline Mouse::~Mouse()
 	{
-		delete[] _currentButtonState;
-		delete[] _oldButtonState;
+		//delete[] _currentButtonState;
+		//delete[] _oldButtonState;
 
 		// Restore user mouse parameters
 		SystemParametersInfo(SPI_SETMOUSE, 0, _userMouseParams, SPIF_SENDCHANGE);
@@ -102,7 +102,7 @@ namespace game
 		bool currentState = _currentButtonState[button];
 		bool oldState = _oldButtonState[button];
 
-		//_oldButtonState[button] = _currentButtonState[button];
+		_oldButtonState[button] = _currentButtonState[button];
 
 		return (!oldState && currentState);
 	}
@@ -114,7 +114,7 @@ namespace game
 		bool currentState = _currentButtonState[button];
 		bool oldState = _oldButtonState[button];
 
-		//_oldButtonState[button] = _currentButtonState[button];
+		_oldButtonState[button] = _currentButtonState[button];
 
 		return (oldState && !currentState);
 	}
