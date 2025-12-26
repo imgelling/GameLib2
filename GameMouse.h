@@ -80,7 +80,7 @@ namespace game
 		bool currentState = _currentButtonState[button];
 		bool oldState = _oldButtonState[button];
 
-		_oldButtonState[button] = _currentButtonState[button];
+		//_oldButtonState[button] = _currentButtonState[button];
 
 		if (currentState && oldState)
 		{
@@ -102,7 +102,7 @@ namespace game
 		bool currentState = _currentButtonState[button];
 		bool oldState = _oldButtonState[button];
 
-		_oldButtonState[button] = _currentButtonState[button];
+		//_oldButtonState[button] = _currentButtonState[button];
 
 		return (!oldState && currentState);
 	}
@@ -114,7 +114,7 @@ namespace game
 		bool currentState = _currentButtonState[button];
 		bool oldState = _oldButtonState[button];
 
-		_oldButtonState[button] = _currentButtonState[button];
+		//_oldButtonState[button] = _currentButtonState[button];
 
 		return (oldState && !currentState);
 	}
