@@ -308,6 +308,7 @@ namespace game
 		do
 		{
 			geMouse.ResetMouseValues();
+			geMouse.CheckButtons();
 
 			// Do window messages
 			_ProcessMessages();
@@ -335,7 +336,6 @@ namespace game
 			if (msElapsed >= _updateTime)
 			{
 				_updateTimer.Reset();
-				geMouse.CheckButtons();
 				Update(msElapsed);
 				upsTime += msElapsed;
 				updatesCounted++;
