@@ -335,6 +335,7 @@ namespace game
 			if (msElapsed >= _updateTime)
 			{
 				_updateTimer.Reset();
+				geMouse.CheckButtons();
 				Update(msElapsed);
 				upsTime += msElapsed;
 				updatesCounted++;
