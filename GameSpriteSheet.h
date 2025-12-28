@@ -9,8 +9,9 @@ namespace game
 	{
 	public:
 		SpriteSheet();
-		void Initialize(const Texture2D texure, const int width, const int height) noexcept;
-		void Initialize(const Texture2D texure, const Pointi &size) noexcept;
+		SpriteSheet(Texture2D& texure, const int width, const int height);
+		void Initialize(Texture2D &texure, const int width, const int height) noexcept;
+		void Initialize(Texture2D &texure, const Pointi &size) noexcept;
 		void SetTexture(Texture2D& texure) {};
 		Recti GetRectFromId(int id) noexcept;
 	private:
@@ -27,8 +28,8 @@ namespace game
 		_tilesPerRow = 0;
 		_texture = nullptr;
 	}
-
-	inline void SpriteSheet::Initialize(Texture2D texture, const int width, const int height) noexcept
+	
+	SpriteSheet::SpriteSheet(Texture2D& texture, const int width, const int height)
 	{
 		_texture = &texture;
 		_tileWidth = width;
@@ -36,7 +37,15 @@ namespace game
 		_tilesPerRow = _texture->width / _tileWidth;
 	}
 
-	inline void SpriteSheet::Initialize(const Texture2D texture, const Pointi &size) noexcept
+	inline void SpriteSheet::Initialize(Texture2D &texture, const int width, const int height) noexcept
+	{
+		_texture = &texture;
+		_tileWidth = width;
+		_tileHeight = height;
+		_tilesPerRow = _texture->width / _tileWidth;
+	}
+
+	inline void SpriteSheet::Initialize(Texture2D &texture, const Pointi &size) noexcept
 	{
 		Initialize(texture, size.width, size.height);
 	}
