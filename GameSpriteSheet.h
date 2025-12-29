@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "GameMath.h"
 #include "GameTexture2D.h"
 

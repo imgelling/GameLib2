@@ -1,11 +1,9 @@
 #pragma once
-#include <iostream>
 #include "GameWindowsKeys.h"
 
 #define GAME_TEXT_INPUT_ALL 0
 #define GAME_TEXT_INPUT_ALPHA 1
 #define GAME_TEXT_INPUT_DIGIT 2
-
 
 
 namespace game
@@ -16,14 +14,36 @@ namespace game
 		Keyboard();
 		~Keyboard();
 		void SetKeyState(const uint8_t key, const  bool state);
-		bool WasKeyReleased(const uint8_t key);
-		bool WasKeyPressed(const uint8_t key);
-		bool IsKeyHeld(const uint8_t key);
+		bool WasKeyReleased(const uint8_t key) const;
+		bool WasKeyPressed(const uint8_t key) const;
+		bool IsKeyHeld(const uint8_t key) const;
+		void CheckKeys()
+		{
+			for (int i = 0; i < 256; i++)
+			{
+				_keyState[i].pressed = false;
+				_keyState[i].released = false;
+				if (_newKeyState[i] != _oldKeyState[i])
+				{
+					if (_newKeyState[i])
+					{
+						_keyState[i].pressed = !_keyState[i].held;
+						_keyState[i].held = true;
+					}
+					else
+					{
+						_keyState[i].released = true;
+						_keyState[i].held = false;
+					}
+				}
+				_oldKeyState[i] = _newKeyState[i];
+			}
+		}
 
 
 		void TextInputMode(const bool textInputMode, const uint32_t restrictions = GAME_TEXT_INPUT_ALL);
-		std::string GetTextInput();
-		std::string GetCompletedTextInput();
+		std::string GetTextInput() const;
+		std::string GetCompletedTextInput() const;
 		bool IsTextInput() const;
 		uint32_t GetTabSize() const;
 		void SetTabSize(const uint32_t tabSize);
@@ -32,10 +52,17 @@ namespace game
 		void ResetTextInputTextChange() noexcept { _textInputTextChange = false; }
 		bool TextInputTextChange() const noexcept { return _textInputTextChange; }
 	private:
+		struct _KeyboardButtonState
+		{
+			bool pressed = false;
+			bool released = false;
+			bool held = false;
+		};
 		bool _textInputTextChange;
-		void _UpdateText(uint8_t key, uint8_t shiftedKey);
-		bool* _keyCurrentState;
-		bool* _keyOldState;
+		void _UpdateText(const uint8_t key, const uint8_t shiftedKey);
+		bool* _newKeyState;
+		bool* _oldKeyState;
+		_KeyboardButtonState _keyState[256];
 		bool _isTextInputMode;
 		std::string _textInput;
 		std::string _completedText;
@@ -59,10 +86,10 @@ namespace game
 
 	inline Keyboard::Keyboard()
 	{
-		_keyCurrentState = new bool[256];
-		_keyOldState = new bool[256];
-		ZeroMemory(_keyCurrentState, 256);
-		ZeroMemory(_keyOldState, 256);
+		_newKeyState = new bool[256];
+		_oldKeyState = new bool[256];
+		ZeroMemory(_newKeyState, 256);
+		ZeroMemory(_oldKeyState, 256);
 		_isTextInputMode = false;
 		_tabSize = 5;
 		_cursorPosition = 0;
@@ -73,8 +100,8 @@ namespace game
 
 	inline Keyboard::~Keyboard()
 	{
-		delete[] _keyCurrentState;
-		delete[] _keyOldState;
+		delete[] _newKeyState;
+		delete[] _oldKeyState;
 	}
 
 	inline bool Keyboard::IsTextInput() const
@@ -82,12 +109,12 @@ namespace game
 		return _isTextInputMode;
 	}
 
-	inline std::string Keyboard::GetTextInput()
+	inline std::string Keyboard::GetTextInput() const
 	{
 		return _textInput;
 	}
 
-	inline std::string Keyboard::GetCompletedTextInput()
+	inline std::string Keyboard::GetCompletedTextInput() const
 	{
 		return _completedText;
 	}
@@ -120,9 +147,9 @@ namespace game
 		_tabSize = tabSize;
 	}
 
-	inline void Keyboard::_UpdateText(uint8_t key, uint8_t shiftedKey)
+	inline void Keyboard::_UpdateText(const uint8_t key, const uint8_t shiftedKey)
 	{
-		if (_keyCurrentState[VK_SHIFT])
+		if (_newKeyState[VK_SHIFT])
 		{
 			if (_cursorPosition < _textInput.length())
 			{
@@ -150,15 +177,15 @@ namespace game
 
 	inline void Keyboard::SetKeyState(const uint8_t key, const bool state)
 	{
-		// Ignore repeats
-		if (_keyCurrentState[key] == state)
+		// Ignore repeats // TODO: may need fixed
+		if (_newKeyState[key] == state)
 		{
 			return;
 		}
 
 		// Save the states
-		_keyOldState[key] = _keyCurrentState[key];
-		_keyCurrentState[key] = state;
+		_oldKeyState[key] = _newKeyState[key];
+		_newKeyState[key] = state;
 
 		// If we are in text input mode, process that data
 		if (_isTextInputMode)
@@ -313,7 +340,7 @@ namespace game
 				}
 				else
 				{
-					if (_keyCurrentState[VK_SHIFT])
+					if (_newKeyState[VK_SHIFT])
 					{
 						return;
 					}
@@ -434,44 +461,19 @@ namespace game
 		}
 	}
 
-	inline bool Keyboard::WasKeyReleased(const uint8_t key)
+	inline bool Keyboard::WasKeyReleased(const uint8_t key) const
 	{
-		bool currentState = _keyCurrentState[key];
-		bool oldState = _keyOldState[key];
-
-		_keyOldState[key] = _keyCurrentState[key];
-
-		return (oldState && !currentState);
+		return _keyState[key].released;
 	}
 
-	inline bool Keyboard::WasKeyPressed(const uint8_t key)
+	inline bool Keyboard::WasKeyPressed(const uint8_t key) const
 	{
-		bool currentState = _keyCurrentState[key];
-		bool oldState = _keyOldState[key];
-
-		_keyOldState[key] = _keyCurrentState[key];
-
-		return (!oldState && currentState);
+		return _keyState[key].pressed;
 	}
 
-	inline bool Keyboard::IsKeyHeld(const uint8_t key)
+	inline bool Keyboard::IsKeyHeld(const uint8_t key) const
 	{
-		bool currentState = _keyCurrentState[key];
-		bool oldState = _keyOldState[key];
-
-		_keyOldState[key] = _keyCurrentState[key];
-
-		if (currentState && oldState)
-		{
-			// current state and old state are true, so the key is held
-			return true;
-		}
-		else if (!oldState && currentState)
-		{
-			// Still consider key held if this is the first time pressed
-			return true;
-		}
-		return false;
+		return _keyState[key].held;
 	}
 }
 

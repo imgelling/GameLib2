@@ -309,6 +309,7 @@ namespace game
 		{
 			geMouse.ResetMouseValues();
 			geMouse.CheckButtons();
+			geKeyboard.CheckKeys();
 
 			// Do window messages
 			_ProcessMessages();
