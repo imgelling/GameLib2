@@ -1,4 +1,9 @@
 #pragma once
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <cctype>
+#include <cstdint>
+#include <string>
 #include "GameWindowsKeys.h"
 
 #define GAME_TEXT_INPUT_ALL 0
