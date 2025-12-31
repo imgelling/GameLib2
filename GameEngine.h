@@ -307,8 +307,8 @@ namespace game
 		// Do the game loop
 		do
 		{
+			geMouse.SaveState();
 			geMouse.ResetMouseValues();
-			geMouse.CheckButtons();
 			geKeyboard.CheckKeys();
 
 			// Do window messages
@@ -815,15 +815,19 @@ namespace game
 		case WM_MOUSEWHEEL:	enginePointer->geMouse.HandleMouseWheel(GET_WHEEL_DELTA_WPARAM(wParam)); return 0;
 		//case WM_ERASEBKGND: return 1;
 			//case WM_MOUSELEAVE: ptrPGE->olc_UpdateMouseFocus(false);                                    return 0;
-			//case WM_SETFOCUS:	ptrPGE->olc_UpdateKeyFocus(true);                                       return 0;
-			//case WM_KILLFOCUS:	ptrPGE->olc_UpdateKeyFocus(false);                                      return 0;
-		case WM_LBUTTONDOWN:enginePointer->geMouse.SetMouseState(geM_LEFT, true); return 0;
-		case WM_LBUTTONUP:	enginePointer->geMouse.SetMouseState(geM_LEFT, false); return 0;
-		case WM_RBUTTONDOWN:enginePointer->geMouse.SetMouseState(geM_RIGHT, true); return 0;
-		case WM_RBUTTONUP:	enginePointer->geMouse.SetMouseState(geM_RIGHT, false); return 0;
-		case WM_MBUTTONDOWN:enginePointer->geMouse.SetMouseState(geM_MIDDLE, true); return 0;
-		case WM_MBUTTONUP:	enginePointer->geMouse.SetMouseState(geM_MIDDLE, false); return 0;
-		case WM_XBUTTONDOWN: enginePointer->geMouse.SetMouseState(GET_XBUTTON_WPARAM(wParam) + geM_RIGHT, true); return true;
+		case WM_MOUSELEAVE: 
+			enginePointer->geMouse.hasFocus = false; return 0;
+		case WM_SETFOCUS:	
+			enginePointer->geMouse.hasFocus = true; return 0;// ptrPGE->olc_UpdateKeyFocus(true);                                       return 0;
+		case WM_KILLFOCUS:	
+			enginePointer->geMouse.hasFocus = false; return 0;//ptrPGE->olc_UpdateKeyFocus(false);                                      return 0;
+		case WM_LBUTTONDOWN: SetCapture(hWnd); enginePointer->geMouse.SetMouseState(geM_LEFT, true); return 0;
+		case WM_LBUTTONUP:	 ReleaseCapture(); enginePointer->geMouse.SetMouseState(geM_LEFT, false); return 0;
+		case WM_RBUTTONDOWN:SetCapture(hWnd); enginePointer->geMouse.SetMouseState(geM_RIGHT, true); return 0;
+		case WM_RBUTTONUP:	 ReleaseCapture(); enginePointer->geMouse.SetMouseState(geM_RIGHT, false); return 0;
+		case WM_MBUTTONDOWN:SetCapture(hWnd); enginePointer->geMouse.SetMouseState(geM_MIDDLE, true); return 0;
+		case WM_MBUTTONUP:	 ReleaseCapture(); enginePointer->geMouse.SetMouseState(geM_MIDDLE, false); return 0;
+		case WM_XBUTTONDOWN: SetCapture(hWnd); enginePointer->geMouse.SetMouseState(GET_XBUTTON_WPARAM(wParam) + geM_RIGHT, true); return true;
 		case WM_XBUTTONUP: enginePointer->geMouse.SetMouseState(GET_XBUTTON_WPARAM(wParam) + geM_RIGHT, false); return true;
 		//case WM_SIZING: break;
 		case WM_SIZE: 

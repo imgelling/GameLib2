@@ -9,19 +9,21 @@
 #include <d3d10.h>
 #endif
 
-#include "GameEngine.h"
+#include <GameEngine.h>
 #include "GameErrors.h"
 #include "GameMath.h"
 #include "GameSpriteFont.h"
 #include "GameTexture2D.h"
 #include "GameTextShaders.h"
 
-#include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <cctype>
-#include <iomanip>
+#include <string.h>
+#include <cmath>
+#include <cstdint>
+#include "Game.h"
+#include "GameColor.h"
+#include "GameShader.h"
 
 namespace game
 {
@@ -41,12 +43,12 @@ namespace game
 		// Render a complete batch of sprites
 		void Render();
 		// Will draw entire texture to location x,y
-		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color);
-		void Draw(const Texture2D& texture, const Pointi& position, const Color color);
+		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		// Will draw a specified rectangle portion of a texture to location x,y
-		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color);
+		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 		// Draws using floating point
-		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color);
+		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
 		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
@@ -1171,11 +1173,11 @@ namespace game
 #if defined (GAME_DIRECTX12)
 		if (enginePointer->geIsUsing(GAME_DIRECTX12))
 		{
-			_numberOfSpritesUsed = 0;
 			_vertexOffset = 0;
 			_spritesUsed = 0;
 		}
 #endif
+		_numberOfSpritesUsed = 0;
 	}
 
 	inline void SpriteBatch::Render()

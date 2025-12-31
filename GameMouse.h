@@ -12,9 +12,25 @@
 
 namespace game
 {
+	struct MouseButtonState
+	{
+		bool pressed = false;
+		bool released = false;
+		bool held = false;
+	};
+	struct MouseState
+	{
+		MouseButtonState buttonState[10];
+		game::Pointi position;
+		game::Pointi positionDelta; // may need to be cached between frames?
+		int32_t wheelDelta = 0;
+	};
+
 	class Mouse
 	{
 	public:
+
+		bool hasFocus = true;
 		Mouse();
 		~Mouse();
 		bool IsButtonHeld(const int32_t button) const noexcept;
@@ -29,42 +45,54 @@ namespace game
 		int32_t GetWheelDelta() const noexcept;
 		void ShowMouse(const bool isShown);
 		void UseMouseAcceleration(const bool useAcceleration) noexcept;
-		void CheckButtons()
+		void SetFocus(const bool isFocused)
 		{
+			hasFocus = isFocused;
+		}
+		MouseState GetState() const
+		{
+			return _mouseState;
+		}
+		void SaveState()
+		{
+			// Save buttons
 			for (int i = 0; i < 10; i++)
 			{
-				_buttonState[i].pressed = false;
-				_buttonState[i].released = false;
+				_mouseState.buttonState[i].pressed = false;
+				_mouseState.buttonState[i].released = false;
 				if (_newButtonState[i] != _oldButtonState[i])
 				{
 					if (_newButtonState[i])
 					{
-						_buttonState[i].pressed = !_buttonState[i].held;
-						_buttonState[i].held = true;
+						_mouseState.buttonState[i].pressed = !_mouseState.buttonState[i].held;
+						_mouseState.buttonState[i].held = true;
 					}
 					else
 					{
-						_buttonState[i].released = true;
-						_buttonState[i].held = false;
+						_mouseState.buttonState[i].released = true;
+						_mouseState.buttonState[i].held = false;
 					}
 				}
 				_oldButtonState[i] = _newButtonState[i];
 			}
+
+			// Save position
+			_mouseState.position = _position;
+
+			// Save relative position, how much it moved
+			_mouseState.positionDelta = _positionRelative;
+
+			// Save wheel delta
+			_mouseState.wheelDelta = _wheelDelta;
 		}
 	private:
-		struct _MouseButtonState
-		{
-			bool pressed = false;
-			bool released = false;
-			bool held = false;
-		};
 		int32_t _wheelDelta;
 		Pointi _position;
 		Pointi _positionOld;
 		Pointi _positionRelative;
 		bool _newButtonState[10];
 		bool _oldButtonState[10];
-		_MouseButtonState _buttonState[10];
+		MouseState _mouseState;// buttonState[10];
 		int32_t _userMouseParams[3];
 	};
 
@@ -104,29 +132,29 @@ namespace game
 	inline bool Mouse::IsButtonHeld(const int32_t button) const noexcept
 	{
 		if ((button < 0) || (button > 9)) return false;
-		return _buttonState[button].held;
+		return _mouseState.buttonState[button].held;
 	}
 
 	inline bool Mouse::WasButtonPressed(const int32_t button) const noexcept
 	{
 		if ((button < 0) || (button > 9)) return false;
-		return _buttonState[button].pressed;
+		return _mouseState.buttonState[button].pressed;
 	}
 
 	inline bool Mouse::WasButtonReleased(const int32_t button) const noexcept
 	{
 		if ((button < 0) || (button > 9)) return false;
-		return _buttonState[button].released;
+		return _mouseState.buttonState[button].released;
 	}
 
 	inline void Mouse::HandleMouseMove(const int32_t xPosition, const int32_t yPosition) noexcept
 	{
+		hasFocus = true;
 		_positionOld = _position;
 
 		_position = { xPosition, yPosition };
 
 		_positionRelative = _position - _positionOld;
-
 	}
 	
 	inline void Mouse::HandleMouseWheel(const int32_t delta) noexcept
@@ -136,7 +164,6 @@ namespace game
 
 	inline void Mouse::SetMouseState(const uint32_t button, const bool pressed)
 	{
-		//_oldButtonState[button] = _newButtonState[button];
 		_newButtonState[button] = pressed;
 	}
 
@@ -148,17 +175,17 @@ namespace game
 
 	inline Pointi Mouse::GetPosition() const noexcept
 	{
-		return _position;
+		return _mouseState.position;// _position;
 	}
 
 	inline Pointi Mouse::GetPositionRelative() const noexcept
 	{
-		return _positionRelative;
+		return _mouseState.positionDelta;// _positionRelative;
 	}
 
 	inline int32_t Mouse::GetWheelDelta() const noexcept
 	{
-		return _wheelDelta;
+		return _mouseState.wheelDelta;// _wheelDelta;
 	}
 
 	inline void Mouse::ShowMouse(const bool isShown)
