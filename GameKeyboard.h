@@ -22,7 +22,7 @@ namespace game
 		bool WasKeyReleased(const uint8_t key) const;
 		bool WasKeyPressed(const uint8_t key) const;
 		bool IsKeyHeld(const uint8_t key) const;
-		void CheckKeys()
+		void SaveState()
 		{
 			for (int i = 0; i < 256; i++)
 			{

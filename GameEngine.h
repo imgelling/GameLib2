@@ -309,7 +309,7 @@ namespace game
 		{
 			geMouse.SaveState();
 			geMouse.ResetMouseValues();
-			geKeyboard.CheckKeys();
+			geKeyboard.SaveState();
 
 			// Do window messages
 			_ProcessMessages();

@@ -50,8 +50,8 @@ namespace game
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
-		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() noexcept;
 	private:
