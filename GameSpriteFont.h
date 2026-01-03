@@ -7,6 +7,7 @@
 #include "GameEngine.h"
 #include "GameErrors.h"
 #include "GameTexture2D.h"
+#include "GameMath.h"
 
 namespace game
 {
@@ -46,6 +47,8 @@ namespace game
 		SpriteFont();
 		~SpriteFont();
 		uint32_t Length(const std::string &text);
+		uint32_t Height(const std::string& text);
+		game::Recti BoundingBox(const std::string& string);
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
@@ -174,9 +177,49 @@ namespace game
 		enginePointer->geUnLoadTexture(_texture);
 	}
 
+
+	inline game::Recti SpriteFont::BoundingBox(const std::string& string)
+	{
+		Recti destination;
+		const uint64_t size = string.size();
+		Recti box(20000, 20000, -20000, -20000);
+		int32_t currentX = 0;
+		int32_t currentY = 0;
+		for (uint64_t i = 0; i < size; ++i)
+		{
+			const uint8_t letter = string[i];
+			const uint32_t widthOfLetter = _characterSet.letters[letter].width;
+			const uint32_t heightOfLetter = _characterSet.letters[letter].height;
+
+			destination.left = currentX + (_characterSet.letters[letter].xOffset);
+			destination.top = currentY + (_characterSet.letters[letter].yOffset);
+			destination.right = destination.left + (widthOfLetter);
+			destination.bottom = destination.top + (heightOfLetter);
+
+			// Find the bounding box
+			if (destination.left < box.left)
+				box.left = destination.left;
+			if (destination.top < box.top)
+				box.top = destination.top;
+			if (destination.bottom > box.bottom)
+				box.bottom = destination.bottom;
+			if (destination.right > box.right)
+				box.right = destination.right;
+			currentX += (_characterSet.letters[letter].xAdvance);
+		}
+		return box;
+	}
+
 	inline uint32_t SpriteFont::Length(const std::string& text)
 	{
-		return 0;
+		game::Recti bbox = BoundingBox(text);
+		return bbox.right - bbox.left;
+	}
+
+	inline uint32_t SpriteFont::Height(const std::string& text)
+	{
+		game::Recti bbox = BoundingBox(text);
+		return bbox.bottom - bbox.top;
 	}
 
 	inline Texture2D SpriteFont::Texture() const
