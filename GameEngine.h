@@ -307,9 +307,9 @@ namespace game
 		// Do the game loop
 		do
 		{
-			geMouse.SaveState();
-			geMouse.ResetMouseValues();
-			geKeyboard.SaveState();
+			//geMouse.SaveState();
+			//geMouse.ResetMouseValues();
+			//geKeyboard.SaveState();
 
 			// Do window messages
 			_ProcessMessages();
@@ -336,6 +336,9 @@ namespace game
 			msElapsed = _updateTimer.Elapsed();
 			if (msElapsed >= _updateTime)
 			{
+				geMouse.SaveState();
+				geMouse.ResetMouseValues();
+				geKeyboard.SaveState();
 				_updateTimer.Reset();
 				Update(msElapsed);
 				upsTime += msElapsed;

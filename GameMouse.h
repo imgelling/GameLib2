@@ -154,12 +154,12 @@ namespace game
 
 		_position = { xPosition, yPosition };
 
-		_positionRelative = _position - _positionOld;
+		_positionRelative += _position - _positionOld;
 	}
 	
 	inline void Mouse::HandleMouseWheel(const int32_t delta) noexcept
 	{
-		_wheelDelta = delta;
+		_wheelDelta += delta;
 	}
 
 	inline void Mouse::SetMouseState(const uint32_t button, const bool pressed)
