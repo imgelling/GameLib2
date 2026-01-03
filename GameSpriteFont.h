@@ -8,6 +8,7 @@
 #include "GameErrors.h"
 #include "GameTexture2D.h"
 #include "GameMath.h"
+#include "GameColor.h"
 
 namespace game
 {
@@ -46,9 +47,10 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		uint32_t Length(const std::string &text);
-		uint32_t Height(const std::string& text);
-		game::Recti BoundingBox(const std::string& string);
+		uint32_t Length(const std::string &text) const;
+		uint32_t Height(const std::string& text) const;
+		game::Recti BoundingBox(const std::string& string) const;
+		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
@@ -178,7 +180,7 @@ namespace game
 	}
 
 
-	inline game::Recti SpriteFont::BoundingBox(const std::string& string)
+	inline game::Recti SpriteFont::BoundingBox(const std::string& string) const
 	{
 		Recti destination;
 		const uint64_t size = string.size();
@@ -210,16 +212,25 @@ namespace game
 		return box;
 	}
 
-	inline uint32_t SpriteFont::Length(const std::string& text)
+	inline uint32_t SpriteFont::Length(const std::string& text) const
 	{
 		game::Recti bbox = BoundingBox(text);
 		return bbox.right - bbox.left;
 	}
 
-	inline uint32_t SpriteFont::Height(const std::string& text)
+	inline uint32_t SpriteFont::Height(const std::string& text) const
 	{
 		game::Recti bbox = BoundingBox(text);
 		return bbox.bottom - bbox.top;
+	}
+
+	inline std::string SpriteFont::ColorTagWrap(const std::string& str, const game::Color& color)
+	{
+		std::string ret;
+		ret = "<color=" + color.hexidecimal + ">";
+		ret += str;
+		ret += "</color>";
+		return ret;
 	}
 
 	inline Texture2D SpriteFont::Texture() const
