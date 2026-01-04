@@ -164,6 +164,7 @@ namespace game
 
 	inline void Mouse::SetMouseState(const uint32_t button, const bool pressed)
 	{
+		hasFocus = true;
 		_newButtonState[button] = pressed;
 	}
 
@@ -190,8 +191,28 @@ namespace game
 
 	inline void Mouse::ShowMouse(const bool isShown)
 	{
+		static bool oldShown = true;
 #if defined(_WIN32)
-		ShowCursor(isShown);
+		if (isShown != oldShown)
+		{
+			ShowCursor(isShown);
+			//if (isShown)
+			//{
+			//	while (ShowCursor(TRUE) < 0)
+			//	{
+			//		// Keep incrementing until counter >= 0
+			//	}
+			//}
+			//else
+			//{
+			//	while (ShowCursor(FALSE) >= 0)
+			//	{
+			//		// Keep decrementing until counter < 0
+			//	}
+			//}
+			oldShown = isShown;
+		}
+		
 #elif defined(__linux__)
 		// show mouse
 #endif
