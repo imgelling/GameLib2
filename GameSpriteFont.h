@@ -47,8 +47,8 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		uint32_t Length(const std::string &text) const;
-		uint32_t Height(const std::string& text) const;
+		int32_t Width(const std::string &text) const;
+		int32_t Height(const std::string& text) const;
 		game::Recti BoundingBox(const std::string& string) const;
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 		bool Load(const std::string &filename, const std::string& texture);
@@ -212,13 +212,13 @@ namespace game
 		return box;
 	}
 
-	inline uint32_t SpriteFont::Length(const std::string& text) const
+	inline int32_t SpriteFont::Width(const std::string& text) const
 	{
 		game::Recti bbox = BoundingBox(text);
 		return bbox.right - bbox.left;
 	}
 
-	inline uint32_t SpriteFont::Height(const std::string& text) const
+	inline int32_t SpriteFont::Height(const std::string& text) const
 	{
 		game::Recti bbox = BoundingBox(text);
 		return bbox.bottom - bbox.top;
