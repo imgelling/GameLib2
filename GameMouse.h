@@ -61,9 +61,9 @@ namespace game
 			{
 				_mouseState.buttonState[i].pressed = false;
 				_mouseState.buttonState[i].released = false;
-				if (*_newButtonState[i] != *_oldButtonState[i])
+				if (_newButtonState[i] != _oldButtonState[i])
 				{
-					if (*_newButtonState[i])
+					if (_newButtonState[i])
 					{
 						_mouseState.buttonState[i].pressed = !_mouseState.buttonState[i].held;
 						_mouseState.buttonState[i].held = true;
@@ -74,7 +74,7 @@ namespace game
 						_mouseState.buttonState[i].held = false;
 					}
 				}
-				*_oldButtonState[i] = *_newButtonState[i];
+				_oldButtonState[i] = _newButtonState[i];
 			}
 
 			// Save position
@@ -91,8 +91,8 @@ namespace game
 		Pointi _position;
 		Pointi _positionOld;
 		Pointi _positionRelative;
-		std::shared_ptr<bool> _newButtonState[10];
-		std::shared_ptr<bool> _oldButtonState[10];
+		bool _newButtonState[10];
+		bool _oldButtonState[10];
 		MouseState _mouseState;// buttonState[10];
 		int32_t _userMouseParams[3];
 	};
@@ -105,10 +105,10 @@ namespace game
 		_wheelDelta = 0;
 		for (uint8_t button = 0; button < 10; button++)
 		{
-			_newButtonState[button] = std::make_shared<bool>();
-			//_newButtonState[button] = false;
-			//_oldButtonState[button] = false;
-			_oldButtonState[button] = std::make_shared<bool>();
+			//_newButtonState[button] = std::make_shared<bool>();
+			_newButtonState[button] = false;
+			_oldButtonState[button] = false;
+			//_oldButtonState[button] = std::make_shared<bool>();
 		}
 	}
 
@@ -168,7 +168,7 @@ namespace game
 	inline void Mouse::SetMouseState(const uint32_t button, const bool pressed)
 	{
 		hasFocus = true;
-		*_newButtonState[button] = pressed;
+		_newButtonState[button] = pressed;
 	}
 
 	inline void Mouse::ResetMouseValues() noexcept
