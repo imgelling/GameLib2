@@ -1,14 +1,15 @@
 #pragma once
-#include "GameMath.h"
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <cstdint>
+#include <memory>
+#include "GameMath.h"
 
-#define geM_LEFT   0
-#define geM_MIDDLE 1
-#define geM_RIGHT  2
-#define geM_X1 geMOUSE_RIGHT + 1
-#define geM_X2 geMOUSE_X1 + 1
+constexpr auto geM_LEFT = 0;
+constexpr auto geM_MIDDLE = 1;
+constexpr auto geM_RIGHT = 2;
+constexpr auto geM_X1 = geM_RIGHT + 1;
+constexpr auto geM_X2 = geM_X1 + 1;
 
 namespace game
 {
@@ -60,9 +61,9 @@ namespace game
 			{
 				_mouseState.buttonState[i].pressed = false;
 				_mouseState.buttonState[i].released = false;
-				if (_newButtonState[i] != _oldButtonState[i])
+				if (*_newButtonState[i] != *_oldButtonState[i])
 				{
-					if (_newButtonState[i])
+					if (*_newButtonState[i])
 					{
 						_mouseState.buttonState[i].pressed = !_mouseState.buttonState[i].held;
 						_mouseState.buttonState[i].held = true;
@@ -73,7 +74,7 @@ namespace game
 						_mouseState.buttonState[i].held = false;
 					}
 				}
-				_oldButtonState[i] = _newButtonState[i];
+				*_oldButtonState[i] = *_newButtonState[i];
 			}
 
 			// Save position
@@ -90,8 +91,8 @@ namespace game
 		Pointi _position;
 		Pointi _positionOld;
 		Pointi _positionRelative;
-		bool _newButtonState[10];
-		bool _oldButtonState[10];
+		std::shared_ptr<bool> _newButtonState[10];
+		std::shared_ptr<bool> _oldButtonState[10];
 		MouseState _mouseState;// buttonState[10];
 		int32_t _userMouseParams[3];
 	};
@@ -104,8 +105,10 @@ namespace game
 		_wheelDelta = 0;
 		for (uint8_t button = 0; button < 10; button++)
 		{
-			_newButtonState[button] = false;
-			_oldButtonState[button] = false;
+			_newButtonState[button] = std::make_shared<bool>();
+			//_newButtonState[button] = false;
+			//_oldButtonState[button] = false;
+			_oldButtonState[button] = std::make_shared<bool>();
 		}
 	}
 
@@ -165,7 +168,7 @@ namespace game
 	inline void Mouse::SetMouseState(const uint32_t button, const bool pressed)
 	{
 		hasFocus = true;
-		_newButtonState[button] = pressed;
+		*_newButtonState[button] = pressed;
 	}
 
 	inline void Mouse::ResetMouseValues() noexcept
