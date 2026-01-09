@@ -50,6 +50,7 @@ namespace game
 		int32_t Width(const std::string &text) const;
 		int32_t Height(const std::string& text) const;
 		game::Recti BoundingBox(const std::string& string) const;
+		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height);
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
@@ -210,6 +211,13 @@ namespace game
 			currentX += (_characterSet.letters[letter].xAdvance);
 		}
 		return box;
+	}
+
+	inline void SpriteFont::GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height)
+	{
+		boundingBox = BoundingBox(string);
+		width = boundingBox.right - boundingBox.left;
+		height = boundingBox.bottom - boundingBox.top;
 	}
 
 	inline int32_t SpriteFont::Width(const std::string& text) const
