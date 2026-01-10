@@ -55,7 +55,10 @@ namespace game
 
 		void TextInputMode(const bool textInputMode, const uint32_t restrictions = GAME_TEXT_INPUT_ALL);
 		std::string GetTextInput() const;
+		// add a set cursor position also
 		uint32_t GetCursorPosition() const;
+
+		// add a variable to control cursor position too
 		void SetTextInputText(const std::string& text) noexcept;
 		
 		std::string GetCompletedTextInput() const;
