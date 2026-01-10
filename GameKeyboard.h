@@ -55,26 +55,27 @@ namespace game
 
 		void TextInputMode(const bool textInputMode, const uint32_t restrictions = GAME_TEXT_INPUT_ALL);
 		std::string GetTextInput() const;
+		uint32_t GetCursorPosition() const;
+		void SetTextInputText(const std::string& text) noexcept;
+		
 		std::string GetCompletedTextInput() const;
 		bool IsTextInput() const;
 		uint32_t GetTabSize() const;
 		void SetTabSize(const uint32_t tabSize);
-		uint32_t GetCursorPosition() const;
-		void SetTextInputText(const std::string& text) noexcept;
 		void ResetTextInputTextChange() noexcept { _textInputTextChange = false; }
 		bool TextInputTextChange() const noexcept { return _textInputTextChange; }
 	private:
-		bool _textInputTextChange;
 		void _UpdateText(const uint8_t key, const uint8_t shiftedKey);
 		bool* _newKeyState;
 		bool* _oldKeyState;
 		KeyboardButtonState _keyState[256];
-		bool _isTextInputMode;
 		std::string _textInput;
 		std::string _completedText;
 		uint32_t _tabSize;
 		uint32_t _cursorPosition;
 		uint32_t _restrictedInput;
+		bool _isTextInputMode;
+		bool _textInputTextChange;
 		//std::vector<std::string> _textBuffer;
 		//uint32_t _textBufferPosition;
 		
@@ -120,7 +121,7 @@ namespace game
 		return _textInput;
 	}
 
-	inline std::string Keyboard::GetCompletedTextInput() const
+	inline std::string Keyboard::GetCompletedTextInput() const // needed
 	{
 		return _completedText;
 	}

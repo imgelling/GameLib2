@@ -21,10 +21,11 @@ namespace game
 	};
 	struct MouseState
 	{
-		MouseButtonState buttonState[10];
+		MouseButtonState buttonState[10]; // 52
 		game::Pointi position;
 		game::Pointi positionDelta; // may need to be cached between frames?
 		int32_t wheelDelta = 0;
+		//std::vector<uint8_t> test; // 48 bytes
 	};
 
 	class Mouse
