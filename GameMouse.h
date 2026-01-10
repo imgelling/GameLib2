@@ -21,11 +21,10 @@ namespace game
 	};
 	struct MouseState
 	{
-		MouseButtonState buttonState[10]; // 52
+		MouseButtonState *buttonState;// [10] ; // 52  // now 32
 		game::Pointi position;
 		game::Pointi positionDelta; // may need to be cached between frames?
 		int32_t wheelDelta = 0;
-		//std::vector<uint8_t> test; // 48 bytes
 	};
 
 	class Mouse
@@ -92,8 +91,8 @@ namespace game
 		Pointi _position;
 		Pointi _positionOld;
 		Pointi _positionRelative;
-		bool _newButtonState[10];
-		bool _oldButtonState[10];
+		bool *_newButtonState;// [10] ;
+		bool *_oldButtonState;// [10] ;
 		MouseState _mouseState;// buttonState[10];
 		int32_t _userMouseParams[3];
 	};
@@ -102,6 +101,10 @@ namespace game
 	{
 		// Save the user mouse parameters
 		SystemParametersInfo(SPI_GETMOUSE, 0, _userMouseParams, 0);
+		// maybe set to nullptr just incase failure
+		_newButtonState = new bool[10];
+		_oldButtonState = new bool[10];
+		_mouseState.buttonState = new MouseButtonState[10];
 
 		_wheelDelta = 0;
 		for (uint8_t button = 0; button < 10; button++)
@@ -117,6 +120,10 @@ namespace game
 	{
 		// Restore user mouse parameters
 		SystemParametersInfo(SPI_SETMOUSE, 0, _userMouseParams, SPIF_SENDCHANGE);
+
+		if (_newButtonState) delete [] _newButtonState;
+		if (_oldButtonState) delete[] _oldButtonState;
+		if (_mouseState.buttonState) delete[] _mouseState.buttonState;
 	}
 
 	inline void Mouse::UseMouseAcceleration(const bool useAcceleration) noexcept

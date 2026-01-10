@@ -68,7 +68,7 @@ namespace game
 		void _UpdateText(const uint8_t key, const uint8_t shiftedKey);
 		bool* _newKeyState;
 		bool* _oldKeyState;
-		KeyboardButtonState _keyState[256];
+		KeyboardButtonState* _keyState;// [256] ;
 		std::string _textInput;
 		std::string _completedText;
 		uint32_t _tabSize;
@@ -95,8 +95,10 @@ namespace game
 	{
 		_newKeyState = new bool[256];
 		_oldKeyState = new bool[256];
+		_keyState = new KeyboardButtonState[256];
 		ZeroMemory(_newKeyState, 256);
 		ZeroMemory(_oldKeyState, 256);
+		ZeroMemory(_keyState, sizeof(KeyboardButtonState) * 256);
 		_isTextInputMode = false;
 		_tabSize = 5;
 		_cursorPosition = 0;
@@ -107,6 +109,7 @@ namespace game
 
 	inline Keyboard::~Keyboard()
 	{
+		delete[] _keyState;
 		delete[] _newKeyState;
 		delete[] _oldKeyState;
 	}
