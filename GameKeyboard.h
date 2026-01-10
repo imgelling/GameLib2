@@ -13,6 +13,13 @@
 
 namespace game
 {
+	struct KeyboardButtonState
+	{
+		bool pressed = false;
+		bool released = false;
+		bool held = false;
+	};
+
 	class Keyboard
 	{
 	public:
@@ -57,17 +64,11 @@ namespace game
 		void ResetTextInputTextChange() noexcept { _textInputTextChange = false; }
 		bool TextInputTextChange() const noexcept { return _textInputTextChange; }
 	private:
-		struct _KeyboardButtonState
-		{
-			bool pressed = false;
-			bool released = false;
-			bool held = false;
-		};
 		bool _textInputTextChange;
 		void _UpdateText(const uint8_t key, const uint8_t shiftedKey);
 		bool* _newKeyState;
 		bool* _oldKeyState;
-		_KeyboardButtonState _keyState[256];
+		KeyboardButtonState _keyState[256];
 		bool _isTextInputMode;
 		std::string _textInput;
 		std::string _completedText;
