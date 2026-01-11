@@ -149,7 +149,7 @@ namespace game
 		// needs to be called for them.
 		void geClear(const uint32_t bufferFlags, const Color color);  // probably need a value for depth/stencil
 		bool geCreateTexture(Texture2D& texture);
-		bool geLoadTexture(const std::string fileName, Texture2D& texture);
+		bool geLoadTexture(const std::string &fileName, Texture2D& texture);
 		void geUnLoadTexture(Texture2D& texture);
 		bool geLoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool geLoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader);
@@ -497,7 +497,7 @@ namespace game
 		return false;
 	}
 
-	inline bool Engine::geLoadTexture(const std::string fileName, Texture2D &texture)
+	inline bool Engine::geLoadTexture(const std::string &fileName, Texture2D &texture)
 	{
 		if (_renderer)
 		{

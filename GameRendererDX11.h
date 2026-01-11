@@ -24,7 +24,7 @@ namespace game
 		void HandleWindowResize(const uint32_t width, const uint32_t height);
 		void FillOutRendererInfo() {}
 		bool CreateTexture(Texture2D& texture);
-		bool LoadTexture(std::string fileName, Texture2D& texture);
+		bool LoadTexture(const std::string& fileName, Texture2D& texture);
 		void UnLoadTexture(Texture2D& texture);
 		bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader)
@@ -286,7 +286,7 @@ namespace game
 		_d3d11DeviceContext->RSSetViewports(1, &viewPort);
 	}
 
-	inline bool RendererDX11::LoadTexture(std::string fileName, Texture2D& texture)
+	inline bool RendererDX11::LoadTexture(const std::string& fileName, Texture2D& texture)
 	{
 		ImageLoader loader;
 		void* data = nullptr;

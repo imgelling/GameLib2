@@ -101,7 +101,7 @@ namespace game
 		void HandleWindowResize(const uint32_t width, const uint32_t height);
 		void FillOutRendererInfo();
 		bool CreateTexture(Texture2D& texture);
-		bool LoadTexture(std::string fileName, Texture2D &texture);
+		bool LoadTexture(const std::string& fileName, Texture2D &texture);
 		void UnLoadTexture(Texture2D& texture);
 		bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader);
@@ -917,7 +917,7 @@ namespace game
 		return true;
 	}
 
-	inline bool RendererGL::LoadTexture(std::string fileName, Texture2D &texture)
+	inline bool RendererGL::LoadTexture(const std::string& fileName, Texture2D &texture)
 	{
 		void* data = nullptr;
 		uint32_t width = 0;

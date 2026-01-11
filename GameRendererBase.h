@@ -23,7 +23,7 @@ namespace game
 		virtual void HandleWindowResize(const uint32_t width, const uint32_t height) = 0;
 		virtual void FillOutRendererInfo() = 0;
 		virtual bool CreateTexture(Texture2D& texture) = 0;
-		virtual bool LoadTexture(std::string fileName, Texture2D& texture) = 0;
+		virtual bool LoadTexture(const std::string& fileName, Texture2D& texture) = 0;
 		virtual void UnLoadTexture(Texture2D& texture) = 0;
 		virtual bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader) = 0;
 		virtual bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader) = 0;

@@ -302,7 +302,7 @@ namespace game
 		return true;
 	};
 
-	inline bool RendererDX10::LoadTexture(std::string fileName, Texture2D& texture)
+	inline bool RendererDX10::LoadTexture(const std::string &fileName, Texture2D& texture)
 	{
 		ImageLoader loader;
 		void* data = nullptr;
