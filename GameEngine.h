@@ -869,6 +869,32 @@ namespace game
 		case WM_XBUTTONDOWN: SetCapture(hWnd); enginePointer->geMouse.hasFocus = true; enginePointer->geMouse.hasFocus = true; enginePointer->geMouse.SetMouseState(GET_XBUTTON_WPARAM(wParam) + geM_RIGHT, true); return true;
 		case WM_XBUTTONUP: ReleaseCapture(); enginePointer->geMouse.SetMouseState(GET_XBUTTON_WPARAM(wParam) + geM_RIGHT, false); return true;
 		//case WM_SIZING: break;
+			//WMSZ_BOTTOM
+			//	6
+			//	Bottom edge
+			//	WMSZ_BOTTOMLEFT
+			//	7
+			//	Bottom - left corner
+			//	WMSZ_BOTTOMRIGHT
+			//	8
+			//	Bottom - right corner
+			//	WMSZ_LEFT
+			//	1
+			//	Left edge
+			//	WMSZ_RIGHT
+			//	2
+			//	Right edge
+			//	WMSZ_TOP
+			//	3
+			//	Top edge
+			//	WMSZ_TOPLEFT
+			//	4
+			//	Top - left corner
+			//	WMSZ_TOPRIGHT
+			//	5
+			//	Top - right corner
+			// return true if we handled it
+			// break
 		case WM_SIZE: 
 		{
 			switch (wParam)
