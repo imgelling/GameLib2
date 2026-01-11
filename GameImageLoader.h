@@ -1,8 +1,13 @@
 #if !defined(GAMEIMAGELOADER_H)
 #define GAMEIMAGELOADER_H
-#include <wrl.h>
 #include <wincodec.h>
 
+#include <malloc.h>
+#include <ocidl.h>
+#include <Windows.h>
+#include <wrl/client.h>
+#include <cstdint>
+#include <iostream>
 #include "GameHelpers.h"
 
 namespace game

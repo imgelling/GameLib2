@@ -327,7 +327,7 @@ namespace game
 			for (int i = 0; i < 24; i++)
 			{
 				uint32_t k = r & (1 << i) ? 255 : 0;
-				_fontROM[py * 128 + px] = k;
+				_fontROM[py * 128 + px] = (uint8_t)k;
 				if (++py == 48) { px++; py = 0; }
 			}
 		}

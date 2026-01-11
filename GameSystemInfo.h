@@ -121,21 +121,21 @@ namespace game
         int nLogicalProcessors = 0;
         int nAPICPhysicalID = 0;
         int nFeatureInfo = 0;
-        int nCacheLineSize = 0;
-        int nL2Associativity = 0;
-        int nCacheSizeK = 0;
-        int nPhysicalAddress = 0;
-        int nVirtualAddress = 0;
-        int nRet = 0;
+        //int nCacheLineSize = 0;
+        //int nL2Associativity = 0;
+        //int nCacheSizeK = 0;
+        //int nPhysicalAddress = 0;
+        //int nVirtualAddress = 0;
+        //int nRet = 0;
 
-        int nCores = 0;
-        int nCacheType = 0;
-        int nCacheLevel = 0;
-        int nMaxThread = 0;
-        int nSysLineSize = 0;
-        int nPhysicalLinePartitions = 0;
-        int nWaysAssociativity = 0;
-        int nNumberSets = 0;
+        //int nCores = 0;
+        //int nCacheType = 0;
+        //int nCacheLevel = 0;
+        //int nMaxThread = 0;
+        //int nSysLineSize = 0;
+        //int nPhysicalLinePartitions = 0;
+        //int nWaysAssociativity = 0;
+        //int nNumberSets = 0;
 
         unsigned    nIds, nExIds, i;
 
@@ -175,13 +175,13 @@ namespace game
         bool    b64Available = false;
         bool    b3DNowExt = false;
         bool    b3DNow = false;
-        bool    bNestedPaging = false;
-        bool    bLBRVisualization = false;
-        bool    bFP128 = false;
-        bool    bMOVOptimization = false;
+        //bool    bNestedPaging = false;
+        //bool    bLBRVisualization = false;
+        //bool    bFP128 = false;
+        //bool    bMOVOptimization = false;
 
-        bool    bSelfInit = false;
-        bool    bFullyAssociative = false;
+        //bool    bSelfInit = false;
+        //bool    bFullyAssociative = false;
 
         // __cpuid with an InfoType argument of 0 returns the number of
         // valid Ids in CPUInfo[0] and the CPU identification string in

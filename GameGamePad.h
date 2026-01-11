@@ -53,7 +53,7 @@ namespace game
 		int32_t Id(const uint32_t pad) const;
 		void Connection(bool& isConnected, bool& wasConnected, const uint32_t pad) const;
 
-		void SetRumble(const Vector2f amount, const uint32_t pad);
+		//void SetRumble(const Vector2f amount, const uint32_t pad);
 		void Update();
 		// negative dead zone will set default, otherwise 0-32767 valid
 		void SetDeadZone(const int32_t left, const int32_t right, const uint32_t pad);
@@ -306,10 +306,10 @@ namespace game
 		return normalizedPosition;
 	}
 
-	inline void GamePad::SetRumble(const Vector2f amount, const uint32_t pad)
-	{
+	//inline void GamePad::SetRumble(const Vector2f amount, const uint32_t pad)
+	//{
 
-	}
+	//}
 }
 
 

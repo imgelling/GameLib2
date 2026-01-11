@@ -609,7 +609,7 @@ namespace game
 		if (geLogger == nullptr)
 		{
 			throw std::logic_error("Must set a logger with geSetLogger() before calling geCreate().");
-			return false;
+			//return false;
 		}
 
 		geLogger->Header(_attributes.WindowTitle, _attributes.GameVersion);

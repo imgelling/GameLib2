@@ -79,7 +79,7 @@ namespace game
 		DXGI_SWAP_CHAIN_DESC scd = { 0 };
 		D3D11_VIEWPORT viewPort = { 0 };
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> backBuffer;
-		uint32_t debug = 0;
+		//uint32_t debug = 0; // not used
 		D3D11_TEXTURE2D_DESC depthStencilDesc = { 0 };
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11DepthStencilBuffer;
 

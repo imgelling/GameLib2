@@ -63,7 +63,7 @@ namespace game
 		}
 		catch (...)
 		{
-			ret = -1;
+			ret = 0;// -1;
 		}
 		_mutex.unlock();
 		return ret;

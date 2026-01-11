@@ -2,11 +2,11 @@
 #include <string>
 #include <vector>
 
+#include <cstdint>
 #include "GameAttributes.h"
 #include "GameColor.h"
 #include "GameLogger.h"
 #include "GameShader.h"
-#include "GameSystemInfo.h"
 #include "GameTexture2D.h"
 #include "GameWindow.h"
 
@@ -30,6 +30,7 @@ namespace game
 		virtual bool LoadTextShader(const std::string shaderText, const std::string vertexEntryPoint, const std::string fragmentEntryPoint, Shader& shader) = 0;
 		virtual void UnLoadShader(Shader& shader) = 0;
 		virtual void Clear(const uint32_t bufferFlags, const Color color) = 0;
+		virtual ~RendererBase() {}
 	protected:
 		Attributes _attributes;
 		std::vector<std::string> _extensionsAvailable;

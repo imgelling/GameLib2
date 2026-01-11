@@ -55,10 +55,10 @@ namespace game
 			out[1] = hexDigits[byte & 0x0F];        // low nibble)
 			};
 		hexColor[0] = '#';
-		byteToHex(r, &hexColor[1]);
-		byteToHex(g, &hexColor[3]);
-		byteToHex(b, &hexColor[5]);
-		byteToHex(a, &hexColor[7]);
+		byteToHex((uint8_t)r, &hexColor[1]);
+		byteToHex((uint8_t)g, &hexColor[3]);
+		byteToHex((uint8_t)b, &hexColor[5]);
+		byteToHex((uint8_t)a, &hexColor[7]);
 		hexColor[9] = '\0';
 		return std::string(hexColor);
 	}
