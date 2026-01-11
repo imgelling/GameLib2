@@ -876,23 +876,25 @@ namespace game
 			case SIZE_MINIMIZED:
 				enginePointer->geIsMinimized = true;
 				enginePointer->geIsMaximized = false;
-				enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
+				/*enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); */
+				enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_MAXIMIZED:
 				enginePointer->geIsMinimized = false;
 				enginePointer->geIsMaximized = true;
-				enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
+				//enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
+				enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_RESTORED:
 				if (enginePointer->geIsMaximized)
 				{
-					enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
+					enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 					enginePointer->geIsMaximized = false;
 				}
-				if (enginePointer->geIsFullScreen)
-				{
+				//if (enginePointer->geIsFullScreen)
+				//{
 					enginePointer->geIsFullScreen = false;
-				}
+				//}
 				enginePointer->geIsMinimized = false;
 				break;
 			default:
