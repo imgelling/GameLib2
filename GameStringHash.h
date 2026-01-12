@@ -34,6 +34,11 @@ namespace game
 			hash = _ComputeHash(str.c_str());
 			this->string = str;
 		}
+		StringHash(const char* str)
+		{
+			string = str;
+			hash = _ComputeHash(str);
+		}
 		// Overloaded assignment operator
 		StringHash& operator=(const std::string& other)
 		{
