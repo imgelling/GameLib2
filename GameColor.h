@@ -232,9 +232,14 @@ namespace game
 		const Color Blue50(0, 0, 1.0f, 0.50f);
 		const Color Blue25(0, 0, 1.0f, 0.25f);
 
+		const Color Black(0, 0, 0, 1.0f);
+		const Color Black75(0, 0, 0, 0.75f);
+		const Color Black50(0, 0, 0, 0.50f);
+		const Color Black25(0, 0, 0, 0.25f);
+
 		const Color CornFlowerBlue((uint32_t)100, 149, 237, 255);
 		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
-		const Color Black(0, 0, 0, 1.0f);
+
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
 		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
