@@ -2,6 +2,9 @@
 #define GAMECOLOR_H
 
 #include <string>
+#include <cmath>
+#include <cstdint>
+#include "Game.h"
 
 
 namespace game
@@ -210,15 +213,31 @@ namespace game
 	namespace Colors
 	{
 		const Color White(1.0f, 1.0f, 1.0f, 1.0f);
+		const Color White75(1.0f, 1.0f, 1.0f, 0.75f);
+		const Color White50(1.0f, 1.0f, 1.0f, 0.75f);
+		const Color White25(1.0f, 1.0f, 1.0f, 0.75f);
+
 		const Color Red(1.0f, 0.0f, 0, 1.0f);
+		const Color Red75(1.0f, 0.0f, 0, 0.75f);
+		const Color Red50(1.0f, 0.0f, 0, 0.50f);
+		const Color Red25(1.0f, 0.0f, 0, 0.25f);
+
 		const Color Green(0, 1.0f, 0, 1.0f);
+		const Color Green75(0, 1.0f, 0, 0.75f);
+		const Color Green50(0, 1.0f, 0, 0.50f);
+		const Color Green25(0, 1.0f, 0, 0.25f);
+
 		const Color Blue(0, 0, 1.0f, 1.0f);
+		const Color Blue75(0, 0, 1.0f, 0.75f);
+		const Color Blue50(0, 0, 1.0f, 0.50f);
+		const Color Blue25(0, 0, 1.0f, 0.25f);
+
 		const Color CornFlowerBlue((uint32_t)100, 149, 237, 255);
 		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
 		const Color Black(0, 0, 0, 1.0f);
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
-		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
+		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
 		const Color DarkGray(0.25f, 0.25f, 0.25f, 1.0f);
 		const Color DarkRed(0.75f, 0.0f, 0, 1.0f);
 		const Color DarkOrange(1.0f, 0.55f, 0, 1.0f);
