@@ -214,8 +214,8 @@ namespace game
 	{
 		const Color White(1.0f, 1.0f, 1.0f, 1.0f);
 		const Color White75(1.0f, 1.0f, 1.0f, 0.75f);
-		const Color White50(1.0f, 1.0f, 1.0f, 0.75f);
-		const Color White25(1.0f, 1.0f, 1.0f, 0.75f);
+		const Color White50(1.0f, 1.0f, 1.0f, 0.50f);
+		const Color White25(1.0f, 1.0f, 1.0f, 0.25f);
 		const Color White10(1.0f, 1.0f, 1.0f, 0.10f);
 
 		const Color Red(1.0f, 0.0f, 0, 1.0f);
@@ -244,6 +244,11 @@ namespace game
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
 		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
+		const Color LightGray75(0.75f, 0.75f, 0.75f, 0.75f);
+		const Color LightGray50(0.75f, 0.75f, 0.75f, 0.55f);
+		const Color LightGray25(0.75f, 0.75f, 0.75f, 0.25f);
+		const Color LightGray10(0.75f, 0.75f, 0.75f, 0.10f);
+
 		const Color DarkGray(0.25f, 0.25f, 0.25f, 1.0f);
 		const Color DarkRed(0.75f, 0.0f, 0, 1.0f);
 		const Color DarkOrange(1.0f, 0.55f, 0, 1.0f);
