@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <sstream>
 
+#include "GameSystemInfo.h"
 #include "GameImageLoader.h"
 #include "GameRendererBase.h"
 #include "GameShader.h"

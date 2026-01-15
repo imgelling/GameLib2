@@ -216,6 +216,7 @@ namespace game
 		const Color White75(1.0f, 1.0f, 1.0f, 0.75f);
 		const Color White50(1.0f, 1.0f, 1.0f, 0.75f);
 		const Color White25(1.0f, 1.0f, 1.0f, 0.75f);
+		const Color White10(1.0f, 1.0f, 1.0f, 0.10f);
 
 		const Color Red(1.0f, 0.0f, 0, 1.0f);
 		const Color Red75(1.0f, 0.0f, 0, 0.75f);

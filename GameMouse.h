@@ -21,7 +21,7 @@ namespace game
 	};
 	struct MouseState
 	{
-		MouseButtonState *buttonState;// [10] ; // 52  // now 32
+		MouseButtonState *buttonState = nullptr;// [10] ; // 52  // now 32
 		game::Pointi position;
 		game::Pointi positionDelta; // may need to be cached between frames?
 		int32_t wheelDelta = 0;
