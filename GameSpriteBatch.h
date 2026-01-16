@@ -2412,23 +2412,23 @@ namespace game
 		for (uint64_t i = 0; i < size; ++i)
 		{
 			const uint8_t letter = Str[i];
-			const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
-			const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+			const uint32_t widthOfLetter = font.characterSet.letters[letter].width;
+			const uint32_t heightOfLetter = font.characterSet.letters[letter].height;
 
-			source.left = font._characterSet.letters[letter].x;
-			source.top = font._characterSet.letters[letter].y;
+			source.left = font.characterSet.letters[letter].x;
+			source.top = font.characterSet.letters[letter].y;
 			source.right = source.left + widthOfLetter;
 			source.bottom = source.top + heightOfLetter;
 
-			destination.left = currentX + (font._characterSet.letters[letter].xOffset * _scaleX);
-			destination.top = currentY + (font._characterSet.letters[letter].yOffset * _scaleY);
+			destination.left = currentX + (font.characterSet.letters[letter].xOffset * _scaleX);
+			destination.top = currentY + (font.characterSet.letters[letter].yOffset * _scaleY);
 
 			destination.right = destination.left + (widthOfLetter * _scaleX);
 			destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
 			Draw(font.Texture(), destination, source, color);
 
-			currentX += (font._characterSet.letters[letter].xAdvance * _scaleX);
+			currentX += (font.characterSet.letters[letter].xAdvance * _scaleX);
 		}
 	}
 
@@ -2586,22 +2586,22 @@ namespace game
 			for (uint64_t i = 0; i < size; ++i)
 			{
 				const uint8_t letter = s.text[i];
-				const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
-				const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+				const uint32_t widthOfLetter = font.characterSet.letters[letter].width;
+				const uint32_t heightOfLetter = font.characterSet.letters[letter].height;
 
-				source.left = font._characterSet.letters[letter].x;
-				source.top = font._characterSet.letters[letter].y;
+				source.left = font.characterSet.letters[letter].x;
+				source.top = font.characterSet.letters[letter].y;
 				source.right = source.left + widthOfLetter;
 				source.bottom = source.top + heightOfLetter;
 
-				destination.left = currentX+(font._characterSet.letters[letter].xOffset * _scaleX);
-				destination.top = currentY+(font._characterSet.letters[letter].yOffset * _scaleY);
+				destination.left = currentX+(font.characterSet.letters[letter].xOffset * _scaleX);
+				destination.top = currentY+(font.characterSet.letters[letter].yOffset * _scaleY);
 				destination.right = destination.left + (widthOfLetter * _scaleX);
 				destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
 				Draw(font.Texture(), destination, source, s.color);
 
-				currentX += (font._characterSet.letters[letter].xAdvance * _scaleX);
+				currentX += (font.characterSet.letters[letter].xAdvance * _scaleX);
 
 			}
 		}
