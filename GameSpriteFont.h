@@ -53,6 +53,24 @@ namespace game
 		game::Recti BoundingBox(const std::string& string) const;
 		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const;
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
+		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
+		{
+			int32_t offset = 0;
+			int32_t currentX = 0;
+
+			if (cursorPosition <= 0) return 0;
+
+			for (uint64_t i = 0; i < cursorPosition; i++)
+			{
+				const uint8_t letter = text[i];
+				const uint32_t widthOfLetter = characterSet.letters[letter].width;
+				offset = currentX + characterSet.letters[letter].xOffset;
+				offset = offset + (widthOfLetter);
+				if (letter == ' ') offset += characterSet.letters[letter].xAdvance;
+				currentX += (characterSet.letters[letter].xAdvance);// *_scaleX);
+			}
+			return offset;
+		}
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
