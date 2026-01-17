@@ -88,10 +88,11 @@ namespace game
 	{
 		_textInput = text;
 		const uint64_t size = text.size();
-		for (uint32_t len = 0; len < size; len++)
-		{
-			_cursorPosition++; // lol just add it
-		}
+		_cursorPosition = (uint32_t)size;
+		//for (uint32_t len = 0; len < size; len++)
+		//{
+		//	_cursorPosition++; // lol just add it
+		//}
 	}
 
 	inline Keyboard::Keyboard()
