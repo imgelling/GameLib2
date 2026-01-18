@@ -937,7 +937,16 @@ namespace game
 			return 0;
 		}
 
-		case WM_KEYDOWN: enginePointer->geKeyboard.SetKeyState((uint8_t)wParam, true); return 0;
+		case WM_KEYDOWN:
+		{
+			int repeatCount = lParam & 0xFFFF;
+			for (int i = 0; i < repeatCount; i++)
+			{
+				enginePointer->geKeyboard.SetKeyState((uint8_t)wParam, false);
+				enginePointer->geKeyboard.SetKeyState((uint8_t)wParam, true);
+			}
+			return 0;
+		}
 		case WM_KEYUP: enginePointer->geKeyboard.SetKeyState((uint8_t)wParam, false); return 0;
 			//case WM_SYSKEYDOWN: ptrPGE->olc_UpdateKeyState(mapKeys[wParam], true);						return 0;
 			//case WM_SYSKEYUP:	ptrPGE->olc_UpdateKeyState(mapKeys[wParam], false);
