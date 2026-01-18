@@ -40,6 +40,11 @@ namespace game
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
 
+		void SetAlpha(const float_t alpha)
+		{
+			Set(rf, gf, bf, alpha);
+		}
+
 		std::string ToHex() const;
 		std::string hexidecimal;
 

@@ -57,6 +57,12 @@ namespace game
 		std::string GetTextInput() const;
 		// add a set cursor position also
 		uint32_t GetCursorPosition() const;
+		void SetCursorPosition(const uint32_t pos)
+		{
+			_cursorPosition = pos;
+			if (_cursorPosition < 0) _cursorPosition = 0;
+			if (_cursorPosition > _textInput.length()) _cursorPosition = (int32_t)_textInput.length();
+		}
 
 		// add a variable to control cursor position too
 		void SetTextInputText(const std::string& text) noexcept;
