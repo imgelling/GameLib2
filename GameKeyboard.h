@@ -197,6 +197,7 @@ namespace game
 
 	inline void Keyboard::SetKeyState(const uint8_t key, const bool state)
 	{
+		_textInputTextChange = false;
 		// Ignore repeats // TODO: may need fixed
 		if (_newKeyState[key] == state)
 		{
@@ -206,10 +207,10 @@ namespace game
 		// Save the states
 		_oldKeyState[key] = _newKeyState[key];
 		_newKeyState[key] = state;
-
 		// If we are in text input mode, process that data
 		if (_isTextInputMode)
 		{
+			//_textInputTextChange = false;
 			// Was a release captured? Ignore it
 			if (!state)
 			{
@@ -277,20 +278,20 @@ namespace game
 
 			// If return is pressed, we need to store the current text
 			// in the history/buffer and give a new line
-			if (key == geK_RETURN)
-			{
-				//if (_textInput.size() == 0)
-				//{
-				//	return;
-				//}
-				_completedText = _textInput;
-				//_textBuffer.emplace_back(_textInput);
-				_textInput = "";
-				_cursorPosition = 0;
-				//_textBufferPosition = (uint32_t)_textBuffer.size();
-				_textInputTextChange = true;
-				return;
-			}
+			//if (key == geK_RETURN)
+			//{
+			//	//if (_textInput.size() == 0)
+			//	//{
+			//	//	return;
+			//	//}
+			//	_completedText = _textInput;
+			//	//_textBuffer.emplace_back(_textInput);
+			//	_textInput = "";
+			//	_cursorPosition = 0;
+			//	//_textBufferPosition = (uint32_t)_textBuffer.size();
+			//	_textInputTextChange = true;
+			//	return;
+			//}
 
 			// Backspace key
 			if (key == geK_BACK)
