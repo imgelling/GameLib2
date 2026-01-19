@@ -40,9 +40,39 @@ namespace game
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
 
-		void SetAlpha(const float_t alpha)
+		void SetAlpha(const float_t alpha, Color* out = nullptr)
 		{
-			Set(rf, gf, bf, alpha);
+			if (out)
+			{
+				out->Set(rf, gf, bf, alpha);
+			}
+			else
+			{
+				Set(rf, gf, bf, alpha);
+			}
+		}
+
+		void SetAlpha(const double alpha, Color *out = nullptr)
+		{
+			if (out)
+			{
+				out->Set((double)rf, (double)gf, (double)bf, alpha);
+			}
+			else
+			{
+				Set((double)rf, (double)gf, (double)bf, alpha);
+			}
+		}
+		void Set(const uint32_t alpha, Color* out = nullptr)
+		{
+			if (out)
+			{
+				out->Set(r, g, b, alpha);
+			}
+			else
+			{
+				Set(r, g, b, alpha);
+			}
 		}
 
 		std::string ToHex() const;
