@@ -198,7 +198,7 @@ namespace game
 	inline void Keyboard::SetKeyState(const uint8_t key, const bool state)
 	{
 		_textInputTextChange = false;
-		// Ignore repeats // TODO: may need fixed
+		// Ignore repeats
 		if (_newKeyState[key] == state)
 		{
 			return;
