@@ -23,7 +23,7 @@ namespace game
 	{
 	public:
 		std::string string;
-		uint64_t hash = 0;
+		uint64_t hash;
 		StringHash()
 		{
 			string = "";
