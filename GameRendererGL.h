@@ -624,14 +624,7 @@ namespace game
 		}
 		else
 		{
-		//	glDisable(GL_MULTISAMPLE);
-		//	// Causes error 
-		//	Texture state usage warning : The texture object(0) bound to texture image unit 0 does not have a
-		//		defined base level and cannot be used for texture mapping.
-		//		Source : API
-		//		Type :
-		//		ID: 33361
-		//	Severity : Low
+			glDisable(GL_MULTISAMPLE);
 		}
 
 		if (_attributes.DebugMode)
