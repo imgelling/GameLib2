@@ -903,20 +903,20 @@ namespace game
 				enginePointer->geIsMinimized = true;
 				enginePointer->geIsMaximized = false;
 				/*enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); */
-				enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
+				//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_MAXIMIZED:
 				enginePointer->geIsMinimized = false;
 				enginePointer->geIsMaximized = true;
 				//enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
-				enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
+				//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_RESTORED:
-				if (enginePointer->geIsMaximized)
-				{
-					enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
+				//if (enginePointer->geIsMaximized)
+				//{
+					//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 					enginePointer->geIsMaximized = false;
-				}
+				//}
 				//if (enginePointer->geIsFullScreen)
 				//{
 					enginePointer->geIsFullScreen = false;
@@ -927,15 +927,15 @@ namespace game
 				break;
 			}
 			// Tell the application the window changed size
-			//enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
+			enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF);
 
 			return 0;
 		}
-		case WM_EXITSIZEMOVE: 
-		{
-			enginePointer->HandleWindowResize(enginePointer->geGetWindowSize().x, enginePointer->geGetWindowSize().y);
-			return 0;
-		}
+		//case WM_EXITSIZEMOVE: 
+		//{
+		//	enginePointer->HandleWindowResize(enginePointer->geGetWindowSize().x, enginePointer->geGetWindowSize().y);
+		//	return 0;
+		//}
 
 		case WM_KEYDOWN:
 		{

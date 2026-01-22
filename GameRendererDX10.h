@@ -30,7 +30,8 @@ namespace game
 		void HandleWindowResize(const uint32_t width, const uint32_t height);
 		void FillOutRendererInfo() {};
 		bool CreateTexture(Texture2D& texture);
-		bool LoadTexture(std::string fileName, Texture2D& texture);
+		//inline bool RendererDX10::LoadTexture(const std::string& fileName, Texture2D& texture)
+		bool LoadTexture(const std::string &fileName, Texture2D& texture);
 		void UnLoadTexture(Texture2D& texture);
 		bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader);
@@ -71,7 +72,7 @@ namespace game
 		_d3d10Device->Flush();
 
 		// Resize the new buffers
-		_d3d10SwapChain->ResizeBuffers(1, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		_d3d10SwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_UNKNOWN, 0);
 
 		// Create depth and stencil buffer
 		depthStencilDesc.Width = _attributes.WindowWidth;
