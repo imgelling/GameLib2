@@ -57,6 +57,8 @@ namespace game
 		TextureFilterType filterType;
 		uint8_t anisotropyLevel;		// 1 is off, then powers of 2 up to max
 
+		bool isLoaded;
+
 		Texture2D();
 	private:
 	};
@@ -80,6 +82,7 @@ namespace game
 #endif
 #if defined(GAME_DIRECTX11)
 #endif
+		isLoaded = false;
 		width = 0;
 		height = 0;
 		oneOverWidth = 0.0f;

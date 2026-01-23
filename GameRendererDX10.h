@@ -371,7 +371,7 @@ namespace game
 
 		if (texture.isMipMapped)
 			_d3d10Device->GenerateMips(texture.textureSRV10.Get());
-
+		texture.isLoaded = true;
 		return true;
 	}
 

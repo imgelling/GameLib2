@@ -990,7 +990,7 @@ namespace game
 			_glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
-
+		texture.isLoaded = true;
 		return true;
 	}
 

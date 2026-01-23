@@ -141,6 +141,7 @@ namespace game
 
 	inline bool RendererVK::LoadTexture(const std::string& fileName, Texture2D &texture)
 	{
+
 		return false;
 	}
 

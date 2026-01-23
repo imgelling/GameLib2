@@ -341,7 +341,7 @@ namespace game
 			memcpy(dest, data, sizeof(unsigned char) * texture.width * texture.height * 4);
 		}
 		texture.textureInterface9->UnlockRect(0);
-
+		texture.isLoaded = true;
 		return true;
 	}
 

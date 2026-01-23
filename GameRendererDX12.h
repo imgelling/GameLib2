@@ -1039,7 +1039,7 @@ namespace game
 			return false;
 		}
 		flushGPU();
-
+		texture.isLoaded = true;
 		//lastError = { GameErrors::GameDirectX12Specific,"Texture not implemented " }; 
 		return true;
 	};
