@@ -224,7 +224,7 @@ namespace game
 				{
 					_cursorPosition--;
 				}
-				_textInputTextChange = true;
+				//_textInputTextChange = true;
 				return;
 			}
 
@@ -235,7 +235,7 @@ namespace game
 				{
 					_cursorPosition++;
 				}
-				_textInputTextChange = true;
+				//_textInputTextChange = true;
 				return;
 			}
 
