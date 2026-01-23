@@ -75,6 +75,7 @@ namespace game
 		void UnLoad();
 		Texture2D Texture() const;
 		Charset characterSet;
+		bool isLoaded;
 
 
 	private:
@@ -83,7 +84,7 @@ namespace game
 
 	inline SpriteFont::SpriteFont()
 	{
-
+		isLoaded = false;
 	}
 
 	inline SpriteFont::~SpriteFont()
@@ -192,13 +193,14 @@ namespace game
 			}
 		}
 		stream.close();
-
+		isLoaded = true;
 		return true;
 	}
 
 	inline void SpriteFont::UnLoad()
 	{
 		enginePointer->geUnLoadTexture(_texture);
+		isLoaded = false;
 	}
 
 
