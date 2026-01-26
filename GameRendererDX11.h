@@ -1,14 +1,26 @@
 #if !defined(GAMERENDERERDX11_H)
 #define GAMERENDERERDX11_H
-#include <wrl.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <dxgi.h>
+#include <dxgiformat.h>
+#include <dxgitype.h>
+#include <d3dcommon.h>
+#include <Windows.h>
+#include <wrl/client.h>
+#include <cmath>
+#include <cstdint>
+#include <string>
 #include "GameErrors.h"
 #include "GameImageLoader.h"
 #include "GameRendererBase.h"
 #include "GameShader.h"
 #include "GameSystemInfo.h"
 #include "GameTexture2D.h"
+#include "Game.h"
+#include "GameColor.h"
+#include "GameHelpers.h"
+#include "GameWindow.h"
 
 
 namespace game
