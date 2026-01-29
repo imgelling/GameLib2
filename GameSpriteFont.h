@@ -48,10 +48,23 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		int32_t Width(const std::string &text) const;
 		int32_t Height(const std::string& text) const;
 		game::Recti BoundingBox(const std::string& string) const;
 		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const;
+		inline int32_t WidthInPixels(const std::string& string) const
+		{
+			const uint64_t size = string.size();
+			int32_t currentX = 0;
+			int32_t width = 0;
+			for (uint64_t i = 0; i < size; ++i)
+			{
+				const uint8_t letter = string[i];
+				const uint32_t widthOfLetter = characterSet.letters[letter].width;
+				width = currentX + (characterSet.letters[letter].xOffset) + (widthOfLetter);
+				currentX += (characterSet.letters[letter].xAdvance);
+			}
+			return width;
+		}
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
 		{
@@ -206,6 +219,11 @@ namespace game
 
 	inline game::Recti SpriteFont::BoundingBox(const std::string& string) const
 	{
+		if (string == "")
+		{
+			Recti e;
+			return e;
+		}
 		Recti destination;
 		const uint64_t size = string.size();
 		Recti box(20000, 20000, -20000, -20000);
@@ -241,12 +259,6 @@ namespace game
 		boundingBox = BoundingBox(string);
 		width = boundingBox.right - boundingBox.left;
 		height = boundingBox.bottom - boundingBox.top;
-	}
-
-	inline int32_t SpriteFont::Width(const std::string& text) const
-	{
-		game::Recti bbox = BoundingBox(text);
-		return bbox.right - bbox.left;
 	}
 
 	inline int32_t SpriteFont::Height(const std::string& text) const
