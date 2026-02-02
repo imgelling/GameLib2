@@ -23,7 +23,8 @@ namespace game
     {
 		Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
 		HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
-		if (FAILED(hr)) {
+		if (FAILED(hr))
+		{
 			return false;
 		}
 		
