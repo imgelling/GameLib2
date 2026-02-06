@@ -127,21 +127,21 @@ namespace game
 	}
 
 	// ----- Begin float_t
-	inline Color::Color(const float_t inR, const float_t inG, const float_t inB, const float_t inA) noexcept
+	inline Color::Color(const float_t red, const float_t green, const float_t blue, const float_t alpha) noexcept
 	{
-		Set(inR, inG, inB, inA);
+		Set(red, green, blue, alpha);
 	}
 
-	void Color::Set(const float_t inR, const float_t inG, const float_t inB, const float_t inA) noexcept
+	void Color::Set(const float_t red, const float_t green, const float_t blue, const float_t alpha) noexcept
 	{
-		this->r = (uint32_t)(inR * 255.0f);
-		this->g = (uint32_t)(inG * 255.0f);
-		this->b = (uint32_t)(inB * 255.0f);
-		this->a = (uint32_t)(inA * 255.0f);
-		this->rf = inR;
-		this->gf = inG;
-		this->bf = inB;
-		this->af = inA;
+		this->r = (uint32_t)(red * 255.0f);
+		this->g = (uint32_t)(green * 255.0f);
+		this->b = (uint32_t)(blue * 255.0f);
+		this->a = (uint32_t)(alpha * 255.0f);
+		this->rf = red;
+		this->gf = green;
+		this->bf = blue;
+		this->af = alpha;
 
 		uint32_t packedR = this->r << 0;
 		uint32_t packedG = this->g << 8;
@@ -167,21 +167,21 @@ namespace game
 	// End float_t
 
 	// Begin double_t
-	inline Color::Color(const double_t inR, const double_t inG, const double_t inB, const double_t inA) noexcept
+	inline Color::Color(const double_t red, const double_t green, const double_t blue, const double_t alpha) noexcept
 	{
-		Set(inR, inG, inB, inA);
+		Set(red, green, blue, alpha);
 	}
 
-	inline void Color::Set(const double_t inR, const double_t inG, const double_t inB, const double_t inA) noexcept
+	inline void Color::Set(const double_t red, const double_t green, const double_t blue, const double_t alpha) noexcept
 	{
-		this->r = (uint32_t)(inR * 255.0f);
-		this->g = (uint32_t)(inG * 255.0f);
-		this->b = (uint32_t)(inB * 255.0f);
-		this->a = (uint32_t)(inA * 255.0f);
-		this->rf = (float_t)inR;
-		this->gf = (float_t)inG;
-		this->bf = (float_t)inB;
-		this->af = (float_t)inA;
+		this->r = (uint32_t)(red * 255.0f);
+		this->g = (uint32_t)(green * 255.0f);
+		this->b = (uint32_t)(blue * 255.0f);
+		this->a = (uint32_t)(alpha * 255.0f);
+		this->rf = (float_t)red;
+		this->gf = (float_t)green;
+		this->bf = (float_t)blue;
+		this->af = (float_t)alpha;
 
 		uint32_t packedR = this->r << 0;
 		uint32_t packedG = this->g << 8;
