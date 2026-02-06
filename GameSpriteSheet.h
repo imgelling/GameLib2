@@ -32,6 +32,7 @@ namespace game
 	
 	SpriteSheet::SpriteSheet(Texture2D& texture, const int width, const int height)
 	{
+		SpriteSheet();
 		if (!width || !height) return;
 		_texture = &texture;
 		_tileWidth = width;

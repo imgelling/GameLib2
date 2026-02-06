@@ -127,21 +127,21 @@ namespace game
 	}
 
 	// ----- Begin float_t
-	inline Color::Color(const float_t r, const float_t g, const float_t b, const float_t a) noexcept
+	inline Color::Color(const float_t inR, const float_t inG, const float_t inB, const float_t inA) noexcept
 	{
-		Set(r, g, b, a);
+		Set(inR, inG, inB, inA);
 	}
 
-	void Color::Set(const float_t r, const float_t g, const float_t b, const float_t a) noexcept
+	void Color::Set(const float_t inR, const float_t inG, const float_t inB, const float_t inA) noexcept
 	{
-		this->r = (uint32_t)(r * 255.0f);
-		this->g = (uint32_t)(g * 255.0f);
-		this->b = (uint32_t)(b * 255.0f);
-		this->a = (uint32_t)(a * 255.0f);
-		this->rf = r;
-		this->gf = g;
-		this->bf = b;
-		this->af = a;
+		this->r = (uint32_t)(inR * 255.0f);
+		this->g = (uint32_t)(inG * 255.0f);
+		this->b = (uint32_t)(inB * 255.0f);
+		this->a = (uint32_t)(inA * 255.0f);
+		this->rf = inR;
+		this->gf = inG;
+		this->bf = inB;
+		this->af = inA;
 
 		uint32_t packedR = this->r << 0;
 		uint32_t packedG = this->g << 8;
@@ -167,21 +167,21 @@ namespace game
 	// End float_t
 
 	// Begin double_t
-	inline Color::Color(const double_t r, const double_t g, const double_t b, const double_t a) noexcept
+	inline Color::Color(const double_t inR, const double_t inG, const double_t inB, const double_t inA) noexcept
 	{
-		Set(r, g, b, a);
+		Set(inR, inG, inB, inA);
 	}
 
-	inline void Color::Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept
+	inline void Color::Set(const double_t inR, const double_t inG, const double_t inB, const double_t inA) noexcept
 	{
-		this->r = (uint32_t)(r * 255.0f);
-		this->g = (uint32_t)(g * 255.0f);
-		this->b = (uint32_t)(b * 255.0f);
-		this->a = (uint32_t)(a * 255.0f);
-		this->rf = (float_t)r;
-		this->gf = (float_t)g;
-		this->bf = (float_t)b;
-		this->af = (float_t)a;
+		this->r = (uint32_t)(inR * 255.0f);
+		this->g = (uint32_t)(inG * 255.0f);
+		this->b = (uint32_t)(inB * 255.0f);
+		this->a = (uint32_t)(inA * 255.0f);
+		this->rf = (float_t)inR;
+		this->gf = (float_t)inG;
+		this->bf = (float_t)inB;
+		this->af = (float_t)inA;
 
 		uint32_t packedR = this->r << 0;
 		uint32_t packedG = this->g << 8;
@@ -206,26 +206,26 @@ namespace game
 	// End double_t
 
 	// Start uint32_t
-	inline Color::Color(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept
+	inline Color::Color(const uint32_t red, const uint32_t green, const uint32_t blue, const uint32_t alpha) noexcept
 	{
-		Set(r, g, b, a);
+		Set(red, green, blue, alpha);
 	}
 
-	inline void Color::Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept
+	inline void Color::Set(const uint32_t red, const uint32_t green, const uint32_t blue, const uint32_t alpha) noexcept
 	{
-		this->r = r;
-		this->g = g;
-		this->b = b;
-		this->a = a;
-		this->rf = r * oneOver255;
-		this->gf = g * oneOver255;
-		this->bf = b * oneOver255;
-		this->af = a * oneOver255;
+		this->r = red;
+		this->g = green;
+		this->b = blue;
+		this->a = alpha;
+		this->rf = red * oneOver255;
+		this->gf = green * oneOver255;
+		this->bf = blue * oneOver255;
+		this->af = alpha * oneOver255;
 
-		uint32_t packedR = r << 0;
-		uint32_t packedG = g << 8;
-		uint32_t packedB = b << 16;
-		uint32_t packedA = a << 24;
+		uint32_t packedR = red << 0;
+		uint32_t packedG = green << 8;
+		uint32_t packedB = blue << 16;
+		uint32_t packedA = alpha << 24;
 //#if defined(GAME_OPENGL)  || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
