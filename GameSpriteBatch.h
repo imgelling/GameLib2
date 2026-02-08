@@ -132,7 +132,7 @@ namespace game
 		LPDIRECT3DINDEXBUFFER9 _indexBuffer9;
 		DWORD _savedFVF;
 		DWORD _savedBlending;
-		IDirect3DBaseTexture9* _savedTexture;
+		//IDirect3DBaseTexture9* _savedTexture;
 #endif
 #if defined (GAME_DIRECTX10)
 		struct _spriteVertex10
@@ -265,7 +265,7 @@ namespace game
 			_vertexBuffer9 = nullptr;
 			_savedFVF = 0;
 			_savedBlending = 0;
-			_savedTexture = nullptr;
+			//_savedTexture = nullptr;
 		}
 #endif
 #if defined (GAME_DIRECTX10)
@@ -1025,7 +1025,9 @@ namespace game
 		{
 			// Save current state
 			enginePointer->d3d9Device->GetFVF(&_savedFVF);
-			enginePointer->d3d9Device->GetTexture(0, &_savedTexture);
+			// Below fails to get a texture
+			//if (FAILED(enginePointer->d3d9Device->GetTexture(0, &_savedTexture)));
+			//std::cout << "get text failed \n";
 			enginePointer->d3d9Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &_savedBlending);
 
 			// Disable multisampling if enabled
@@ -1164,14 +1166,14 @@ namespace game
 
 			// Restore previous state
 			enginePointer->d3d9Device->SetFVF(_savedFVF);
-			enginePointer->d3d9Device->SetTexture(0, _savedTexture);
+			//enginePointer->d3d9Device->SetTexture(0, _savedTexture);
 			enginePointer->d3d9Device->SetRenderState(D3DRS_ALPHABLENDENABLE, _savedBlending);
-			if (_savedTexture)
-			{
-				// This may be a bug
-				_savedTexture->Release();
-				_savedTexture = nullptr;
-			}
+			//if (_savedTexture)
+			//{
+			//	// This may be a bug
+			//	//_savedTexture->Release();
+			//	//_savedTexture = nullptr;
+			//}
 
 			// Renable multisampling if it was enabled
 			if (enginePointer->_attributes.MultiSamples > 1)
