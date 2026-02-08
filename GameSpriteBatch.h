@@ -1470,32 +1470,32 @@ namespace game
 			}
 			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
 			// Top left
-			access->x = (float_t)x;
-			access->y = (float_t)y;
+			access->x = (float_t)x + 0.5f;
+			access->y = (float_t)y + 0.5f;
 			access->u = 0.0f;
 			access->v = 0.0f;
 			access->color = color.packedARGB;
 			access++;
 
 			// Top right
-			access->x = (float_t)x + (float_t)texture.width;
-			access->y = (float_t)y;
+			access->x = (float_t)x + (float_t)texture.width + 0.5f;
+			access->y = (float_t)y + 0.5f;
 			access->u = 1.0f;
 			access->v = 0.0f;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom left
-			access->x = (float_t)x;
-			access->y = (float_t)y + (float_t)texture.height;
+			access->x = (float_t)x + 0.5f;
+			access->y = (float_t)y + (float_t)texture.height + 0.5f;
 			access->u = 0.0f;
 			access->v = 1.0f;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom right
-			access->x = (float_t)x + (float_t)texture.width;
-			access->y = (float_t)y + (float_t)texture.height;
+			access->x = (float_t)x + (float_t)texture.width + 0.5f;
+			access->y = (float_t)y + (float_t)texture.height + 0.5f;
 			access->u = 1.0f;
 			access->v = 1.0f;
 			access->color = color.packedARGB;
@@ -1788,32 +1788,32 @@ namespace game
 
 			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
 			// Top left
-			access->x = (float_t)destination.left - texture.oneOverWidth;
-			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->x = (float_t)destination.left + 0.5f;// -texture.oneOverWidth;
+			access->y = (float_t)destination.top + 0.5f;// -texture.oneOverHeight;
 			access->u = (float_t)portion.left * texture.oneOverWidth;
 			access->v = (float_t)portion.top * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Top right
-			access->x = (float_t)destination.right - texture.oneOverWidth;
-			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->x = (float_t)destination.right + 0.5f;// -texture.oneOverWidth;
+			access->y = (float_t)destination.top + 0.5f;// -texture.oneOverHeight;
 			access->u = (float_t)portion.right * texture.oneOverWidth;// 1.0f;
 			access->v = (float_t)portion.top * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom left
-			access->x = (float_t)destination.left - texture.oneOverWidth;
-			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->x = (float_t)destination.left + 0.5f;// -texture.oneOverWidth;
+			access->y = (float_t)destination.bottom + 0.5f;// -texture.oneOverHeight;
 			access->u = (float_t)portion.left * texture.oneOverWidth;
 			access->v = (float_t)portion.bottom * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom right
-			access->x = (float_t)destination.right - texture.oneOverWidth;
-			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->x = (float_t)destination.right + 0.5f;// -texture.oneOverWidth;
+			access->y = (float_t)destination.bottom + 0.5f;// -texture.oneOverHeight;
 			access->u = (float_t)portion.right * texture.oneOverWidth;
 			access->v = (float_t)portion.bottom * texture.oneOverHeight;
 			access->color = color.packedARGB;
@@ -2120,32 +2120,32 @@ namespace game
 
 			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
 			// Top left
-			access->x = (float_t)destination.left - texture.oneOverWidth;
-			access->y = (float_t)destination.top - texture.oneOverHeight;
+			access->x = (float_t)destination.left + 0.5f;;
+			access->y = (float_t)destination.top + 0.5f;
 			access->u = (float_t)portion.left * texture.oneOverWidth;
 			access->v = (float_t)portion.top * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Top right
-			access->x = (float_t)destination.right - texture.oneOverWidth;
-			access->y = (float_t)destination.top - texture.oneOverHeight;
-			access->u = (float_t)portion.right * texture.oneOverWidth;// 1.0f;
+			access->x = (float_t)destination.right + 0.5f;;
+			access->y = (float_t)destination.top + 0.5f;
+			access->u = (float_t)portion.right * texture.oneOverWidth;
 			access->v = (float_t)portion.top * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom left
-			access->x = (float_t)destination.left - texture.oneOverWidth;
-			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->x = (float_t)destination.left + 0.5f;
+			access->y = (float_t)destination.bottom + 0.5f;
 			access->u = (float_t)portion.left * texture.oneOverWidth;
 			access->v = (float_t)portion.bottom * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
 
 			// Bottom right
-			access->x = (float_t)destination.right - texture.oneOverWidth;
-			access->y = (float_t)destination.bottom - texture.oneOverHeight;
+			access->x = (float_t)destination.right + 0.5f; 
+			access->y = (float_t)destination.bottom + 0.5f;
 			access->u = (float_t)portion.right * texture.oneOverWidth;
 			access->v = (float_t)portion.bottom * texture.oneOverHeight;
 			access->color = color.packedARGB;
