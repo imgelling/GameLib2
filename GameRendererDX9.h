@@ -327,6 +327,7 @@ namespace game
 		texture.name = fileName;
 
 		// Create texture memory
+		// hResult = _d3d9Device->CreateTexture(texture.width, texture.height, 1, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture.textureInterface9, NULL);
 		hResult = _d3d9Device->CreateTexture(texture.width, texture.height, texture.isMipMapped ? 0 : 1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture.textureInterface9, NULL);
 		if (hResult != D3D_OK)
 		{
