@@ -132,12 +132,12 @@ namespace game
 	{
 	public :
 		ImageLoader();
-		void* Load(const char* filename, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel);
+		void* Load(const char* fileName, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel, const bool toABGR = true);
 		void UnLoad();
 		~ImageLoader();
 	private:
 		void* _data;
-		uint32_t _ARGBToABGR(uint32_t argbColor) const noexcept;
+		uint32_t _ARGBToABGR(const uint32_t argbColor) const noexcept;
 	};
 
 	inline ImageLoader::ImageLoader()
@@ -145,14 +145,14 @@ namespace game
 		_data = nullptr;
 	}
 
-	inline uint32_t ImageLoader::_ARGBToABGR(uint32_t argbColor) const noexcept
+	inline uint32_t ImageLoader::_ARGBToABGR(const uint32_t argbColor) const noexcept
 	{
-		uint32_t r = (argbColor >> 16) & 0xFF;
-		uint32_t b = argbColor & 0xFF;
+		const uint32_t r = (argbColor >> 16) & 0xFF;
+		const uint32_t b = argbColor & 0xFF;
 		return (argbColor & 0xFF00FF00) | (b << 16) | r;
 	}
 
-	inline void* ImageLoader::Load(const char* fileName, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel)
+	void* ImageLoader::Load(const char* fileName, uint32_t& width, uint32_t& height, uint32_t& componentsPerPixel, const bool toABGR)
 	{
 		// Clears data if multiple loads happen
 		if (_data != nullptr)
@@ -165,24 +165,28 @@ namespace game
 
         Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
         HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
-        if (FAILED(hr)) {
+        if (FAILED(hr)) 
+		{
             return nullptr;
         }
 
         Microsoft::WRL::ComPtr<IWICBitmapDecoder> decoder;
         hr = factory->CreateDecoderFromFilename(ConvertToWide(fileName).c_str(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnDemand, decoder.GetAddressOf());
-        if (FAILED(hr)) {
+        if (FAILED(hr)) 
+		{
             return nullptr;
         }
 
         Microsoft::WRL::ComPtr<IWICBitmapFrameDecode> frame;
         hr = decoder->GetFrame(0, frame.GetAddressOf());
-        if (FAILED(hr)) {
+        if (FAILED(hr)) 
+		{
             return nullptr;
         }
 
         hr = frame->GetSize(&width, &height);
-        if (FAILED(hr)) {
+        if (FAILED(hr)) 
+		{
             return nullptr;
         }
         componentsPerPixel = 4;
@@ -191,19 +195,23 @@ namespace game
 
         hr = frame->CopyPixels(nullptr, width * componentsPerPixel, width * componentsPerPixel * height , static_cast<uint8_t*>(_data));
 
-        if (FAILED(hr)) {
+        if (FAILED(hr)) 
+		{
             //delete[] _data;
 			_aligned_free(_data);
             _data = nullptr;
             return nullptr;
         }
 
-		// Windows loads as ARGB, most use ABGR so convert it
-		uint32_t* colorMap = (uint32_t*)_data;
-		for (uint32_t pix = 0; pix < width * height; pix++)
+		if (toABGR)
 		{
-			*colorMap = _ARGBToABGR(*colorMap);
-			colorMap++;
+			// Windows loads as ARGB, most use ABGR so convert it
+			uint32_t* colorMap = (uint32_t*)_data;
+			for (uint32_t pix = 0; pix < width * height; pix++)
+			{
+				*colorMap = _ARGBToABGR(*colorMap);
+				colorMap++;
+			}
 		}
 
 		return _data;
