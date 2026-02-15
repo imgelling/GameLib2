@@ -65,6 +65,20 @@ namespace game
 			}
 			return width;
 		}
+
+		int32_t MaxCharsForWidth(const std::string& in, const int32_t maxPixels) const
+		{
+			int32_t count = 0;
+			std::string test;
+			for (auto c : in)
+			{
+				test += c;
+				if (WidthInPixels(test) >= maxPixels)
+					return count;// 
+				count++;
+			}
+			return count;
+		}
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
 		{
