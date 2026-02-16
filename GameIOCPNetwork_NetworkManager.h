@@ -10,7 +10,7 @@
 #define NETWORK_ONRECEIVE_PARAMETERS socket, data, bytesReceived, channel, error
 #define NETWORK_ONSEND_SIGNATURE const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const game::IOCP::Network::NetworkError& error
 #define NETWORK_ONSEND_PARAMETERS socket, bytesSent, channel, error
-#define NETWORK_ONCONNECT_SIGNATURE const SOCKET socket, const NetworkError& error
+#define NETWORK_ONCONNECT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
 #define NETWORK_ONCONNECT_PARAMETERS socket, error
 
 
