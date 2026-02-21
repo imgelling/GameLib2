@@ -566,7 +566,7 @@ namespace game
 		#elif defined(__linux__)
 		Recti size;  // get window size on linux
 		#endif
-		HandleWindowResize(size.right, size.bottom);
+		//HandleWindowResize(size.right, size.bottom);
 		geIsFullScreen = !geIsFullScreen;
 	}
 
