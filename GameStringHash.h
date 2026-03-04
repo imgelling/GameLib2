@@ -18,12 +18,12 @@
 
 namespace game
 {
-
 	class StringHash
 	{
 	public:
 		std::string string;
 		uint64_t hash;
+
 		StringHash()
 		{
 			string = "";
@@ -71,4 +71,5 @@ namespace game
 			return computingHash;
 		}
 	};
+	const game::StringHash emptyStringHash = "";
 }
