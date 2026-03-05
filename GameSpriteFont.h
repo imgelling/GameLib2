@@ -59,9 +59,9 @@ namespace game
 			for (uint64_t i = 0; i < size; ++i)
 			{
 				const uint8_t letter = string[i];
-				const uint32_t widthOfLetter = characterSet.letters[letter].width;
-				width = currentX + (characterSet.letters[letter].xOffset) + (widthOfLetter);
-				currentX += (characterSet.letters[letter].xAdvance);
+				const uint32_t widthOfLetter = characterSet->letters[letter].width;
+				width = currentX + (characterSet->letters[letter].xOffset) + (widthOfLetter);
+				currentX += (characterSet->letters[letter].xAdvance);
 			}
 			return width;
 		}
@@ -90,18 +90,18 @@ namespace game
 			for (uint64_t i = 0; i < cursorPosition; i++)
 			{
 				const uint8_t letter = text[i];
-				const uint32_t widthOfLetter = characterSet.letters[letter].width;
-				offset = currentX + characterSet.letters[letter].xOffset;
+				const uint32_t widthOfLetter = characterSet->letters[letter].width;
+				offset = currentX + characterSet->letters[letter].xOffset;
 				offset = offset + (widthOfLetter);
-				if (letter == ' ') offset += characterSet.letters[letter].xAdvance;
-				currentX += (characterSet.letters[letter].xAdvance);// *_scaleX);
+				if (letter == ' ') offset += characterSet->letters[letter].xAdvance;
+				currentX += (characterSet->letters[letter].xAdvance);// *_scaleX);
 			}
 			return offset;
 		}
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
-		Charset characterSet;
+		std::shared_ptr<Charset> characterSet;
 		bool isLoaded;
 
 
@@ -112,6 +112,7 @@ namespace game
 	inline SpriteFont::SpriteFont()
 	{
 		isLoaded = false;
+		characterSet = std::make_shared<Charset>();
 	}
 
 	inline SpriteFont::~SpriteFont()
@@ -164,17 +165,17 @@ namespace game
 					//assign the correct value
 					Converter << value;
 					if (key == "lineHeight")
-						Converter >> characterSet.lineHeight; // line size of font
+						Converter >> characterSet->lineHeight; // line size of font
 					else if (key == "base")
-						Converter >> characterSet.base;
+						Converter >> characterSet->base;
 					else if (key == "scaleW")
-						Converter >> characterSet.width;
+						Converter >> characterSet->width;
 					else if (key == "scaleH")
-						Converter >> characterSet.height;
+						Converter >> characterSet->height;
 					else if (key == "pages")
-						Converter >> characterSet.pages;
+						Converter >> characterSet->pages;
 					else if (key == "size")
-						Converter >> characterSet.size;
+						Converter >> characterSet->size;
 				}
 			}
 			else if (read == "char")
@@ -201,21 +202,21 @@ namespace game
 					if (key == "id")
 						Converter >> CharID;
 					else if (key == "x")
-						Converter >> characterSet.letters[CharID].x;
+						Converter >> characterSet->letters[CharID].x;
 					else if (key == "y")
-						Converter >> characterSet.letters[CharID].y;
+						Converter >> characterSet->letters[CharID].y;
 					else if (key == "width")
-						Converter >> characterSet.letters[CharID].width;
+						Converter >> characterSet->letters[CharID].width;
 					else if (key == "height")
-						Converter >> characterSet.letters[CharID].height;
+						Converter >> characterSet->letters[CharID].height;
 					else if (key == "xoffset")
-						Converter >> characterSet.letters[CharID].xOffset;
+						Converter >> characterSet->letters[CharID].xOffset;
 					else if (key == "yoffset")
-						Converter >> characterSet.letters[CharID].yOffset;
+						Converter >> characterSet->letters[CharID].yOffset;
 					else if (key == "xadvance")
-						Converter >> characterSet.letters[CharID].xAdvance;
+						Converter >> characterSet->letters[CharID].xAdvance;
 					else if (key == "page")
-						Converter >> characterSet.letters[CharID].page;
+						Converter >> characterSet->letters[CharID].page;
 				}
 			}
 		}
@@ -246,11 +247,11 @@ namespace game
 		for (uint64_t i = 0; i < size; ++i)
 		{
 			const uint8_t letter = string[i];
-			const uint32_t widthOfLetter = characterSet.letters[letter].width;
-			const uint32_t heightOfLetter = characterSet.letters[letter].height;
+			const uint32_t widthOfLetter = characterSet->letters[letter].width;
+			const uint32_t heightOfLetter = characterSet->letters[letter].height;
 
-			destination.left = currentX + (characterSet.letters[letter].xOffset);
-			destination.top = currentY + (characterSet.letters[letter].yOffset);
+			destination.left = currentX + (characterSet->letters[letter].xOffset);
+			destination.top = currentY + (characterSet->letters[letter].yOffset);
 			destination.right = destination.left + (widthOfLetter);
 			destination.bottom = destination.top + (heightOfLetter);
 
@@ -263,7 +264,7 @@ namespace game
 				box.bottom = destination.bottom;
 			if (destination.right > box.right)
 				box.right = destination.right;
-			currentX += (characterSet.letters[letter].xAdvance);
+			currentX += (characterSet->letters[letter].xAdvance);
 		}
 		return box;
 	}
