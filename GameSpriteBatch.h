@@ -2495,98 +2495,98 @@ namespace game
 
 
 	// Font tag helpers
-	namespace
-	{
-		// Structure to hold a text segment and its color
-		class TextSegment
-		{
-		public:
-			std::string text;
-			Color color; // 0xRRGGBB
-		};
+	//namespace
+	//{
+		//// Structure to hold a text segment and its color
+		//class TextSegment
+		//{
+		//public:
+		//	std::string text;
+		//	Color color; // 0xRRGGBB
+		//};
 
-		// Helper: Convert hex string to integer
-		static Color hexToRGBA(const std::string& hex, const Color defaultColor)
-		{
-			if (hex.size() != 8) return defaultColor; // default white
-			uint32_t rgba = 0;
-			rgba = std::stoul(hex, nullptr, 16);
-			//std::stringstream ss;
-			//ss << std::hex << hex;
-			//ss >> rgba;
-			Color ret;
-			uint32_t r = (rgba >> 24) & 0xFF;
-			uint32_t g = (rgba >> 16) & 0xFF;
-			uint32_t b = (rgba >> 8) & 0xFF;
-			uint32_t a = (rgba >> 0) & 0xFF;
-			ret.Set(r, g, b, a);
-			return  ret;
-		}
+		//// Helper: Convert hex string to integer
+		//static Color hexToRGBA(const std::string& hex, const Color defaultColor)
+		//{
+		//	if (hex.size() != 8) return defaultColor; // default white
+		//	uint32_t rgba = 0;
+		//	rgba = std::stoul(hex, nullptr, 16);
+		//	//std::stringstream ss;
+		//	//ss << std::hex << hex;
+		//	//ss >> rgba;
+		//	Color ret;
+		//	uint32_t r = (rgba >> 24) & 0xFF;
+		//	uint32_t g = (rgba >> 16) & 0xFF;
+		//	uint32_t b = (rgba >> 8) & 0xFF;
+		//	uint32_t a = (rgba >> 0) & 0xFF;
+		//	ret.Set(r, g, b, a);
+		//	return  ret;
+		//}
 
-		// Parser function
-		static std::vector<TextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White)
-		{
-			std::vector<TextSegment> segments;
-			uint64_t pos = 0;
-			Color currentColor = defaultColor;
-			const uint64_t size = input.size();
-			std::string coloredText;
-			std::string colorCode;
-			uint64_t colorCodeStart = 0;
-			uint64_t tagEnd = 0;
-			uint64_t closeTag = 0;
-			uint64_t tagStart = 0;
+	//	// Parser function
+	//	static std::vector<TextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White)
+	//	{
+	//		std::vector<TextSegment> segments;
+	//		uint64_t pos = 0;
+	//		Color currentColor = defaultColor;
+	//		const uint64_t size = input.size();
+	//		std::string coloredText;
+	//		std::string colorCode;
+	//		uint64_t colorCodeStart = 0;
+	//		uint64_t tagEnd = 0;
+	//		uint64_t closeTag = 0;
+	//		uint64_t tagStart = 0;
 
-			while (pos < size)
-			{
-				tagStart = input.find("<color=#", pos);
+	//		while (pos < size)
+	//		{
+	//			tagStart = input.find("<color=#", pos);
 
-				if (tagStart == std::string::npos)
-				{
-					// No more tags, push remaining text
-					segments.push_back({ input.substr(pos), currentColor });
-					break;
-				}
+	//			if (tagStart == std::string::npos)
+	//			{
+	//				// No more tags, push remaining text
+	//				segments.push_back({ input.substr(pos), currentColor });
+	//				break;
+	//			}
 
-				// Push text before tag
-				if (tagStart > pos)
-				{
-					segments.push_back({ input.substr(pos, tagStart - pos), currentColor });
-				}
+	//			// Push text before tag
+	//			if (tagStart > pos)
+	//			{
+	//				segments.push_back({ input.substr(pos, tagStart - pos), currentColor });
+	//			}
 
-				// Parse color code
-				colorCodeStart = tagStart + 8; // skip "<color=#"
-				colorCode = input.substr(colorCodeStart, 8);
-				currentColor = hexToRGBA(colorCode, defaultColor);
+	//			// Parse color code
+	//			colorCodeStart = tagStart + 8; // skip "<color=#"
+	//			colorCode = input.substr(colorCodeStart, 8);
+	//			currentColor = hexToRGBA(colorCode, defaultColor);
 
-				// Find closing '>'
-				tagEnd = input.find('>', colorCodeStart + 8);
-				if (tagEnd == std::string::npos)
-				{
-					break; // malformed tag
-				}
+	//			// Find closing '>'
+	//			tagEnd = input.find('>', colorCodeStart + 8);
+	//			if (tagEnd == std::string::npos)
+	//			{
+	//				break; // malformed tag
+	//			}
 
-				// Find closing </color>
-				closeTag = input.find("</color>", tagEnd);
-				if (closeTag == std::string::npos)
-				{
-					break; // malformed tag
-				}
+	//			// Find closing </color>
+	//			closeTag = input.find("</color>", tagEnd);
+	//			if (closeTag == std::string::npos)
+	//			{
+	//				break; // malformed tag
+	//			}
 
-				// Extract colored text
-				coloredText = input.substr(tagEnd + 1, closeTag - (tagEnd + 1));
-				segments.push_back({ coloredText, currentColor });
+	//			// Extract colored text
+	//			coloredText = input.substr(tagEnd + 1, closeTag - (tagEnd + 1));
+	//			segments.push_back({ coloredText, currentColor });
 
-				// Reset color after closing tag
-				currentColor = defaultColor;
+	//			// Reset color after closing tag
+	//			currentColor = defaultColor;
 
-				// Move position after closing tag
-				pos = closeTag + 8; // length of "</color>"
-			}
+	//			// Move position after closing tag
+	//			pos = closeTag + 8; // length of "</color>"
+	//		}
 
-			return segments;
-		}
-	}
+	//		return segments;
+	//	}
+	//}
 
 	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
@@ -2597,7 +2597,7 @@ namespace game
 		Rectf source;
 		Rectf destination;
 
-		auto segments = parseColoredString(Str, color);
+		auto segments = font.parseColoredString(Str, color);
 
 		if (centered)
 		{
