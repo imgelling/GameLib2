@@ -2393,7 +2393,7 @@ namespace game
 	}
 
 	// Maybe put in rect
-	void scaleRectangle(game::Rectf &rect, float scaleFactorX, float scaleFactorY) 
+	void ScaleRectOnCenter(game::Rectf &rect, float scaleFactorX, float scaleFactorY) 
 	{
 		// Negative scaling bad m'kay!
 		scaleFactorX = scaleFactorX < 0 ? 0 : scaleFactorX;
@@ -2464,7 +2464,8 @@ namespace game
 			box.top = (float_t)bbox.top;
 			box.right = (float_t)bbox.right;
 			box.bottom = (float_t)bbox.bottom;
-			scaleRectangle(box, _scaleX, _scaleY);
+			//font.ScaleBoundingBox(box, _scaleX, _scaleY);
+			ScaleRectOnCenter(box, _scaleX, _scaleY);
 			currentX = box.left + (float)x;
 			currentY = box.top + (float)y;
 		}
@@ -2635,7 +2636,7 @@ namespace game
 			box.top = (float_t)bbox.top;
 			box.right = (float_t)bbox.right;
 			box.bottom = (float_t)bbox.bottom;
-			scaleRectangle(box, _scaleX, _scaleY);
+			ScaleRectOnCenter(box, _scaleX, _scaleY);
 			currentX = box.left + (float)x;
 			currentY = box.top + (float)y;
 		}

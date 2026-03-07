@@ -98,6 +98,36 @@ namespace game
 			}
 			return offset;
 		}
+		// Maybe put in rect
+		void ScaleBoundingBoxOnCenter(game::Rectf& rect, float scaleFactorX, float scaleFactorY)
+		{
+			// Negative scaling bad m'kay!
+			scaleFactorX = scaleFactorX < 0 ? 0 : scaleFactorX;
+			scaleFactorY = scaleFactorY < 0 ? 0 : scaleFactorY;
+
+			// Find center before scaling
+			float halfWidth = (rect.right - rect.left) * 0.5f;
+			float halfHeight = (rect.bottom - rect.top) * 0.5f;
+			float centerX = rect.left + halfWidth;// / 2.0f;
+			float centerY = rect.top + halfHeight;// / 2.0f;
+
+			// translate to center around the origin
+			// and find the center again
+			rect.left -= centerX;
+			rect.top -= centerY;
+			centerX = rect.left + halfWidth;// / 2.0f;
+			centerY = rect.top + halfHeight;// / 2.0f;
+
+			// Scale width and height
+			halfWidth *= scaleFactorX;
+			halfHeight *= scaleFactorY;
+
+			// Recalculate top-left so center stays the same
+			rect.left = centerX - halfWidth;// / 2.0f;
+			rect.top = centerY - halfHeight;// / 2.0f;
+			rect.right = centerX + halfWidth;// / 2.0f;
+			rect.bottom = centerY + halfHeight;// / 2.0f;
+		}
 		bool Load(const std::string &filename, const std::string& texture);
 		void UnLoad();
 		Texture2D Texture() const;
