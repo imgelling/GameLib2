@@ -360,39 +360,44 @@ namespace game
 			Recti e;
 			return e;
 		}
+
+		auto segments = parseColoredString(string, game::Colors::White);
+
 		Recti destination;
-		const uint64_t size = string.size();
 		Recti box(20000, 20000, -20000, -20000);
 		int32_t currentX = 0;
 		int32_t currentY = 0;
-		for (uint64_t i = 0; i < size; ++i)
+		for (auto &seg : segments)
 		{
-			const uint8_t letter = string[i];
-			const uint32_t widthOfLetter = characterSet->letters[letter].width;
-			const uint32_t heightOfLetter = characterSet->letters[letter].height;
+			const uint64_t size = seg.text.size();
+			for (uint64_t i = 0; i < size; ++i)
+			{
+				const uint8_t letter = string[i];
+				const uint32_t widthOfLetter = characterSet->letters[letter].width;
+				const uint32_t heightOfLetter = characterSet->letters[letter].height;
 
-			destination.left = currentX + (characterSet->letters[letter].xOffset);
-			destination.top = currentY + (characterSet->letters[letter].yOffset);
-			destination.right = destination.left + (widthOfLetter);
-			destination.bottom = destination.top + (heightOfLetter);
+				destination.left = currentX + (characterSet->letters[letter].xOffset);
+				destination.top = currentY + (characterSet->letters[letter].yOffset);
+				destination.right = destination.left + (widthOfLetter);
+				destination.bottom = destination.top + (heightOfLetter);
 
-			// Find the bounding box
-			if (destination.left < box.left)
-				box.left = destination.left;
-			if (destination.top < box.top)
-				box.top = destination.top;
-			if (destination.bottom > box.bottom)
-				box.bottom = destination.bottom;
-			if (destination.right > box.right)
-				box.right = destination.right;
-			currentX += (characterSet->letters[letter].xAdvance);
+				// Find the bounding box
+				if (destination.left < box.left)
+					box.left = destination.left;
+				if (destination.top < box.top)
+					box.top = destination.top;
+				if (destination.bottom > box.bottom)
+					box.bottom = destination.bottom;
+				if (destination.right > box.right)
+					box.right = destination.right;
+				currentX += (characterSet->letters[letter].xAdvance);
+			}
 		}
 		return box;
 	}
 
 	inline void SpriteFont::GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const
 	{
-
 		boundingBox = BoundingBox(string);
 		width = boundingBox.right - boundingBox.left;
 		height = boundingBox.bottom - boundingBox.top;
