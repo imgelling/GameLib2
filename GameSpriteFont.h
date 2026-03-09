@@ -3,6 +3,8 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <memory>
+#include <vector>
 
 #include "GameEngine.h"
 #include "GameErrors.h"
@@ -98,7 +100,6 @@ namespace game
 			}
 			return offset;
 		}
-		// Maybe put in rect
 		void ScaleBoundingBoxOnCenter(game::Rectf& rect, float scaleFactorX, float scaleFactorY)
 		{
 			// Negative scaling bad m'kay!
@@ -219,7 +220,7 @@ namespace game
 			return segments;
 		}
 	
-		bool Load(const std::string &filename, const std::string& texture);
+		bool Load(const std::string &filename, const std::string& texture, const TextureFilterType filter = TextureFilterType::Point);
 		void UnLoad();
 		Texture2D Texture() const;
 		std::shared_ptr<Charset> characterSet;
@@ -241,7 +242,7 @@ namespace game
 		UnLoad();
 	}
 
-	inline bool SpriteFont::Load(const std::string &fileName, const std::string& texture)
+	inline bool SpriteFont::Load(const std::string &fileName, const std::string& texture, const TextureFilterType filter)
 	{
 
 		std::string line;
@@ -250,7 +251,7 @@ namespace game
 		std::ifstream stream;
 
 		_texture.isMipMapped = true;
-		//_texture.filterType = TextureFilterType::Point;
+		_texture.filterType = filter;// TextureFilterType::Trilinear;
 		if (!enginePointer->geLoadTexture(texture, _texture))
 		{
 			lastError = { GameErrors::GameContent, "Could not load \"" + texture + "\" for SpriteFont." };
