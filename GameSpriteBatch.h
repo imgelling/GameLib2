@@ -2493,7 +2493,7 @@ namespace game
 		}
 	}
 
-	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -2502,7 +2502,7 @@ namespace game
 		Rectf source;
 		Rectf destination;
 
-		auto segments = font.parseColoredString(Str, color);
+		auto segments = font.parseColoredString(str, color);
 
 		if (centered)
 		{

@@ -18,30 +18,36 @@ namespace game
 	extern GameError lastError;
 	struct FontDescriptor
 	{
-		unsigned short x, y;
-		unsigned short width, height;
-		short xOffset, yOffset;
-		unsigned short xAdvance;
-		unsigned short page;
+		uint16_t x;
+		uint16_t y;
+		uint16_t width;
+		uint16_t height;
+		int16_t xOffset;
+		int16_t yOffset;
+		uint16_t xAdvance;
+		//uint16_t page;
 
 		FontDescriptor()
 		{
-			y = x = 0;
-			width = height = 0;
-			xOffset = yOffset = 0;
+			y = 0;
+			x = 0;
+			width = 0;
+			height = 0;
+			xOffset = 0;
+			yOffset = 0;
 			xAdvance = 0;
-			page = 0;
+			//page = 0;
 		}
 	};
 
 	struct Charset
 	{
-		unsigned short lineHeight = 0;
-		unsigned short base = 0;
-		unsigned short width = 0;
-		unsigned short height = 0;
-		unsigned short pages = 0;
-		unsigned short size = 0;
+		uint16_t lineHeight = 0;
+		uint16_t base = 0;
+		uint16_t width = 0;
+		uint16_t height = 0;
+		//uint16_t pages = 0;
+		//uint16_t size = 0;
 		FontDescriptor letters[256];
 	};
 
@@ -157,7 +163,7 @@ namespace game
 		}
 
 		// Parser function
-		static std::vector<TextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White)
+		std::vector<TextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
 		{
 			std::vector<TextSegment> segments;
 			uint64_t pos = 0;
@@ -246,8 +252,10 @@ namespace game
 	{
 
 		std::string line;
-		std::string read, key, value;
-		std::size_t index;
+		std::string read;
+		std::string key;
+		std::string value;
+		uint64_t index;
 		std::ifstream stream;
 
 		_texture.isMipMapped = true;
@@ -265,10 +273,12 @@ namespace game
 			return false;
 		}
 
+		std::stringstream lineStream;
 		while (!stream.eof())
 		{
-			std::stringstream lineStream;
 			getline(stream, line);
+			lineStream.str("");
+			lineStream.clear();
 			lineStream << line;
 
 			//read the line's type
@@ -294,20 +304,20 @@ namespace game
 						Converter >> characterSet->width;
 					else if (key == "scaleH")
 						Converter >> characterSet->height;
-					else if (key == "pages")
-						Converter >> characterSet->pages;
-					else if (key == "size")
-						Converter >> characterSet->size;
+					//else if (key == "pages")
+					//	Converter >> characterSet->pages;
+					//else if (key == "size")
+					//	Converter >> characterSet->size;
 				}
 			}
 			else if (read == "char")
 			{
 				//this is data for a specific char
-				unsigned short CharID = 0;
+				uint16_t charID = 0;
 
 				while (!lineStream.eof())
 				{
-					if (CharID > 255)
+					if (charID > 255)
 					{
 						stream.close();
 						lastError = { GameErrors::GameContent, "File error in \"" + fileName + "\"." };
@@ -322,23 +332,23 @@ namespace game
 					//assign the correct value
 					Converter << value;
 					if (key == "id")
-						Converter >> CharID;
+						Converter >> charID;
 					else if (key == "x")
-						Converter >> characterSet->letters[CharID].x;
+						Converter >> characterSet->letters[charID].x;
 					else if (key == "y")
-						Converter >> characterSet->letters[CharID].y;
+						Converter >> characterSet->letters[charID].y;
 					else if (key == "width")
-						Converter >> characterSet->letters[CharID].width;
+						Converter >> characterSet->letters[charID].width;
 					else if (key == "height")
-						Converter >> characterSet->letters[CharID].height;
+						Converter >> characterSet->letters[charID].height;
 					else if (key == "xoffset")
-						Converter >> characterSet->letters[CharID].xOffset;
+						Converter >> characterSet->letters[charID].xOffset;
 					else if (key == "yoffset")
-						Converter >> characterSet->letters[CharID].yOffset;
+						Converter >> characterSet->letters[charID].yOffset;
 					else if (key == "xadvance")
-						Converter >> characterSet->letters[CharID].xAdvance;
-					else if (key == "page")
-						Converter >> characterSet->letters[CharID].page;
+						Converter >> characterSet->letters[charID].xAdvance;
+					//else if (key == "page")
+					//	Converter >> characterSet->letters[CharID].page;
 				}
 			}
 		}
