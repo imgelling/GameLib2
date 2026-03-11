@@ -28,11 +28,6 @@
 #endif
 #pragma endregion
 
-#pragma region DirectX10
-#if defined(GAME_DIRECTX10)
-#include "GameRendererDX10.h"
-#endif
-#pragma endregion
 
 #pragma region DirectX9
 #if defined(GAME_DIRECTX9)
@@ -82,12 +77,6 @@ namespace game
 		bool geIsFullScreen;			// Is the game window full screen (no border)?
 #if defined(GAME_DIRECTX9)
 		LPDIRECT3DDEVICE9 d3d9Device;
-#endif
-#if defined(GAME_DIRECTX10)
-		Microsoft::WRL::ComPtr<ID3D10Device> d3d10Device;
-		Microsoft::WRL::ComPtr<IDXGISwapChain> d3d10SwapChain;
-		Microsoft::WRL::ComPtr<ID3D10RenderTargetView> d3d10RenderTargetView;
-		Microsoft::WRL::ComPtr<ID3D10DepthStencilView> d3d10DepthStencilView;
 #endif
 #if defined(GAME_DIRECTX11)
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d11DeviceContext;
@@ -231,8 +220,6 @@ namespace game
 #if defined(GAME_DIRECTX9)
 		d3d9Device = nullptr;
 #endif
-#if defined(GAME_DIRECTX10)
-#endif
 #if defined(GAME_DIRECTX11)
 #endif
 	}
@@ -248,12 +235,6 @@ namespace game
 		{
 			d3d9Device->Release();
 		}
-#endif
-#if defined(GAME_DIRECTX10)
-		d3d10SwapChain.Reset();
-		d3d10Device.Reset();
-		d3d10RenderTargetView.Reset();
-		d3d10DepthStencilView.Reset();
 #endif
 #if defined(GAME_DIRECTX11)
 #endif
@@ -280,10 +261,6 @@ namespace game
 #endif
 #if defined(GAME_VULKAN)
 		if ((renderer == 3) && (_attributes.RenderingAPI == RenderAPI::Vulkan))
-			return true;
-#endif
-#if defined(GAME_DIRECTX10)
-		if ((renderer == 6) && (_attributes.RenderingAPI == RenderAPI::DirectX10))
 			return true;
 #endif
 #if defined(GAME_DIRECTX11)
@@ -656,15 +633,6 @@ namespace game
 			return false;
 #endif
 		}
-		else if (_attributes.RenderingAPI == RenderAPI::DirectX10)
-		{
-#if defined(GAME_DIRECTX10)
-			_renderer = new game::RendererDX10();
-#else
-			lastError = { GameErrors::GameInvalidParameter, "Requested DirectX10 without #defining GAME_SUPPORT_DIRECTX10 or GAME_SUPPORT ALL." };
-			return false;
-#endif
-		}
 		else if (_attributes.RenderingAPI == RenderAPI::DirectX11)
 		{
 #if defined(GAME_DIRECTX11)
@@ -705,15 +673,6 @@ namespace game
 			if (_renderer)
 			{
 				dynamic_cast<RendererDX9*>(_renderer)->GetDevice(d3d9Device);
-			}
-		}
-#endif
-#if defined(GAME_DIRECTX10)
-		if (geIsUsing(GAME_DIRECTX10))
-		{
-			if (_renderer)
-			{
-				dynamic_cast<RendererDX10*>(_renderer)->GetDevice(d3d10Device, d3d10SwapChain, d3d10RenderTargetView, d3d10DepthStencilView);
 			}
 		}
 #endif
@@ -773,19 +732,6 @@ namespace game
 					dynamic_cast<RendererDX9*>(_renderer)->GetDevice(d3d9Device);
 				}
 			}
-#endif
-#if defined(GAME_DIRECTX10)
-		if (geIsUsing(GAME_DIRECTX10))
-		{
-			if (_renderer)
-			{
-				d3d10Device.Reset();
-				d3d10SwapChain.Reset();
-				d3d10RenderTargetView.Reset();
-				_renderer->HandleWindowResize(width, height);
-				dynamic_cast<RendererDX10*>(_renderer)->GetDevice(d3d10Device, d3d10SwapChain, d3d10RenderTargetView, d3d10DepthStencilView);
-			}
-		}
 #endif
 #if defined(GAME_DIRECTX11)
 		if (geIsUsing(GAME_DIRECTX11))

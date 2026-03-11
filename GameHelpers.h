@@ -10,8 +10,7 @@ namespace game
 	{
 		OpenGL = 0,		// OpenGL
 		Vulkan,			// Vulkan
-		DirectX9,		// DirectXs
-		DirectX10,		
+		DirectX9,		// DirectXs		
 		DirectX11,
 		DirectX12
 	};

@@ -5,9 +5,6 @@
 #if defined(GAME_DIRECTX9)
 #include <d3d9.h>
 #endif
-#if defined(GAME_DIRECTX10)
-#include <d3d10.h>
-#endif
 
 #include <GameEngine.h>
 #include "GameErrors.h"
@@ -134,41 +131,6 @@ namespace game
 		DWORD _savedBlending;
 		//IDirect3DBaseTexture9* _savedTexture;
 #endif
-#if defined (GAME_DIRECTX10)
-		struct _spriteVertex10
-		{
-			float_t x, y, z;
-			float_t r, g, b, a;
-			float_t u, v;
-		};
-		_spriteVertex10* _spriteVertices10;
-		Shader _spriteBatchShader10;
-		Microsoft::WRL::ComPtr<ID3D10Buffer> _vertexBuffer10;
-		Microsoft::WRL::ComPtr<ID3D10InputLayout> _vertexLayout10;
-		Microsoft::WRL::ComPtr<ID3D10SamplerState> _textureSamplerState10;
-		Microsoft::WRL::ComPtr<ID3D10Buffer> _indexBuffer10;
-		Microsoft::WRL::ComPtr<ID3D10BlendState> _spriteBatchBlendState10;
-		Microsoft::WRL::ComPtr<ID3D10DepthStencilState> _depthStencilState10;
-
-
-		// saves state of dx10 states we change to restore
-		uint32_t _oldStride10;
-		uint32_t _oldOffset10;
-		uint32_t _oldStencilRef10;
-		Microsoft::WRL::ComPtr<ID3D10Buffer> _oldVertexBuffer10;
-		Microsoft::WRL::ComPtr<ID3D10Buffer> _oldIndexBuffer10;
-		DXGI_FORMAT _oldIndexFormat10;
-		uint32_t _oldIndexOffset10;
-		Microsoft::WRL::ComPtr<ID3D10InputLayout> _oldInputLayout10;
-		Microsoft::WRL::ComPtr<ID3D10VertexShader> _oldVertexShader10;
-		Microsoft::WRL::ComPtr<ID3D10PixelShader> _oldPixelShader10;
-		Microsoft::WRL::ComPtr<ID3D10SamplerState> _oldTextureSamplerState10;
-		D3D10_PRIMITIVE_TOPOLOGY _oldPrimitiveTopology10;
-		Microsoft::WRL::ComPtr<ID3D10BlendState> _oldBlendState10;
-		Microsoft::WRL::ComPtr<ID3D10DepthStencilState> _oldDepthStencilState10;
-		float_t _oldBlendFactor10[4];
-		uint32_t _oldSampleMask10;
-#endif
 #if defined (GAME_DIRECTX11)
 		struct _spriteVertex11
 		{
@@ -268,21 +230,6 @@ namespace game
 			//_savedTexture = nullptr;
 		}
 #endif
-#if defined (GAME_DIRECTX10)
-		//if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			
-			_spriteVertices10 = nullptr;
-			_oldStencilRef10 = 0;
-			_oldStride10 = 0;
-			_oldOffset10 = 0;
-			_oldIndexFormat10 = {};
-			_oldIndexOffset10 = 0;
-			_oldPrimitiveTopology10 = {};
-			ZeroMemory(_oldBlendFactor10, 4 * sizeof(float_t));
-			_oldSampleMask10 = 0;
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		_spriteVertices11 = nullptr;
 		_oldStride11 = 0;
@@ -338,18 +285,6 @@ namespace game
 				delete[] _spriteVertices9;
 				_spriteVertices9 = nullptr;
 			}
-		}
-#endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			if (_spriteVertices10)
-			{
-				delete[] _spriteVertices10;
-				_spriteVertices10 = nullptr;
-			}
-			enginePointer->geUnLoadShader(_spriteBatchShader10);
-
 		}
 #endif
 #if defined (GAME_DIRECTX11)
@@ -414,27 +349,6 @@ namespace game
 			}
 		}
 #endif
-
-		// DX10 impementation of vertices
-#if defined(GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			_spriteVertices10 = new _spriteVertex10[(size_t)_maxSprites * 4];
-			for (uint32_t vertex = 0; vertex < _maxSprites * 4; vertex++)
-			{
-				_spriteVertices10[vertex].x = 0.0f;
-				_spriteVertices10[vertex].y = 0.0f;
-				_spriteVertices10[vertex].z = 0.0f;
-				_spriteVertices10[vertex].u = 0.0f;
-				_spriteVertices10[vertex].v = 0.0f;
-				_spriteVertices10[vertex].r = Colors::White.rf;
-				_spriteVertices10[vertex].g = Colors::White.gf;
-				_spriteVertices10[vertex].b = Colors::White.bf;
-				_spriteVertices10[vertex].a = Colors::White.af;
-			}
-		}
-#endif
-
 		// DX11 impementation of vertices
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
@@ -516,119 +430,7 @@ namespace game
 
 		}
 #endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			D3D10_BUFFER_DESC vertexBufferDescription = { 0 };
-			D3D10_BUFFER_DESC indexBufferDescription = { 0 };
-			D3D10_SUBRESOURCE_DATA vertexInitialData = { 0 };
-			D3D10_SUBRESOURCE_DATA indexInitialData = { 0 };
-			std::vector<uint32_t> indices;
 
-			D3D10_INPUT_ELEMENT_DESC inputLayout[] =
-			{
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0 },
-				{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0},
-				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D10_APPEND_ALIGNED_ELEMENT, D3D10_INPUT_PER_VERTEX_DATA, 0},
-			};
-			D3D10_SAMPLER_DESC samplerDesc = { };
-
-			// Load shaders for spriteBatch
-			//if (!enginePointer->geLoadShader("Content/VertexShader.hlsl", "Content/PixelShader.hlsl", _spriteBatchShader10))
-			if (!enginePointer->geLoadTextShader(gameTextShaders, "mainVS", "mainPS", _spriteBatchShader10))
-			{
-				return false;
-			}
-
-			// Create the vertex buffer
-			vertexBufferDescription.ByteWidth = _maxSprites * (uint32_t)4 * (uint32_t)sizeof(_spriteVertex10);
-			vertexBufferDescription.Usage = D3D10_USAGE_DYNAMIC;
-			vertexBufferDescription.BindFlags = D3D10_BIND_VERTEX_BUFFER;
-			vertexBufferDescription.CPUAccessFlags = D3D10_CPU_ACCESS_WRITE;
-			vertexBufferDescription.MiscFlags = 0;
-			if (FAILED(enginePointer->d3d10Device->CreateBuffer(&vertexBufferDescription, NULL, _vertexBuffer10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific, "Could not create vertex buffer for SpriteBatch." };
-				return false;
-			}
-
-			// Create index buffer
-			//  0, 1, 2, 1, 3, 2
-			for (uint32_t index = 0; index < _maxSprites; index++)
-			{
-				indices.emplace_back(0 + (index * 4));  // 4 indices per quad, not 6 like I had
-				indices.emplace_back(1 + (index * 4));
-				indices.emplace_back(2 + (index * 4));
-				indices.emplace_back(1 + (index * 4));
-				indices.emplace_back(3 + (index * 4));
-				indices.emplace_back(2 + (index * 4));
-			}
-			indexBufferDescription.Usage = D3D10_USAGE_IMMUTABLE;
-			indexBufferDescription.ByteWidth = sizeof(DWORD) * 6 * _maxSprites;
-			indexBufferDescription.BindFlags = D3D10_BIND_INDEX_BUFFER;
-			indexBufferDescription.CPUAccessFlags = 0;
-			indexBufferDescription.MiscFlags = 0;
-			indexInitialData.pSysMem = indices.data();
-			if (FAILED(enginePointer->d3d10Device->CreateBuffer(&indexBufferDescription, &indexInitialData, _indexBuffer10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific,"Could not create index buffer for SpriteBatch." };
-				enginePointer->geUnLoadShader(_spriteBatchShader10);
-				return false;
-			}
-
-
-			// Create input layout for shaders
-			if (FAILED(enginePointer->d3d10Device->CreateInputLayout(inputLayout, 3, _spriteBatchShader10.compiledVertexShader10->GetBufferPointer(), _spriteBatchShader10.compiledVertexShader10->GetBufferSize(), _vertexLayout10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific, "Could not create input layout for SpriteBatch." };
-				return false;
-			}
-
-			// Create texture sampler 
-			samplerDesc.Filter = D3D10_FILTER_MIN_MAG_MIP_POINT; //D3D10_FILTER_ANISOTROPIC
-			samplerDesc.AddressU = D3D10_TEXTURE_ADDRESS_CLAMP;
-			samplerDesc.AddressV = D3D10_TEXTURE_ADDRESS_CLAMP;
-			samplerDesc.AddressW = D3D10_TEXTURE_ADDRESS_CLAMP;
-			samplerDesc.ComparisonFunc = D3D10_COMPARISON_ALWAYS;
-			samplerDesc.MinLOD = 0;
-			samplerDesc.MaxLOD = D3D10_FLOAT32_MAX;
-			if (FAILED(enginePointer->d3d10Device->CreateSamplerState(&samplerDesc, _textureSamplerState10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific,"Could not create sampler state for SpriteBatch." };
-				return false;
-			}
-
-			// Create blend state
-			D3D10_BLEND_DESC blendStateDesc = { 0 };
-			blendStateDesc.AlphaToCoverageEnable = FALSE;
-			blendStateDesc.BlendEnable[0] = TRUE;
-			blendStateDesc.SrcBlend = D3D10_BLEND_SRC_ALPHA;
-			blendStateDesc.DestBlend = D3D10_BLEND_INV_SRC_ALPHA;
-			blendStateDesc.BlendOp = D3D10_BLEND_OP_ADD;
-			blendStateDesc.SrcBlendAlpha = D3D10_BLEND_SRC_ALPHA;
-			blendStateDesc.DestBlendAlpha = D3D10_BLEND_INV_SRC_ALPHA;
-			blendStateDesc.BlendOpAlpha = D3D10_BLEND_OP_ADD;
-			blendStateDesc.RenderTargetWriteMask[0] = D3D10_COLOR_WRITE_ENABLE_ALL;
-			if (FAILED(enginePointer->d3d10Device->CreateBlendState(&blendStateDesc, _spriteBatchBlendState10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific, "Could not create blend state for SpriteBatch." };
-				return false;
-			}
-
-			// Create depth state
-			D3D10_DEPTH_STENCIL_DESC dsDesc = { 0 };
-			dsDesc.DepthEnable = true;
-			dsDesc.DepthWriteMask = D3D10_DEPTH_WRITE_MASK::D3D10_DEPTH_WRITE_MASK_ALL;
-			dsDesc.DepthFunc = D3D10_COMPARISON_FUNC::D3D10_COMPARISON_LESS_EQUAL;
-
-			// Create depth stencil state
-			if (FAILED(enginePointer->d3d10Device->CreateDepthStencilState(&dsDesc, _depthStencilState10.GetAddressOf())))
-			{
-				lastError = { GameErrors::GameDirectX10Specific, "Could not create Depth Stencil State. " };
-				return false;
-			}
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1043,44 +845,7 @@ namespace game
 			enginePointer->d3d9Device->SetIndices(_indexBuffer9);
 		}
 #endif
-#if defined(GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			uint32_t stride = sizeof(_spriteVertex10);
-			uint32_t offset = 0;
-			float sampleMask[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-			// need to save blend state check Render
-
-			// Save everything we modify
-			enginePointer->d3d10Device->IAGetIndexBuffer(_oldIndexBuffer10.GetAddressOf(), &_oldIndexFormat10, &_oldIndexOffset10);
-			enginePointer->d3d10Device->IAGetVertexBuffers(0, 1, _oldVertexBuffer10.GetAddressOf(), &_oldStride10, &_oldOffset10);
-			enginePointer->d3d10Device->IAGetInputLayout(_oldInputLayout10.GetAddressOf());
-			enginePointer->d3d10Device->VSGetShader(_oldVertexShader10.GetAddressOf());
-			enginePointer->d3d10Device->PSGetShader(_oldPixelShader10.GetAddressOf());
-			enginePointer->d3d10Device->PSGetSamplers(0, 1, _oldTextureSamplerState10.GetAddressOf());
-			enginePointer->d3d10Device->IAGetPrimitiveTopology(&_oldPrimitiveTopology10);
-			enginePointer->d3d10Device->OMGetBlendState(_oldBlendState10.GetAddressOf(), _oldBlendFactor10, &_oldSampleMask10);
-			enginePointer->d3d10Device->OMGetDepthStencilState(_oldDepthStencilState10.GetAddressOf(), &_oldStencilRef10);
-
-			// Change what we need
-			enginePointer->d3d10Device->IASetIndexBuffer(_indexBuffer10.Get(), DXGI_FORMAT_R32_UINT, 0);
-			enginePointer->d3d10Device->IASetVertexBuffers(0, 1, _vertexBuffer10.GetAddressOf(), &stride, &offset);
-			enginePointer->d3d10Device->IASetInputLayout(_vertexLayout10.Get());
-			enginePointer->d3d10Device->VSSetShader(_spriteBatchShader10.vertexShader10.Get());
-			enginePointer->d3d10Device->PSSetShader(_spriteBatchShader10.pixelShader10.Get());
-			enginePointer->d3d10Device->PSSetSamplers(0, 1, _textureSamplerState10.GetAddressOf());
-			enginePointer->d3d10Device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-			enginePointer->d3d10Device->OMSetBlendState(_spriteBatchBlendState10.Get(), sampleMask, 0xffffffff);
-			enginePointer->d3d10Device->OMSetDepthStencilState(_depthStencilState10.Get(), 1);
-			
-
-			// Reset current texture
-			_currentTexture.name = "";
-			// Disable multisampling
-			// not now
-		}
-#endif
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1182,24 +947,6 @@ namespace game
 			}
 		}
 #endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			// restore everything
-			enginePointer->d3d10Device->OMSetDepthStencilState(_oldDepthStencilState10.Get(), _oldStencilRef10);
-			enginePointer->d3d10Device->IASetIndexBuffer(_oldIndexBuffer10.Get(), _oldIndexFormat10, _oldIndexOffset10);
-			enginePointer->d3d10Device->IASetVertexBuffers(0, 1, _oldVertexBuffer10.GetAddressOf(), &_oldStride10, &_oldOffset10);
-			enginePointer->d3d10Device->IASetInputLayout(_oldInputLayout10.Get());
-			enginePointer->d3d10Device->VSSetShader(_oldVertexShader10.Get());
-			enginePointer->d3d10Device->PSSetShader(_oldPixelShader10.Get());
-			enginePointer->d3d10Device->PSSetSamplers(0, 1, _oldTextureSamplerState10.GetAddressOf());
-			if (_oldPrimitiveTopology10 != D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED)
-			{
-				enginePointer->d3d10Device->IASetPrimitiveTopology(_oldPrimitiveTopology10);
-			}
-			enginePointer->d3d10Device->OMSetBlendState(_oldBlendState10.Get(), _oldBlendFactor10, _oldSampleMask10);
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1261,20 +1008,6 @@ namespace game
 
 			// Draw the sprites
 			enginePointer->d3d9Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _numberOfSpritesUsed * 6, 0, _numberOfSpritesUsed * 2);
-		}
-#endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			void* lockedDest = nullptr;
-
-			// Send vertices to card
-			_vertexBuffer10->Map(D3D10_MAP_WRITE_DISCARD, 0, &lockedDest);
-			memcpy(lockedDest, &_spriteVertices10[0], sizeof(_spriteVertex10) * 4 * _numberOfSpritesUsed);
-			_vertexBuffer10->Unmap();
-
-			// Draw the sprites
-			enginePointer->d3d10Device->DrawIndexed(_numberOfSpritesUsed * 6, 0, 0);
 		}
 #endif
 #if defined (GAME_DIRECTX11)
@@ -1501,78 +1234,6 @@ namespace game
 			access->u = 1.0f;
 			access->v = 1.0f;
 			access->color = color.packedARGB;
-			access++;
-		}
-#endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			_spriteVertex10* access = nullptr;
-			Vector2i windowSize;
-			Rectf scaledPos;
-
-			// If texture changed, render and change SRV
-			if (texture.name != _currentTexture.name)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d10Device->PSSetShaderResources(0, 1, texture.textureSRV10.GetAddressOf());
-			}
-
-			access = &_spriteVertices10[_numberOfSpritesUsed * 4];
-			windowSize = enginePointer->geGetWindowSize();
-			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPos.left = ((float_t)x * 2.0f / (float_t)windowSize.width) - 1.0f;
-			scaledPos.top = 1.0f - ((float_t)y * 2.0f / (float_t)windowSize.height);// -1.0f;
-			scaledPos.right = (((float_t)x + (float_t)texture.width) * 2.0f / (float)windowSize.width) - 1.0f;
-			scaledPos.bottom = 1.0f - (((float_t)y + (float_t)texture.height) * 2.0f / (float)windowSize.height);// -1.0f;
-
-
-			// Fill vertices
-
-			// Top left
-			access->x = scaledPos.left;
-			access->y = scaledPos.top;
-			access->u = 0.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-
-			access++;
-
-			// Top right
-			access->x = scaledPos.right;
-			access->y = scaledPos.top;
-			access->u = 1.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom left
-			access->x = scaledPos.left;
-			access->y = scaledPos.bottom;
-			access->u = 0.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom right
-			access->x = scaledPos.right;
-			access->y = scaledPos.bottom;
-			access->u = 1.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
 			access++;
 		}
 #endif
@@ -1822,81 +1483,7 @@ namespace game
 			access++;
 		}
 #endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			_spriteVertex10* access = nullptr;
-			Vector2i window;
-			Rectf scaledPosition;
-			Rectf scaledUV;
 
-			// If texture changed, render and change texture/SRV
-			if (texture.name != _currentTexture.name)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d10Device->PSSetShaderResources(0, 1, _currentTexture.textureSRV10.GetAddressOf());
-			}
-
-			access = &_spriteVertices10[_numberOfSpritesUsed * 4];
-			window = enginePointer->geGetWindowSize();
-			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPosition.left = ((float_t)(destination.left) * 2.0f / (float_t)window.width) - 1.0f;
-			scaledPosition.top = 1.0f - ((float_t)(destination.top) * 2.0f / (float_t)window.height);// -1.0f;
-			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
-			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
-			// Homogenise UV coords to 0.0f - 1.0f
-			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
-			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
-			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
-			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
-
-			// Fill vertices
-
-			// Top left
-			access->x = scaledPosition.left;
-			access->y = scaledPosition.top;
-			access->u = scaledUV.left;
-			access->v = scaledUV.top;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Top right
-			access->x = scaledPosition.right;
-			access->y = scaledPosition.top;
-			access->u = scaledUV.right;
-			access->v = scaledUV.top;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom left
-			access->x = scaledPosition.left;
-			access->y = scaledPosition.bottom;
-			access->u = scaledUV.left;
-			access->v = scaledUV.bottom;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom right
-			access->x = scaledPosition.right;
-			access->y = scaledPosition.bottom;
-			access->u = scaledUV.right;
-			access->v = scaledUV.bottom;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -2152,81 +1739,6 @@ namespace game
 			access->v = (float_t)portion.bottom * texture.oneOverHeight;
 			access->color = color.packedARGB;
 			access++;
-		}
-#endif
-#if defined (GAME_DIRECTX10)
-		if (enginePointer->geIsUsing(GAME_DIRECTX10))
-		{
-			_spriteVertex10* access = nullptr;
-			Vector2i window;
-			Rectf scaledPosition;
-			Rectf scaledUV;
-
-			// If texture changed, render and change texture/SRV
-			if (texture.name != _currentTexture.name)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d10Device->PSSetShaderResources(0, 1, _currentTexture.textureSRV10.GetAddressOf());
-			}
-
-			access = &_spriteVertices10[_numberOfSpritesUsed * 4];
-			window = enginePointer->geGetWindowSize();
-			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPosition.left = ((float_t)(destination.left) * 2.0f / (float_t)window.width) - 1.0f;
-			scaledPosition.top = 1.0f - ((float_t)(destination.top) * 2.0f / (float_t)window.height);// -1.0f;
-			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
-			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
-			// Homogenise UV coords to 0.0f - 1.0f
-			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
-			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
-			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
-			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
-
-			// Fill vertices
-
-			// Top left
-			access->x = scaledPosition.left;
-			access->y = scaledPosition.top;
-			access->u = scaledUV.left;
-			access->v = scaledUV.top;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Top right
-			access->x = scaledPosition.right;
-			access->y = scaledPosition.top;
-			access->u = scaledUV.right;
-			access->v = scaledUV.top;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom left
-			access->x = scaledPosition.left;
-			access->y = scaledPosition.bottom;
-			access->u = scaledUV.left;
-			access->v = scaledUV.bottom;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom right
-			access->x = scaledPosition.right;
-			access->y = scaledPosition.bottom;
-			access->u = scaledUV.right;
-			access->v = scaledUV.bottom;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
 		}
 #endif
 #if defined (GAME_DIRECTX11)
