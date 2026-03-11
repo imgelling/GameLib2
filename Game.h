@@ -97,10 +97,6 @@ Change Log:
 #define GAME_DIRECTX11 4
 #endif
 
-#if defined(GAME_SUPPORT_DIRECTX10) || defined(GAME_SUPPORT_ALL)
-#define GAME_DIRECTX10 6
-#endif
-
 #if defined(GAME_SUPPORT_DIRECTX9) || defined(GAME_SUPPORT_ALL)
 #define GAME_DIRECTX9 2
 #endif
