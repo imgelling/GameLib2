@@ -2,9 +2,7 @@
 #if defined(GAME_OPENGL)
 #include <GL/gl.h>
 #endif
-#if defined(GAME_DIRECTX9)
-#include <d3d9.h>
-#endif
+
 
 #include <GameEngine.h>
 #include "GameErrors.h"
@@ -117,20 +115,6 @@ namespace game
 		_spriteVertexGL* _spriteVertices;
 		uint32_t _oldTextureBound;
 #endif
-#if defined(GAME_DIRECTX9)
-		struct _spriteVertex9
-		{
-			float_t x, y, z, rhw;
-			uint32_t color;
-			float_t u, v;
-		};
-		_spriteVertex9* _spriteVertices9;
-		LPDIRECT3DVERTEXBUFFER9 _vertexBuffer9;
-		LPDIRECT3DINDEXBUFFER9 _indexBuffer9;
-		DWORD _savedFVF;
-		DWORD _savedBlending;
-		//IDirect3DBaseTexture9* _savedTexture;
-#endif
 #if defined (GAME_DIRECTX11)
 		struct _spriteVertex11
 		{
@@ -219,17 +203,6 @@ namespace game
 			_oldTextureBound = 0;
 		}
 #endif
-#if defined(GAME_DIRECTX9)  
-		//if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			_spriteVertices9 = nullptr;
-			_indexBuffer9 = nullptr;
-			_vertexBuffer9 = nullptr;
-			_savedFVF = 0;
-			_savedBlending = 0;
-			//_savedTexture = nullptr;
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		_spriteVertices11 = nullptr;
 		_oldStride11 = 0;
@@ -272,18 +245,6 @@ namespace game
 			{
 				delete[] _spriteVertices;
 				_spriteVertices = nullptr;
-			}
-		}
-#endif
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			SAFE_RELEASE(_vertexBuffer9);
-			SAFE_RELEASE(_indexBuffer9);
-			if (_spriteVertices9)
-			{
-				delete[] _spriteVertices9;
-				_spriteVertices9 = nullptr;
 			}
 		}
 #endif
@@ -332,23 +293,6 @@ namespace game
 			}
 		}
 #endif
-
-#if defined (GAME_DIRECTX9)  
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			_spriteVertices9 = new _spriteVertex9[(uint64_t)(_maxSprites) * 4];
-			for (uint32_t vertex = 0; vertex < _maxSprites * 4; vertex++)
-			{
-				_spriteVertices9[vertex].x = 0.0f;
-				_spriteVertices9[vertex].y = 0.0f;
-				_spriteVertices9[vertex].z = 0.0f;
-				_spriteVertices9[vertex].rhw = 1.0f;
-				_spriteVertices9[vertex].u = 0.0f;
-				_spriteVertices9[vertex].v = 0.0f;
-				_spriteVertices9[vertex].color = Colors::White.packedARGB;
-			}
-		}
-#endif
 		// DX11 impementation of vertices
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
@@ -391,43 +335,6 @@ namespace game
 #if defined(GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
-		}
-#endif
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			uint32_t* indexMap = nullptr;
-			std::vector<uint32_t> indices;
-
-			//std::cout << "Vertex Buffer Size = " << _maxSprites * (uint32_t)6 * (uint32_t)sizeof(_spriteVertex) / 1024 << "kB.\n";
-			if (enginePointer->d3d9Device->CreateVertexBuffer(_maxSprites * (uint32_t)4 * (uint32_t)sizeof(_spriteVertex9), 0, (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1), D3DPOOL_MANAGED, &_vertexBuffer9, NULL) != D3D_OK)
-			{
-				lastError = { GameErrors::GameDirectX9Specific, "Could not create vertex buffer for SpriteBatch." };
-				return false;
-			}
-
-			if (enginePointer->d3d9Device->CreateIndexBuffer(_maxSprites * (uint32_t)6 * (uint32_t)sizeof(uint32_t), 0, D3DFMT_INDEX32, D3DPOOL_MANAGED, &_indexBuffer9, NULL) != D3D_OK)
-			{
-				lastError = { GameErrors::GameDirectX9Specific, "Could not create index buffer for SpriteBatch." };
-				return false;
-			}
-
-			// Fill index buffer
-			for (uint32_t index = 0; index < _maxSprites; index++)
-			{
-				indices.emplace_back(0 + (index * 4));  // 4 indices per quad, not 6 like I had
-				indices.emplace_back(1 + (index * 4));
-				indices.emplace_back(2 + (index * 4));
-				indices.emplace_back(1 + (index * 4));
-				indices.emplace_back(3 + (index * 4));
-				indices.emplace_back(2 + (index * 4));
-			}
-
-			// Copy data to gpu
-			_indexBuffer9->Lock(0, 0, (void**)&indexMap, 0);
-			memcpy(indexMap, indices.data(), sizeof(uint32_t) * 6 * _maxSprites);
-			_indexBuffer9->Unlock();
-
 		}
 #endif
 
@@ -822,29 +729,6 @@ namespace game
 		_spritesDrawnLastFrame = _currentSpritesDrawn;
 		_currentSpritesDrawn = 0;
 		// needs to save and retore ALL changed states
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			// Save current state
-			enginePointer->d3d9Device->GetFVF(&_savedFVF);
-			// Below fails to get a texture
-			//if (FAILED(enginePointer->d3d9Device->GetTexture(0, &_savedTexture)));
-			//std::cout << "get text failed \n";
-			enginePointer->d3d9Device->GetRenderState(D3DRS_ALPHABLENDENABLE, &_savedBlending);
-
-			// Disable multisampling if enabled
-			if (enginePointer->_attributes.MultiSamples > 1)
-			{
-				enginePointer->d3d9Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
-			}
-
-			enginePointer->d3d9Device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-			enginePointer->d3d9Device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-			enginePointer->d3d9Device->SetFVF((D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1));
-			enginePointer->d3d9Device->SetStreamSource(0, _vertexBuffer9, 0, sizeof(_spriteVertex9));
-			enginePointer->d3d9Device->SetIndices(_indexBuffer9);
-		}
-#endif
 
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
@@ -924,29 +808,6 @@ namespace game
 		{
 			Render();
 		}
-
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-
-			// Restore previous state
-			enginePointer->d3d9Device->SetFVF(_savedFVF);
-			//enginePointer->d3d9Device->SetTexture(0, _savedTexture);
-			enginePointer->d3d9Device->SetRenderState(D3DRS_ALPHABLENDENABLE, _savedBlending);
-			//if (_savedTexture)
-			//{
-			//	// This may be a bug
-			//	//_savedTexture->Release();
-			//	//_savedTexture = nullptr;
-			//}
-
-			// Renable multisampling if it was enabled
-			if (enginePointer->_attributes.MultiSamples > 1)
-			{
-				enginePointer->d3d9Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-			}
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -995,21 +856,6 @@ namespace game
 		}
 		_currentSpritesDrawn += _numberOfSpritesUsed;
 
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			void* lockedDest = nullptr;
-			uint32_t sizeToCopy = sizeof(_spriteVertex9) * 4 * _numberOfSpritesUsed;
-
-			// Send sprite vertices to gpu
-			_vertexBuffer9->Lock(0, sizeToCopy, (void**)&lockedDest, 0);
-			memcpy(lockedDest, &_spriteVertices9[0], sizeToCopy);
-			_vertexBuffer9->Unlock();
-
-			// Draw the sprites
-			enginePointer->d3d9Device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, _numberOfSpritesUsed * 6, 0, _numberOfSpritesUsed * 2);
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1193,50 +1039,6 @@ namespace game
 		}
 #endif
 
-#if defined(GAME_DIRECTX9)
-
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			if (texture.textureInterface9 != _currentTexture.textureInterface9)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d9Device->SetTexture(0, _currentTexture.textureInterface9);
-			}
-			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
-			// Top left
-			access->x = (float_t)x + 0.5f;
-			access->y = (float_t)y + 0.5f;
-			access->u = 0.0f;
-			access->v = 0.0f;
-			access->color = color.packedARGB;
-			access++;
-
-			// Top right
-			access->x = (float_t)x + (float_t)texture.width + 0.5f;
-			access->y = (float_t)y + 0.5f;
-			access->u = 1.0f;
-			access->v = 0.0f;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom left
-			access->x = (float_t)x + 0.5f;
-			access->y = (float_t)y + (float_t)texture.height + 0.5f;
-			access->u = 0.0f;
-			access->v = 1.0f;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom right
-			access->x = (float_t)x + (float_t)texture.width + 0.5f;
-			access->y = (float_t)y + (float_t)texture.height + 0.5f;
-			access->u = 1.0f;
-			access->v = 1.0f;
-			access->color = color.packedARGB;
-			access++;
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1437,50 +1239,6 @@ namespace game
 			access->v = (float_t)portion.top * texture.oneOverHeight;
 			access->color = color.packedABGR;
 			//access++;
-		}
-#endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			if (texture.textureInterface9 != _currentTexture.textureInterface9)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d9Device->SetTexture(0, _currentTexture.textureInterface9);
-			}
-
-			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
-			// Top left
-			access->x = (float_t)destination.left + 0.5f;// -texture.oneOverWidth;
-			access->y = (float_t)destination.top + 0.5f;// -texture.oneOverHeight;
-			access->u = (float_t)portion.left * texture.oneOverWidth;
-			access->v = (float_t)portion.top * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Top right
-			access->x = (float_t)destination.right + 0.5f;// -texture.oneOverWidth;
-			access->y = (float_t)destination.top + 0.5f;// -texture.oneOverHeight;
-			access->u = (float_t)portion.right * texture.oneOverWidth;// 1.0f;
-			access->v = (float_t)portion.top * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom left
-			access->x = (float_t)destination.left + 0.5f;// -texture.oneOverWidth;
-			access->y = (float_t)destination.bottom + 0.5f;// -texture.oneOverHeight;
-			access->u = (float_t)portion.left * texture.oneOverWidth;
-			access->v = (float_t)portion.bottom * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom right
-			access->x = (float_t)destination.right + 0.5f;// -texture.oneOverWidth;
-			access->y = (float_t)destination.bottom + 0.5f;// -texture.oneOverHeight;
-			access->u = (float_t)portion.right * texture.oneOverWidth;
-			access->v = (float_t)portion.bottom * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
 		}
 #endif
 
@@ -1697,50 +1455,7 @@ namespace game
 			//access++;
 		}
 #endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			if (texture.textureInterface9 != _currentTexture.textureInterface9)
-			{
-				Render();
-				_currentTexture = texture;
-				enginePointer->d3d9Device->SetTexture(0, _currentTexture.textureInterface9);
-			}
 
-			_spriteVertex9* access = &_spriteVertices9[_numberOfSpritesUsed * 4];
-			// Top left
-			access->x = (float_t)destination.left + 0.5f;;
-			access->y = (float_t)destination.top + 0.5f;
-			access->u = (float_t)portion.left * texture.oneOverWidth;
-			access->v = (float_t)portion.top * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Top right
-			access->x = (float_t)destination.right + 0.5f;;
-			access->y = (float_t)destination.top + 0.5f;
-			access->u = (float_t)portion.right * texture.oneOverWidth;
-			access->v = (float_t)portion.top * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom left
-			access->x = (float_t)destination.left + 0.5f;
-			access->y = (float_t)destination.bottom + 0.5f;
-			access->u = (float_t)portion.left * texture.oneOverWidth;
-			access->v = (float_t)portion.bottom * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-
-			// Bottom right
-			access->x = (float_t)destination.right + 0.5f; 
-			access->y = (float_t)destination.bottom + 0.5f;
-			access->u = (float_t)portion.right * texture.oneOverWidth;
-			access->v = (float_t)portion.bottom * texture.oneOverHeight;
-			access->color = color.packedARGB;
-			access++;
-		}
-#endif
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{

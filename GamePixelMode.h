@@ -4,9 +4,6 @@
 #if defined(GAME_OPENGL)
 #include <GL/gl.h>
 #endif
-#if defined(GAME_DIRECTX9)
-#include <d3d9.h>
-#endif
 #if defined(GAME_DIRECTX12)
 #include <d3d12.h>
 #include <initguid.h>
@@ -79,25 +76,6 @@ namespace game
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		uint32_t _compiledQuad;
 #endif
-#if defined(GAME_DIRECTX9)
-		struct _vertex9
-		{
-			float_t x, y, z, rhw;    
-			uint32_t color;    
-			float_t u, v;
-		};
-		_vertex9 _quadVertices9[6] =
-		{
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 0.0f, 0.0f},
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 1.0f, 0.0f},
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 0.0f, 1.0f},
-
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 1.0f, 0.0f},
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 1.0f, 1.0f},
-			{0.0f, 0.0f, 0.0f, 1.0f, D3DCOLOR_ARGB(255,255, 255, 255), 0.0f, 1.0f}
-		};
-		LPDIRECT3DVERTEXBUFFER9 _vertexBuffer9;
-#endif
 #if defined(GAME_DIRECTX11)
 		struct _vertex11
 		{
@@ -167,9 +145,6 @@ namespace game
 #if defined(GAME_OPENGL) & !defined(GAME_ENABLE_SHADERS)
 		_compiledQuad = 0;
 #endif
-#if defined(GAME_DIRECTX9)
-		_vertexBuffer9 = nullptr;
-#endif
 #if defined(GAME_DIRECTX11)
 #endif
 #if defined(GAME_DIRECTX12)
@@ -193,16 +168,6 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			glDeleteLists(_compiledQuad, 1);
-		}
-#endif
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			if (_vertexBuffer9)
-			{
-				_vertexBuffer9->Release();
-				_vertexBuffer9 = nullptr;
-			}
 		}
 #endif
 #if defined(GAME_DIRECTX11)
@@ -302,17 +267,6 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			_compiledQuad = glGenLists(1);
-		}
-#endif
-#if defined (GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			enginePointer->d3d9Device->CreateVertexBuffer(6 * sizeof(_vertex9), 0, (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1), D3DPOOL_MANAGED, &_vertexBuffer9, NULL);
-			if (_vertexBuffer9 == nullptr)
-			{
-				lastError = { GameErrors::GameDirectX9Specific, "Could not create vertex buffer for PixelMode." };
-				return false;
-			}
 		}
 #endif
 
@@ -729,17 +683,6 @@ namespace game
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 #endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			D3DLOCKED_RECT rect;
-			unsigned char* test = (unsigned char*)videoBuffer;
-			_frameBuffer.textureInterface9->LockRect(0, &rect, 0, 0);
-			unsigned char* dest = static_cast<unsigned char*>(rect.pBits);
-			memcpy(dest, test, sizeof(unsigned char) * _frameBuffer.width * _frameBuffer.height * 4);
-			_frameBuffer.textureInterface9->UnlockRect(0);
-		}
-#endif
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -816,8 +759,8 @@ namespace game
 		_sizeOfScaledTexture.height = _positionOfScaledTexture.y + (_frameBuffer.height * _scale.y);
 
 		// Pixel offset fix (may be wrecking dx11)
-#if defined(GAME_DIRECTX9)  ||  defined(GAME_OPENGL)
-		//if (enginePointer->geIsUsing(GAME_DIRECTX9) || enginePointer->geIsUsing(GAME_OPENGL))
+#if defined(GAME_OPENGL)
+		//if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			_positionOfScaledTexture.x -= _frameBuffer.oneOverWidth;
 			_positionOfScaledTexture.y -= _frameBuffer.oneOverHeight;
@@ -862,37 +805,6 @@ namespace game
 				glEnd();
 			}
 			glEndList();
-		}
-#endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			VOID* pVoid = nullptr;  
-
-			// tl
-			_quadVertices9[0].x = _positionOfScaledTexture.x;
-			_quadVertices9[0].y = _positionOfScaledTexture.y;
-			// tr
-			_quadVertices9[1].x = _sizeOfScaledTexture.width;
-			_quadVertices9[1].y = _positionOfScaledTexture.y;
-			// bl
-			_quadVertices9[2].x = _positionOfScaledTexture.x;
-			_quadVertices9[2].y = _sizeOfScaledTexture.height;
-
-			// tr
-			_quadVertices9[3].x = _sizeOfScaledTexture.width;
-			_quadVertices9[3].y = _positionOfScaledTexture.y;
-			// br
-			_quadVertices9[4].x = _sizeOfScaledTexture.width;
-			_quadVertices9[4].y = _sizeOfScaledTexture.height;
-			// bl
-			_quadVertices9[5].x = _positionOfScaledTexture.x;
-			_quadVertices9[5].y = _sizeOfScaledTexture.height;
-
-			// Copy vertices to the vertex buffer
-			_vertexBuffer9->Lock(0, 0, (void**)&pVoid, 0);
-			memcpy(pVoid, _quadVertices9, sizeof(_quadVertices9));
-			_vertexBuffer9->Unlock();
 		}
 #endif
 #if defined(GAME_DIRECTX11)
@@ -1018,45 +930,7 @@ namespace game
 			
 		}
 #endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			DWORD oldFVF = 0;
-			IDirect3DBaseTexture9* activeTexture = 0;
-			//enginePointer->d3d9Device->BeginScene();
-			// Save current state
-			enginePointer->d3d9Device->GetFVF(&oldFVF);
-			enginePointer->d3d9Device->GetTexture(0, &activeTexture);
 
-			// Disable multisampling if enabled
-			if (enginePointer->_attributes.MultiSamples > 1)
-			{
-				enginePointer->d3d9Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, FALSE);
-			}
-
-			enginePointer->d3d9Device->SetTexture(0, _frameBuffer.textureInterface9);
-			enginePointer->d3d9Device->SetFVF((D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1));
-			enginePointer->d3d9Device->SetStreamSource(0, _vertexBuffer9, 0, sizeof(_vertex9));
-			enginePointer->d3d9Device->DrawPrimitive(D3DPT_TRIANGLELIST, 0, 2);
-
-			// Restore previous state
-			enginePointer->d3d9Device->SetFVF(oldFVF);
-			enginePointer->d3d9Device->SetTexture(0, activeTexture);
-			if (activeTexture)
-			{
-				activeTexture->Release();
-			}
-
-			// Renable multisampling if it was enabled
-			if (enginePointer->_attributes.MultiSamples > 1)
-			{
-				enginePointer->d3d9Device->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-			}
-
-			//enginePointer->d3d9Device->EndScene();
-		}
-		
-#endif
 #if defined(GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
 		{
@@ -1134,13 +1008,6 @@ namespace game
 
 	inline void PixelMode::Clear(const Color &color) noexcept
 	{
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			std::fill_n(videoBuffer, _totalBufferSize, color.packedARGB);
-			return;
-		}
-#endif	
 		_threadPool.Queue(std::bind(std::fill_n<uint32_t*, uint32_t, uint32_t>, videoBuffers[_currentBuffer], _totalBufferSize, color.packedABGR));
 		//std::fill_n(videoBuffer, _totalBufferSize, color.packedABGR); //1075
 		_currentBuffer++;
@@ -1173,13 +1040,6 @@ namespace game
 			return;
 		}
 #endif
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			videoBuffer[y * _bufferSize.width + x] = color.packedARGB;
-			return;
-		}
-#endif
 		videoBuffer[y * _bufferSize.width + x] = color.packedABGR;
 	}
 
@@ -1187,13 +1047,6 @@ namespace game
 	{
 		if (x < 0 || y < 0) return;
 		if (x > _bufferSize.width-1 || y > _bufferSize.height - 1) return;
-#if defined(GAME_DIRECTX9)
-		if (enginePointer->geIsUsing(GAME_DIRECTX9))
-		{
-			videoBuffer[y * _bufferSize.width + x] = color.packedARGB;
-			return;
-		}
-#endif
 		videoBuffer[(y) * _bufferSize.width + x] = color.packedABGR;
 	}
 

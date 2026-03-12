@@ -29,12 +29,6 @@
 #pragma endregion
 
 
-#pragma region DirectX9
-#if defined(GAME_DIRECTX9)
-#include "GameRendererDX9.h"
-#endif
-#pragma endregion
-
 #pragma region Opengl
 #if defined(GAME_OPENGL)
 #include "GameRendererGL.h"
@@ -75,9 +69,6 @@ namespace game
 		bool geIsMinimized;				// Is the game window minimized?
 		bool geIsMaximized;				// Is the game window maximized?
 		bool geIsFullScreen;			// Is the game window full screen (no border)?
-#if defined(GAME_DIRECTX9)
-		LPDIRECT3DDEVICE9 d3d9Device;
-#endif
 #if defined(GAME_DIRECTX11)
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d11DeviceContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> d3d11RenderTarget;
@@ -217,9 +208,6 @@ namespace game
 		geIsMinimized = false;
 		geIsMaximized = false;
 		geIsFullScreen = false;
-#if defined(GAME_DIRECTX9)
-		d3d9Device = nullptr;
-#endif
 #if defined(GAME_DIRECTX11)
 #endif
 	}
@@ -230,12 +218,6 @@ namespace game
 		{
 			_renderer->DestroyDevice();
 		}
-#if defined(GAME_DIRECTX9)
-		if (d3d9Device)
-		{
-			d3d9Device->Release();
-		}
-#endif
 #if defined(GAME_DIRECTX11)
 #endif
 #if defined (GAME_DIRECTX12)
@@ -253,10 +235,6 @@ namespace game
 	{
 #if defined(GAME_OPENGL)
 		if ((renderer == 1) && (_attributes.RenderingAPI == RenderAPI::OpenGL))
-			return true;
-#endif
-#if defined(GAME_DIRECTX9)
-		if ((renderer == 2) && (_attributes.RenderingAPI == RenderAPI::DirectX9))
 			return true;
 #endif
 #if defined(GAME_VULKAN)
@@ -624,15 +602,6 @@ namespace game
 			return false;
 #endif
 		}
-		else if (_attributes.RenderingAPI == RenderAPI::DirectX9)
-		{
-#if defined(GAME_DIRECTX9)
-			_renderer = new game::RendererDX9();
-#else
-			lastError = { GameErrors::GameInvalidParameter, "Requested DirectX9 without #defining GAME_SUPPORT_DIRECTX9 or GAME_SUPPORT ALL." };
-			return false;
-#endif
-		}
 		else if (_attributes.RenderingAPI == RenderAPI::DirectX11)
 		{
 #if defined(GAME_DIRECTX11)
@@ -667,15 +636,6 @@ namespace game
 
 		_renderer->FillOutRendererInfo();
 
-#if defined(GAME_DIRECTX9)
-		if (geIsUsing(GAME_DIRECTX9))
-		{
-			if (_renderer)
-			{
-				dynamic_cast<RendererDX9*>(_renderer)->GetDevice(d3d9Device);
-			}
-		}
-#endif
 #if defined(GAME_DIRECTX11)
 		if (geIsUsing(GAME_DIRECTX11))
 		{
@@ -722,16 +682,6 @@ namespace game
 				_renderer->HandleWindowResize(width, height);
 			}
 		}
-#endif
-#if defined(GAME_DIRECTX9)
-			if (geIsUsing(GAME_DIRECTX9))
-			{
-				if (_renderer)
-				{
-					_renderer->HandleWindowResize(width, height);
-					dynamic_cast<RendererDX9*>(_renderer)->GetDevice(d3d9Device);
-				}
-			}
 #endif
 #if defined(GAME_DIRECTX11)
 		if (geIsUsing(GAME_DIRECTX11))

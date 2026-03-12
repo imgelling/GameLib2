@@ -9,7 +9,6 @@
 
 namespace game
 {
-#pragma pack(push, 16)
 	class Color
 	{
 	public:
@@ -21,13 +20,13 @@ namespace game
 		uint32_t g;
 		uint32_t b;
 		uint32_t a;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
+//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
 		uint32_t packedABGR;
 //#endif
 //#if defined(GAME_DIRECTX9)
 		uint32_t packedARGB;
 //#endif
-#if defined(GAME_DIRECTX10) | defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
 		float rgba[4];
 #endif
 
@@ -78,10 +77,9 @@ namespace game
 		std::string ToHex() const;
 		std::string hexidecimal;
 
-		float_t oneOver255 = 1.0f / 255.0f;
+
 	private:
 	};
-#pragma pack(pop)
 
 	inline std::string Color::ToHex() const
 	{
@@ -111,13 +109,13 @@ namespace game
 		g = 0;
 		b = 0;
 		a = 255;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = a << 24;
 //#endif
 //#if defined(GAME_DIRECTX9)
 		packedARGB = a << 24;
 //#endif
-#if defined(GAME_DIRECTX10) | defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = 0.0f;
 		rgba[1] = 0.0f;
 		rgba[2] = 0.0f;
@@ -134,29 +132,29 @@ namespace game
 
 	void Color::Set(const float_t red, const float_t green, const float_t blue, const float_t alpha) noexcept
 	{
-		this->r = (uint32_t)(red * 255.0f);
-		this->g = (uint32_t)(green * 255.0f);
-		this->b = (uint32_t)(blue * 255.0f);
-		this->a = (uint32_t)(alpha * 255.0f);
-		this->rf = red;
-		this->gf = green;
-		this->bf = blue;
-		this->af = alpha;
+		r = (uint32_t)(red * 255.0f);
+		g = (uint32_t)(green * 255.0f);
+		b = (uint32_t)(blue * 255.0f);
+		a = (uint32_t)(alpha * 255.0f);
+		rf = red;
+		gf = green;
+		bf = blue;
+		af = alpha;
 
-		uint32_t packedR = this->r << 0;
-		uint32_t packedG = this->g << 8;
-		uint32_t packedB = this->b << 16;
-		uint32_t packedA = this->a << 24;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+		uint32_t packedR = r << 0;
+		uint32_t packedG = g << 8;
+		uint32_t packedB = b << 16;
+		uint32_t packedA = a << 24;
+//#if defined(GAME_OPENGL) ||  defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
 
 //#if defined(GAME_DIRECTX9)
-		packedR = this->r << 16;
-		packedB = this->b << 0;
+		packedR = r << 16;
+		packedB = b << 0;
 		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
-#if defined(GAME_DIRECTX10) | defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
 		rgba[2] = bf;
@@ -174,28 +172,28 @@ namespace game
 
 	inline void Color::Set(const double_t red, const double_t green, const double_t blue, const double_t alpha) noexcept
 	{
-		this->r = (uint32_t)(red * 255.0f);
-		this->g = (uint32_t)(green * 255.0f);
-		this->b = (uint32_t)(blue * 255.0f);
-		this->a = (uint32_t)(alpha * 255.0f);
-		this->rf = (float_t)red;
-		this->gf = (float_t)green;
-		this->bf = (float_t)blue;
-		this->af = (float_t)alpha;
+		r = (uint32_t)(red * 255.0f);
+		g = (uint32_t)(green * 255.0f);
+		b = (uint32_t)(blue * 255.0f);
+		a = (uint32_t)(alpha * 255.0f);
+		rf = (float_t)red;
+		gf = (float_t)green;
+		bf = (float_t)blue;
+		af = (float_t)alpha;
 
-		uint32_t packedR = this->r << 0;
-		uint32_t packedG = this->g << 8;
-		uint32_t packedB = this->b << 16;
-		uint32_t packedA = this->a << 24;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+		uint32_t packedR = r << 0;
+		uint32_t packedG = g << 8;
+		uint32_t packedB = b << 16;
+		uint32_t packedA = a << 24;
+//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
 //#if defined(GAME_DIRECTX9)
-		packedR = this->r << 16;
-		packedB = this->b << 0;
+		packedR = r << 16;
+		packedB = b << 0;
 		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
-#if defined(GAME_DIRECTX10) | defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
 		rgba[2] = bf;
@@ -213,28 +211,28 @@ namespace game
 
 	inline void Color::Set(const uint32_t red, const uint32_t green, const uint32_t blue, const uint32_t alpha) noexcept
 	{
-		this->r = red;
-		this->g = green;
-		this->b = blue;
-		this->a = alpha;
-		this->rf = red * oneOver255;
-		this->gf = green * oneOver255;
-		this->bf = blue * oneOver255;
-		this->af = alpha * oneOver255;
+		r = red;
+		g = green;
+		b = blue;
+		a = alpha;
+		rf = red * (1.0f / 255.0f);
+		gf = green * (1.0f / 255.0f);
+		bf = blue * (1.0f / 255.0f);
+		af = alpha * (1.0f / 255.0f);
 
 		uint32_t packedR = red << 0;
 		uint32_t packedG = green << 8;
 		uint32_t packedB = blue << 16;
 		uint32_t packedA = alpha << 24;
-//#if defined(GAME_OPENGL)  || defined(GAME_DIRECTX10) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+//#if defined(GAME_OPENGL)  || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
 //#if defined(GAME_DIRECTX9)
-		packedR = this->r << 16;
-		packedB = this->b << 0;
+		packedR = r << 16;
+		packedB = b << 0;
 		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
-#if defined(GAME_DIRECTX10) | defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
 		rgba[2] = bf;
