@@ -23,9 +23,6 @@ namespace game
 //#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
 		uint32_t packedABGR;
 //#endif
-//#if defined(GAME_DIRECTX9)
-		uint32_t packedARGB;
-//#endif
 #if defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
 		float rgba[4];
 #endif
@@ -95,7 +92,7 @@ namespace game
 		byteToHex((uint8_t)g, &hexColor[3]);
 		byteToHex((uint8_t)b, &hexColor[5]);
 		byteToHex((uint8_t)a, &hexColor[7]);
-		hexColor[9] = '\0';
+		//hexColor[9] = '\0';
 		return std::string(hexColor);
 	}
 
@@ -111,9 +108,6 @@ namespace game
 		a = 255;
 //#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = a << 24;
-//#endif
-//#if defined(GAME_DIRECTX9)
-		packedARGB = a << 24;
 //#endif
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = 0.0f;
@@ -149,11 +143,6 @@ namespace game
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
 
-//#if defined(GAME_DIRECTX9)
-		packedR = r << 16;
-		packedB = b << 0;
-		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
@@ -188,11 +177,7 @@ namespace game
 //#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
-//#if defined(GAME_DIRECTX9)
-		packedR = r << 16;
-		packedB = b << 0;
-		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
+
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
@@ -227,11 +212,7 @@ namespace game
 //#if defined(GAME_OPENGL)  || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 //#endif
-//#if defined(GAME_DIRECTX9)
-		packedR = r << 16;
-		packedB = b << 0;
-		packedARGB = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
+
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
 		rgba[1] = gf;
