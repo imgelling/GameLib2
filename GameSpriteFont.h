@@ -258,6 +258,8 @@ namespace game
 		uint64_t index;
 		std::ifstream stream;
 
+		if (!characterSet) characterSet = std::make_shared<Charset>();
+
 		_texture.isMipMapped = true;
 		_texture.filterType = filter;// TextureFilterType::Trilinear;
 		if (!enginePointer->geLoadTexture(texture, _texture))
@@ -360,6 +362,7 @@ namespace game
 	inline void SpriteFont::UnLoad()
 	{
 		enginePointer->geUnLoadTexture(_texture);
+		characterSet = nullptr;
 		isLoaded = false;
 	}
 

@@ -28,13 +28,6 @@ namespace game
 #if defined(GAME_OPENGL)
 		uint32_t bind;
 #endif
-#if defined(GAME_DIRECTX9)
-		LPDIRECT3DTEXTURE9 textureInterface9;
-#endif
-#if defined(GAME_DIRECTX10)
-		Microsoft::WRL::ComPtr<ID3D10Texture2D> textureInterface10;
-		Microsoft::WRL::ComPtr<ID3D10ShaderResourceView> textureSRV10;
-#endif
 #if defined(GAME_DIRECTX11)
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> textureInterface11;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> textureSRV11;

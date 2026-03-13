@@ -40,10 +40,12 @@ namespace game
 		{
 			if (out)
 			{
+				if (out->af == alpha) return;
 				out->Set(rf, gf, bf, alpha);
 			}
 			else
 			{
+				if (af == alpha) return;
 				Set(rf, gf, bf, alpha);
 			}
 		}
