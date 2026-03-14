@@ -416,7 +416,7 @@ namespace game
 			samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 			if (FAILED(enginePointer->d3d11Device->CreateSamplerState(&samplerDesc, _textureSamplerState11.GetAddressOf())))
 			{
-				lastError = { GameErrors::GameDirectX10Specific,"Could not create sampler state for SpriteBatch." };
+				lastError = { GameErrors::GameDirectX11Specific,"Could not create sampler state for SpriteBatch." };
 				return false;
 			}
 
