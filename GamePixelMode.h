@@ -1113,7 +1113,8 @@ namespace game
 
 		struct _Clip
 		{
-			inline int clipTest(float_t p, float_t q, float_t* u1, float_t* u2) noexcept
+			// lambda
+			inline int clipTest(const float_t p, const float_t q, float_t* u1, float_t* u2) noexcept
 			{
 				float_t r(0.0f);
 
@@ -1176,8 +1177,8 @@ namespace game
 			Pixel(x1, y, color);
 			return;
 		}
-		int32_t start = (x1 < x2) ? x1 : x2;// std::min(x1, x2);
-		int32_t end = (x1 > x2) ? x1 : x2;// std::max(x1, x2);
+		int32_t start = (x1 < x2) ? x1 : x2;
+		int32_t end = (x1 > x2) ? x1 : x2;
 
 		for (int32_t startX = start; startX <= end; startX++)
 		{
@@ -1215,8 +1216,8 @@ namespace game
 			Pixel(x, y1, color);
 			return;
 		}
-		int32_t start = (y1 < y2) ? y1 : y2;
-		int32_t end = (y1 > y2) ? y1 : y2;
+		const int32_t start = (y1 < y2) ? y1 : y2;
+		const int32_t end = (y1 > y2) ? y1 : y2;
 
 		for (int32_t startY = start; startY <= end; startY++)
 		{
@@ -1481,7 +1482,7 @@ namespace game
 
 	inline void PixelMode::VPillClip(const int32_t x, const int32_t y, const int32_t height, const int32_t radius, const game::Color& color) noexcept
 	{
-		int32_t calculatedHeight = y + (height - (radius * 2));
+		const int32_t calculatedHeight = y + (height - (radius * 2));
 
 		if (radius < 0 || x < -radius || y < -height || x - _bufferSize.width > radius || y - _bufferSize.height > height)
 			return;
