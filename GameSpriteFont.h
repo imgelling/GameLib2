@@ -74,14 +74,17 @@ namespace game
 			return width;
 		}
 
+		// shouldn't need widthInPixels.
 		int32_t MaxCharsForWidth(const std::string& in, const int32_t maxPixels) const
 		{
 			int32_t count = 0;
-			std::string test;
+			int32_t width = 0;
+			//std::string test;
 			for (auto c : in)
 			{
-				test += c;
-				if (WidthInPixels(test) >= maxPixels)
+				//test += c;
+				width += characterSet->letters[c].xOffset + characterSet->letters[c].width + characterSet->letters[c].xAdvance;
+				if (width >= maxPixels)
 					return count;// 
 				count++;
 			}
