@@ -137,7 +137,7 @@ namespace game
 		}
 
 		// Structure to hold a text segment and its color
-		class TextSegment
+		class ColorTextSegment
 		{
 		public:
 			std::string text;
@@ -163,9 +163,9 @@ namespace game
 		}
 
 		// Parser function
-		std::vector<TextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
+		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
 		{
-			std::vector<TextSegment> segments;
+			std::vector<ColorTextSegment> segments;
 			uint64_t pos = 0;
 			Color currentColor = defaultColor;
 			const uint64_t size = input.size();

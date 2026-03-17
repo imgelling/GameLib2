@@ -124,7 +124,7 @@ namespace game
 		// Create device and swap chain
 		if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, 0, deviceFlags, featureLevels, ARRAYSIZE(featureLevels), D3D11_SDK_VERSION, &scd, _d3d11SwapChain.GetAddressOf(), _d3d11Device.GetAddressOf(), &featureLevelCreated, _d3d11DeviceContext.GetAddressOf())))
 		{
-			lastError = { GameErrors::GameDirectX10Specific, "Could not create device." };
+			lastError = { GameErrors::GameDirectX11Specific, "Could not create device." };
 			return false;
 		}
 

@@ -301,7 +301,7 @@ namespace game
 			vertexInitialData.pSysMem = _quadVertices11;
 			if (FAILED(enginePointer->d3d11Device->CreateBuffer(&vertexBufferDescription, &vertexInitialData, _vertexBuffer11.GetAddressOf())))
 			{
-				lastError = { GameErrors::GameDirectX10Specific,"Could not create vertex buffer for PixelMode." };
+				lastError = { GameErrors::GameDirectX11Specific,"Could not create vertex buffer for PixelMode." };
 				enginePointer->geUnLoadShader(_pixelModeShader11);
 				return false;
 			}

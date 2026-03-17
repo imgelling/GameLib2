@@ -447,7 +447,7 @@ namespace game
 			// Create depth stencil state
 			if (FAILED(enginePointer->d3d11Device->CreateDepthStencilState(&dsDesc, _depthStencilState11.GetAddressOf())))
 			{
-				lastError = { GameErrors::GameDirectX10Specific, "Could not create Depth Stencil State. " };
+				lastError = { GameErrors::GameDirectX11Specific, "Could not create Depth Stencil State. " };
 				return false;
 			}
 		}
