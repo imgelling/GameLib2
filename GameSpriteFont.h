@@ -68,6 +68,7 @@ namespace game
 			{
 				const uint8_t letter = string[i];
 				const uint32_t widthOfLetter = characterSet->letters[letter].width;
+				// this can be cleaned up.
 				width = currentX + (characterSet->letters[letter].xOffset) + (widthOfLetter);
 				currentX += (characterSet->letters[letter].xAdvance);
 			}
