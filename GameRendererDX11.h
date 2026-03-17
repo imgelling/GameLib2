@@ -156,7 +156,7 @@ namespace game
 			return false;
 		}
 
-		HRESULT hr;
+		//HRESULT hr;
 		if (FAILED(_d3d11SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf())))
 		{
 			lastError = { GameErrors::GameDirectX11Specific, "Could not create create back buffer." };
@@ -164,8 +164,7 @@ namespace game
 		}
 
 		//Create our Render Target
-		hr = _d3d11Device->CreateRenderTargetView(backBuffer.Get(), NULL, _d3d11RenderTargetView.GetAddressOf());
-		if (FAILED(hr))
+		if (FAILED(_d3d11Device->CreateRenderTargetView(backBuffer.Get(), NULL, _d3d11RenderTargetView.GetAddressOf())))
 		{
 			lastError = { GameErrors::GameDirectX11Specific, "Could not create render target view." };
 			return false;
