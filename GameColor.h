@@ -52,7 +52,7 @@ namespace game
 			}
 		}
 
-		void SetAlpha(const double alpha, Color *out = nullptr)
+		void SetAlpha(const double alpha, Color* out = nullptr)
 		{
 			if (out)
 			{
