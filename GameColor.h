@@ -1,5 +1,4 @@
-#if !defined(GAMECOLOR_H)
-#define GAMECOLOR_H
+#pragma once
 
 #include <string>
 #include <cmath>
@@ -35,6 +34,9 @@ namespace game
 		void Set(const float_t r, const float_t g, const float_t b, const float_t a) noexcept;
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
+
+		// Sets by hex
+		void Set(const std::string& hex);
 
 		void SetAlpha(const float_t alpha, Color* out = nullptr)
 		{
@@ -98,6 +100,24 @@ namespace game
 		return std::string(hexColor);
 	}
 
+	// Helper: Convert hex string to integer
+	void Color::Set (const std::string& hex)
+	{
+		if (hex.size() != 8) return;// defaultColor; // default white
+		uint32_t rgba = 0;
+		rgba = std::stoul(hex, nullptr, 16);
+		//std::stringstream ss;
+		//ss << std::hex << hex;
+		//ss >> rgba;
+		Color ret;
+		uint32_t r = (rgba >> 24) & 0xFF;
+		uint32_t g = (rgba >> 16) & 0xFF;
+		uint32_t b = (rgba >> 8) & 0xFF;
+		uint32_t a = (rgba >> 0) & 0xFF;
+		Set(r, g, b, a);
+		//return  ret;
+	}
+
 	inline Color::Color()
 	{
 		rf = 0.0f;
@@ -108,10 +128,8 @@ namespace game
 		g = 0;
 		b = 0;
 		a = 255;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		packedABGR = a << 24;
-//#endif
-#if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+#if defined(GAME_DIRECTX11) || defined(GAME_DIRECTX12)
 		rgba[0] = 0.0f;
 		rgba[1] = 0.0f;
 		rgba[2] = 0.0f;
@@ -141,9 +159,9 @@ namespace game
 		uint32_t packedG = g << 8;
 		uint32_t packedB = b << 16;
 		uint32_t packedA = a << 24;
-//#if defined(GAME_OPENGL) ||  defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
+
 
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
@@ -176,9 +194,9 @@ namespace game
 		uint32_t packedG = g << 8;
 		uint32_t packedB = b << 16;
 		uint32_t packedA = a << 24;
-//#if defined(GAME_OPENGL) || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
+
 
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
@@ -211,9 +229,8 @@ namespace game
 		uint32_t packedG = green << 8;
 		uint32_t packedB = blue << 16;
 		uint32_t packedA = alpha << 24;
-//#if defined(GAME_OPENGL)  || defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
+
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
-//#endif
 
 #if defined(GAME_DIRECTX11)|| defined(GAME_DIRECTX12)
 		rgba[0] = rf;
@@ -255,9 +272,11 @@ namespace game
 		const Color Black25(0, 0, 0, 0.25f);
 
 		const Color CornFlowerBlue((uint32_t)100, 149, 237, 255);
+
 		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
 
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
+
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
 		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
 		const Color LightGray75(0.75f, 0.75f, 0.75f, 0.75f);
@@ -270,5 +289,3 @@ namespace game
 		const Color DarkOrange(1.0f, 0.55f, 0, 1.0f);
 	}
 }
-
-#endif

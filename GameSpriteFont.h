@@ -92,6 +92,7 @@ namespace game
 			return count;
 		}
 		std::string ColorTagWrap(const std::string& str, const game::Color& color);
+
 		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
 		{
 			int32_t offset = 0;
@@ -148,23 +149,23 @@ namespace game
 			Color color; // 0xRRGGBB
 		};
 
-		// Helper: Convert hex string to integer
-		static Color hexToRGBA(const std::string& hex, const Color defaultColor)
-		{
-			if (hex.size() != 8) return defaultColor; // default white
-			uint32_t rgba = 0;
-			rgba = std::stoul(hex, nullptr, 16);
-			//std::stringstream ss;
-			//ss << std::hex << hex;
-			//ss >> rgba;
-			Color ret;
-			uint32_t r = (rgba >> 24) & 0xFF;
-			uint32_t g = (rgba >> 16) & 0xFF;
-			uint32_t b = (rgba >> 8) & 0xFF;
-			uint32_t a = (rgba >> 0) & 0xFF;
-			ret.Set(r, g, b, a);
-			return  ret;
-		}
+		//// Helper: Convert hex string to integer
+		//static Color hexToRGBA(const std::string& hex, const Color defaultColor)
+		//{
+		//	if (hex.size() != 8) return defaultColor; // default white
+		//	uint32_t rgba = 0;
+		//	rgba = std::stoul(hex, nullptr, 16);
+		//	//std::stringstream ss;
+		//	//ss << std::hex << hex;
+		//	//ss >> rgba;
+		//	Color ret;
+		//	uint32_t r = (rgba >> 24) & 0xFF;
+		//	uint32_t g = (rgba >> 16) & 0xFF;
+		//	uint32_t b = (rgba >> 8) & 0xFF;
+		//	uint32_t a = (rgba >> 0) & 0xFF;
+		//	ret.Set(r, g, b, a);
+		//	return  ret;
+		//}
 
 		// Parser function
 		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
@@ -200,7 +201,8 @@ namespace game
 				// Parse color code
 				colorCodeStart = tagStart + 8; // skip "<color=#"
 				colorCode = input.substr(colorCodeStart, 8);
-				currentColor = hexToRGBA(colorCode, defaultColor);
+				currentColor = defaultColor;
+				currentColor.Set(colorCode);
 
 				// Find closing '>'
 				tagEnd = input.find('>', colorCodeStart + 8);
