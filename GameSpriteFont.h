@@ -171,19 +171,19 @@ namespace game
 		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
 		{
 			std::vector<ColorTextSegment> segments;
-			uint32_t pos = 0;
+			uint64_t pos = 0;
 			Color currentColor = defaultColor;
-			const uint32_t size = (uint32_t)input.size();
+			const uint64_t size = input.size();
 			std::string coloredText;
 			std::string colorCode;
-			uint32_t colorCodeStart = 0;
-			uint32_t tagEnd = 0;
-			uint32_t closeTag = 0;
-			uint32_t tagStart = 0;
+			uint64_t colorCodeStart = 0;
+			uint64_t tagEnd = 0;
+			uint64_t closeTag = 0;
+			uint64_t tagStart = 0;
 
 			while (pos < size)
 			{
-				tagStart = (uint32_t)input.find("<color=#", pos);
+				tagStart = input.find("<color=#", pos);
 
 				if (tagStart == std::string::npos)
 				{
@@ -205,21 +205,21 @@ namespace game
 				currentColor.Set(colorCode);
 
 				// Find closing '>'
-				tagEnd = (uint32_t)input.find('>', colorCodeStart + 8);
+				tagEnd = input.find('>', colorCodeStart + 8);
 				if (tagEnd == std::string::npos)
 				{
 					break; // malformed tag
 				}
 
 				// Find closing </color>
-				closeTag = (uint32_t)input.find("</color>", tagEnd);
+				closeTag = input.find("</color>", tagEnd);
 				if (closeTag == std::string::npos)
 				{
 					break; // malformed tag
 				}
 
 				// Extract colored text
-				coloredText = input.substr((tagEnd) + 1, closeTag - (tagEnd + 1));
+				coloredText = input.substr(tagEnd + 1, closeTag - (tagEnd + 1));
 				segments.push_back({ coloredText, currentColor });
 
 				// Reset color after closing tag
