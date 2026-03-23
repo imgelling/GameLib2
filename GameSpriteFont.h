@@ -64,13 +64,13 @@ namespace game
 			const uint64_t size = string.size();
 			int32_t currentX = 0;
 			int32_t width = 0;
-			for (uint64_t i = 0; i < size; ++i)
+			for (uint16_t i : string) // = 0; i < size; ++i)
 			{
-				const uint8_t letter = string[i];
-				const uint32_t widthOfLetter = characterSet->letters[letter].width;
+				//const uint8_t letter = string[i];
+				const uint32_t widthOfLetter = characterSet->letters[i].width;
 				// this can be cleaned up.
-				width = currentX + (characterSet->letters[letter].xOffset) + (widthOfLetter);
-				currentX += (characterSet->letters[letter].xAdvance);
+				width = currentX + (characterSet->letters[i].xOffset) + (widthOfLetter);
+				currentX += (characterSet->letters[i].xAdvance);
 			}
 			return width;
 		}
@@ -80,14 +80,16 @@ namespace game
 		{
 			int32_t count = 0;
 			int32_t width = 0;
-			//std::string test;
-			for (auto c : in)
+			int32_t currentX = 0;
+			std::string test;
+			for (uint8_t c : in)
 			{
-				//test += c;
-				width += characterSet->letters[c].xOffset + characterSet->letters[c].width + characterSet->letters[c].xAdvance;
+				test += c;
+				width = currentX + characterSet->letters[c].xOffset + characterSet->letters[c].width;
 				if (width >= maxPixels)
 					return count;// 
 				count++;
+				currentX += characterSet->letters[c].xAdvance;
 			}
 			return count;
 		}
