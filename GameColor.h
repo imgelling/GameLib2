@@ -104,17 +104,17 @@ namespace game
 	void Color::Set (const std::string& hex)
 	{
 		if (hex.size() != 8) return;// defaultColor; // default white
-		uint32_t rgba = 0;
-		rgba = std::stoul(hex, nullptr, 16);
+		uint32_t newRGBA = 0;
+		newRGBA = std::stoul(hex, nullptr, 16);
 		//std::stringstream ss;
 		//ss << std::hex << hex;
 		//ss >> rgba;
 		Color ret;
-		uint32_t r = (rgba >> 24) & 0xFF;
-		uint32_t g = (rgba >> 16) & 0xFF;
-		uint32_t b = (rgba >> 8) & 0xFF;
-		uint32_t a = (rgba >> 0) & 0xFF;
-		Set(r, g, b, a);
+		uint32_t newR = (newRGBA >> 24) & 0xFF;
+		uint32_t newG = (newRGBA >> 16) & 0xFF;
+		uint32_t newB = (newRGBA >> 8) & 0xFF;
+		uint32_t newA = (newRGBA >> 0) & 0xFF;
+		Set(newR, newG, newB, newA);
 		//return  ret;
 	}
 

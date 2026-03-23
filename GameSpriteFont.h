@@ -59,11 +59,11 @@ namespace game
 		int32_t Height(const std::string& text) const;
 		game::Recti BoundingBox(const std::string& string) const;
 		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const;
-		inline int32_t WidthInPixels(const std::string& string) const
+		inline int32_t WidthOfTextInPixels(const std::string& string) const
 		{
-			const uint64_t size = string.size();
+			//const uint64_t size = string.size();
 			int32_t currentX = 0;
-			int32_t width = 0;
+			int32_t width = 0; 
 			for (uint16_t i : string) // = 0; i < size; ++i)
 			{
 				//const uint8_t letter = string[i];
@@ -76,7 +76,7 @@ namespace game
 		}
 
 		// shouldn't need widthInPixels.
-		int32_t MaxCharsForWidth(const std::string& in, const int32_t maxPixels) const
+		int32_t NumberTextCharsInAWidth(const std::string& in, const int32_t maxPixels) const
 		{
 			int32_t count = 0;
 			int32_t width = 0;
@@ -150,24 +150,6 @@ namespace game
 			std::string text;
 			Color color; // 0xRRGGBB
 		};
-
-		//// Helper: Convert hex string to integer
-		//static Color hexToRGBA(const std::string& hex, const Color defaultColor)
-		//{
-		//	if (hex.size() != 8) return defaultColor; // default white
-		//	uint32_t rgba = 0;
-		//	rgba = std::stoul(hex, nullptr, 16);
-		//	//std::stringstream ss;
-		//	//ss << std::hex << hex;
-		//	//ss >> rgba;
-		//	Color ret;
-		//	uint32_t r = (rgba >> 24) & 0xFF;
-		//	uint32_t g = (rgba >> 16) & 0xFF;
-		//	uint32_t b = (rgba >> 8) & 0xFF;
-		//	uint32_t a = (rgba >> 0) & 0xFF;
-		//	ret.Set(r, g, b, a);
-		//	return  ret;
-		//}
 
 		// Parser function
 		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
