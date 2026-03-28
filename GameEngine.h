@@ -724,6 +724,7 @@ namespace game
 
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+	std::wstring g_textBuffer;
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
@@ -832,7 +833,28 @@ namespace game
 		//	enginePointer->HandleWindowResize(enginePointer->geGetWindowSize().x, enginePointer->geGetWindowSize().y);
 		//	return 0;
 		//}
-
+		case WM_CHAR:
+		{
+			wchar_t ch = static_cast<wchar_t>(wParam);
+			std::locale::global(std::locale("en_US.UTF-8"));
+			std::wcout.imbue(std::locale());
+			// Handle backspace
+			if (ch == VK_BACK) {
+				if (!g_textBuffer.empty()) {
+					g_textBuffer.pop_back();
+				}
+			}
+			// Handle Enter (example: print and clear buffer)
+			else if (ch == L'\r') {
+				std::wcout << L"Entered text: " << g_textBuffer << std::endl;
+				g_textBuffer.clear();
+			}
+			// Ignore control characters except newline
+			else if (ch >= 0x20) {
+				g_textBuffer.push_back(ch);
+			}
+			return 0;
+		}
 		case WM_KEYDOWN:
 		{
 			int repeatCount = lParam & 0xFFFF;
