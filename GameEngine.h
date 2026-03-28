@@ -724,7 +724,7 @@ namespace game
 
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
-	std::wstring g_textBuffer;
+	std::wstring g_textBuffer; // part of unicode hack
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
@@ -835,6 +835,7 @@ namespace game
 		//}
 		case WM_CHAR:
 		{
+			// unicode hack
 			wchar_t ch = static_cast<wchar_t>(wParam);
 			std::locale::global(std::locale("en_US.UTF-8"));
 			std::wcout.imbue(std::locale());
