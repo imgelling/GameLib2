@@ -836,8 +836,8 @@ namespace game
 		case WM_CHAR:
 		{
 			// unicode hack
-			char16_t ch = static_cast<wchar_t>(wParam);
-			char32_t ch32= 0;
+			wchar_t ch = static_cast<wchar_t>(wParam);
+			//char32_t ch32= 0;
 			//std::u16string test = u"Entered text : ";
 			std::locale::global(std::locale("en_US.UTF-8"));
 			std::wcout.imbue(std::locale());
