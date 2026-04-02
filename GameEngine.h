@@ -1,4 +1,4 @@
-#if !defined(GAMEENGINE_H)
+﻿#if !defined(GAMEENGINE_H)
 #define GAMEENGINE_H
 
 #if defined(__linux__)
@@ -725,6 +725,13 @@ namespace game
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 	std::wstring g_textBuffer; // part of unicode hack
+
+	static wchar_t pendingHighSurrogate = 0; // Store high surrogate if waiting
+	// Convert surrogate pair to full Unicode code point
+	uint32_t combineSurrogates(wchar_t high, wchar_t low) {
+		return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
+	}
+
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		switch (uMsg)
@@ -835,26 +842,47 @@ namespace game
 		//}
 		case WM_CHAR:
 		{
-			// unicode hack
-			wchar_t ch = static_cast<wchar_t>(wParam);
-			//char32_t ch32= 0;
-			//std::u16string test = u"Entered text : ";
+			//// unicode hack
 			std::locale::global(std::locale("en_US.UTF-8"));
 			std::wcout.imbue(std::locale());
-			// Handle backspace
-			if (ch == VK_BACK) {
-				if (!g_textBuffer.empty()) {
-					g_textBuffer.pop_back();
+			wchar_t ch = static_cast<wchar_t>(wParam);
+
+			if (ch >= 0xD800 && ch <= 0xDBFF) {
+				// High surrogate received — store it
+				pendingHighSurrogate = ch;
+			}
+			else if (ch >= 0xDC00 && ch <= 0xDFFF) {
+				// Low surrogate received — combine if we have a pending high surrogate
+				if (pendingHighSurrogate) {
+					uint32_t codepoint = combineSurrogates(pendingHighSurrogate, ch);
+					std::wcout << L"Full code point: U+"
+						<< std::hex << std::uppercase << codepoint << L"\n";
+					pendingHighSurrogate = 0; // Reset
+				}
+				else {
+					std::wcout << L"Unexpected low surrogate: U+"
+						<< std::hex << (int)ch << L"\n";
 				}
 			}
-			// Handle Enter (example: print and clear buffer)
-			else if (ch == L'\r') {
-				std::wcout << L"Entered text :" << g_textBuffer << std::endl;
-				g_textBuffer.clear();
-			}
-			// Ignore control characters except newline
-			else if (ch >= 0x20) {
-				g_textBuffer.push_back(ch);
+			else {
+				// BMP character — no surrogate handling needed
+				std::wcout << L"BMP char: " << ch
+					<< L" (U+" << std::hex << (int)ch << L")\n";
+				// Handle backspace
+				if (ch == VK_BACK) {
+					if (!g_textBuffer.empty()) {
+						g_textBuffer.pop_back();
+					}
+				}
+				// Handle Enter (example: print and clear buffer)
+				else if (ch == L'\r') {
+					std::wcout << L"Entered text :" << g_textBuffer << std::endl;
+					g_textBuffer.clear();
+				}
+				// Ignore control characters except newline
+				else if (ch >= 0x20) {
+					g_textBuffer.push_back(ch);
+				}
 			}
 			return 0;
 		}
