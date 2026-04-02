@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #if defined(GAME_OPENGL)
 #include <GL/gl.h>
 #endif
@@ -102,7 +102,7 @@ namespace game
 	private:
 		uint32_t _maxSprites;
 		uint32_t _numberOfSpritesUsed;
-		Texture2D _currentTexture;
+		const Texture2D* _currentTexture;
 		uint32_t _spritesDrawnLastFrame;
 		uint32_t _currentSpritesDrawn;
 #if defined(GAME_OPENGL)
@@ -762,7 +762,8 @@ namespace game
 			enginePointer->d3d11DeviceContext->OMSetDepthStencilState(_depthStencilState11.Get(), 1);
 
 			// Reset current texture
-			_currentTexture.name = "";
+			//_currentTexture.name = "";
+			_currentTexture = nullptr;
 			// Disable multisampling
 			// not now
 		}
@@ -1047,10 +1048,11 @@ namespace game
 			Rectf scaledPos;
 
 			// If texture changed, render and change SRV
-			if (texture.name != _currentTexture.name)
+			//if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
 			}
 
@@ -1251,10 +1253,10 @@ namespace game
 			Rectf scaledUV;
 
 			// If texture changed, render and change texture/SRV
-			if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
 			}
 
@@ -1465,10 +1467,10 @@ namespace game
 			Rectf scaledUV;
 
 			// If texture changed, render and change texture/SRV
-			if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
 			}
 
@@ -1714,9 +1716,9 @@ namespace game
 			destination.right = destination.left + (widthOfLetter * _scaleX);
 			destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
-			Draw(font.Texture(), destination, source, color);
-
 			currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
+
+			Draw(font.Texture(), destination, source, color);
 		}
 	}
 
@@ -1792,9 +1794,9 @@ namespace game
 				destination.right = destination.left + (widthOfLetter * _scaleX);
 				destination.bottom = destination.top + (heightOfLetter * _scaleY);
 
-				Draw(font.Texture(), destination, source, s.color);
-
 				currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
+
+				Draw(font.Texture(), destination, source, s.color);
 
 			}
 		}
