@@ -1,5 +1,4 @@
-﻿#if !defined(GAMEENGINE_H)
-#define GAMEENGINE_H
+﻿#pragma once
 
 #if defined(__linux__)
 #include <unistd.h>
@@ -728,9 +727,9 @@ namespace game
 
 	static wchar_t pendingHighSurrogate = 0; // Store high surrogate if waiting
 	// Convert surrogate pair to full Unicode code point
-	uint32_t combineSurrogates(wchar_t high, wchar_t low) {
-		return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
-	}
+	//uint32_t combineSurrogates(wchar_t high, wchar_t low) {
+	//	return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
+	//}
 
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -806,25 +805,14 @@ namespace game
 			case SIZE_MINIMIZED:
 				enginePointer->geIsMinimized = true;
 				enginePointer->geIsMaximized = false;
-				/*enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); */
-				//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_MAXIMIZED:
 				enginePointer->geIsMinimized = false;
 				enginePointer->geIsMaximized = true;
-				//enginePointer->HandleWindowResize(lParam & 0xFFF, (lParam >> 16) & 0xFFFF); 
-				//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
 				break;
 			case SIZE_RESTORED:
-				//if (enginePointer->geIsMaximized)
-				//{
-					//enginePointer->HandleWindowResize(LOWORD(lParam), HIWORD(lParam));
-					enginePointer->geIsMaximized = false;
-				//}
-				//if (enginePointer->geIsFullScreen)
-				//{
-					enginePointer->geIsFullScreen = false;
-				//}
+				enginePointer->geIsMaximized = false;
+				enginePointer->geIsFullScreen = false;
 				enginePointer->geIsMinimized = false;
 				break;
 			default:
@@ -853,11 +841,14 @@ namespace game
 			}
 			else if (ch >= 0xDC00 && ch <= 0xDFFF) {
 				// Low surrogate received — combine if we have a pending high surrogate
-				if (pendingHighSurrogate) {
-					uint32_t codepoint = combineSurrogates(pendingHighSurrogate, ch);
+				if (pendingHighSurrogate) 
+				{
+					uint32_t codepoint = 0x10000 + (((pendingHighSurrogate - 0xD800) << 10) | (ch - 0xDC00)); //combineSurrogates(pendingHighSurrogate, ch);
 					std::wcout << L"Full code point: U+"
 						<< std::hex << std::uppercase << codepoint << L"\n";
 					pendingHighSurrogate = 0; // Reset
+					g_textBuffer.push_back(pendingHighSurrogate);
+					g_textBuffer.push_back(ch);
 				}
 				else {
 					std::wcout << L"Unexpected low surrogate: U+"
@@ -866,8 +857,6 @@ namespace game
 			}
 			else {
 				// BMP character — no surrogate handling needed
-				std::wcout << L"BMP char: " << ch
-					<< L" (U+" << std::hex << (int)ch << L")\n";
 				// Handle backspace
 				if (ch == VK_BACK) {
 					if (!g_textBuffer.empty()) {
@@ -876,11 +865,14 @@ namespace game
 				}
 				// Handle Enter (example: print and clear buffer)
 				else if (ch == L'\r') {
+					std::wcout << L"BMP char: <Return>" << L" (U+" << std::hex << (int)ch << L")\n";
 					std::wcout << L"Entered text :" << g_textBuffer << std::endl;
 					g_textBuffer.clear();
 				}
 				// Ignore control characters except newline
 				else if (ch >= 0x20) {
+					std::wcout << L"BMP char: " << ch
+						<< L" (U+" << std::hex << (int)ch << L")\n";
 					g_textBuffer.push_back(ch);
 				}
 			}
@@ -913,200 +905,3 @@ namespace game
 	#endif
 }
 
-#endif
-
-
-//Got it — here’s how you can handle surrogate pairs from WM_CHAR in C++ so you can turn them into a full Unicode code point(for emojis, rare scripts, etc.).
-//
-//Understanding the Problem
-//
-//WM_CHAR delivers UTF‑16 code units.
-//Characters outside the Basic Multilingual Plane(BMP) (U + 10000 and above) are encoded as two UTF‑16 code units :
-//
-//High surrogate : 0xD800–0xDBFF
-//Low surrogate : 0xDC00–0xDFFF
-//
-//
-//You need to detect when a high surrogate arrives, store it, and wait for the low surrogate to combine them into a single Unicode code point.
-//
-//
-//Complete Example
-//Cpp#include <windows.h>
-//#include <iostream>
-//#include <iomanip>
-//
-//static wchar_t pendingHighSurrogate = 0; // Store high surrogate if waiting
-//
-//// Convert surrogate pair to full Unicode code point
-//uint32_t combineSurrogates(wchar_t high, wchar_t low) {
-//	return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
-//}
-//
-//LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-//	if (msg == WM_CHAR) {
-//		wchar_t ch = static_cast<wchar_t>(wParam);
-//
-//		if (ch >= 0xD800 && ch <= 0xDBFF) {
-//			// High surrogate received — store it
-//			pendingHighSurrogate = ch;
-//		}
-//		else if (ch >= 0xDC00 && ch <= 0xDFFF) {
-//			// Low surrogate received — combine if we have a pending high surrogate
-//			if (pendingHighSurrogate) {
-//				uint32_t codepoint = combineSurrogates(pendingHighSurrogate, ch);
-//				std::wcout << L"Full code point: U+"
-//					<< std::hex << std::uppercase << codepoint << L"\n";
-//				pendingHighSurrogate = 0; // Reset
-//			}
-//			else {
-//				std::wcout << L"Unexpected low surrogate: U+"
-//					<< std::hex << (int)ch << L"\n";
-//			}
-//		}
-//		else {
-//			// BMP character — no surrogate handling needed
-//			std::wcout << L"BMP char: " << ch
-//				<< L" (U+" << std::hex << (int)ch << L")\n";
-//		}
-//	}
-//	return DefWindowProc(hwnd, msg, wParam, lParam);
-//}
-//
-//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
-//	// Minimal Win32 setup omitted for brevity — focus is on WM_CHAR handling
-//	return 0;
-//}
-//
-//
-//How It Works
-//
-//Detect high surrogate → store it in pendingHighSurrogate.
-//Detect low surrogate → if a high surrogate is pending, combine them into a full Unicode code point.
-//BMP characters(U + 0000–U + FFFF excluding surrogates) are processed directly.
-//Endianness: No byte swapping needed — Windows already gives UTF‑16LE in wParam.
-//
-//
-//Example Output
-//If you type the 😀 emoji(U + 1F600) :
-//	Full code point : U + 1F600
-//
-//	If you type A :
-//BMP char : A(U + 41)
-//
-//
-//If you want, I can extend this so it prints the actual emoji or symbol in the console, even for non‑BMP characters, by converting the code point to UTF‑8 before output.
-//Do you want me to make that version next ?
-//
-//yes
-//
-//Alright — here’s the extended C++ version that not only reconstructs full Unicode code points from WM_CHAR(handling surrogate pairs) but also prints the actual character in the console, including emojis and other non‑BMP symbols, by converting the code point to UTF‑8 before output.
-//
-//Cpp#include <windows.h>
-//#include <iostream>
-//#include <iomanip>
-//#include <string>
-//
-//// Store pending high surrogate if waiting for a low surrogate
-//static wchar_t pendingHighSurrogate = 0;
-//
-//// Combine UTF-16 surrogate pair into a full Unicode code point
-//uint32_t combineSurrogates(wchar_t high, wchar_t low) {
-//	return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
-//}
-//
-//// Convert a Unicode code point to UTF-8 string
-//std::string codepointToUTF8(uint32_t cp) {
-//	std::string utf8;
-//	if (cp <= 0x7F) {
-//		utf8.push_back(static_cast<char>(cp));
-//	}
-//	else if (cp <= 0x7FF) {
-//		utf8.push_back(static_cast<char>(0xC0 | ((cp >> 6) & 0x1F)));
-//		utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-//	}
-//	else if (cp <= 0xFFFF) {
-//		utf8.push_back(static_cast<char>(0xE0 | ((cp >> 12) & 0x0F)));
-//		utf8.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-//		utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-//	}
-//	else {
-//		utf8.push_back(static_cast<char>(0xF0 | ((cp >> 18) & 0x07)));
-//		utf8.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-//		utf8.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-//		utf8.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-//	}
-//	return utf8;
-//}
-//
-//LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-//	if (msg == WM_CHAR) {
-//		wchar_t ch = static_cast<wchar_t>(wParam);
-//
-//		if (ch >= 0xD800 && ch <= 0xDBFF) {
-//			// High surrogate received — store it
-//			pendingHighSurrogate = ch;
-//		}
-//		else if (ch >= 0xDC00 && ch <= 0xDFFF) {
-//			// Low surrogate received — combine if high surrogate is pending
-//			if (pendingHighSurrogate) {
-//				uint32_t codepoint = combineSurrogates(pendingHighSurrogate, ch);
-//				std::string utf8 = codepointToUTF8(codepoint);
-//				std::cout << "Full code point: U+"
-//					<< std::hex << std::uppercase << codepoint
-//					<< " Character: " << utf8 << "\n";
-//				pendingHighSurrogate = 0;
-//			}
-//			else {
-//				std::cout << "Unexpected low surrogate: U+"
-//					<< std::hex << (int)ch << "\n";
-//			}
-//		}
-//		else {
-//			// BMP character — process directly
-//			uint32_t codepoint = ch;
-//			std::string utf8 = codepointToUTF8(codepoint);
-//			std::cout << "BMP char: U+"
-//				<< std::hex << std::uppercase << codepoint
-//				<< " Character: " << utf8 << "\n";
-//		}
-//	}
-//	return DefWindowProc(hwnd, msg, wParam, lParam);
-//}
-//
-//int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
-//	// Minimal Win32 setup omitted — focus is on WM_CHAR handling logic
-//	return 0;
-//}
-//
-//
-//How This Works
-//
-//Surrogate Pair Handling
-//
-//Detect high surrogate → store it.
-//Detect low surrogate → combine with stored high surrogate into a full Unicode code point.
-//
-//
-//UTF‑8 Conversion
-//
-//codepointToUTF8() converts the Unicode code point into a UTF‑8 string.
-//This allows printing the actual character in the console, including emojis.
-//
-//
-//Endianness
-//
-//Windows provides UTF‑16LE in wParam, so no byte swapping is needed.
-//
-//
-//
-//
-//Example Output
-//Typing 😀(U + 1F600) :
-//	Full code point : U + 1F600 Character : 😀
-//
-//	Typing A :
-//BMP char : U + 41 Character : A
-//
-//
-//If you want, I can also integrate this into a minimal runnable Win32 window loop so you can compile and test it immediately without adding your own message loop.
-//Do you want me to prepare that full runnable version ?
