@@ -331,12 +331,6 @@ namespace game
 		}
 #endif
 
-		// Initialization of API methods used
-#if defined(GAME_OPENGL)
-		if (enginePointer->geIsUsing(GAME_OPENGL))
-		{
-		}
-#endif
 
 #if defined (GAME_DIRECTX11)
 		if (enginePointer->geIsUsing(GAME_DIRECTX11))
@@ -728,6 +722,7 @@ namespace game
 	{
 		_spritesDrawnLastFrame = _currentSpritesDrawn;
 		_currentSpritesDrawn = 0;
+		_currentTexture = nullptr;
 		// needs to save and retore ALL changed states
 
 #if defined(GAME_DIRECTX11)
@@ -763,7 +758,6 @@ namespace game
 
 			// Reset current texture
 			//_currentTexture.name = "";
-			_currentTexture = nullptr;
 			// Disable multisampling
 			// not now
 		}
@@ -912,7 +906,7 @@ namespace game
 			enginePointer->commandList->DrawIndexedInstanced((_numberOfSpritesUsed - _spritesUsed) * 6, 1, _spritesUsed * 6, 0, 0);
 
 
-			return;
+			return; //sus
 		}
 #endif
 
@@ -1698,7 +1692,6 @@ namespace game
 			currentX = box.left + (float)x;
 			currentY = box.top + (float)y;
 		}
-
 		for (uint64_t i = 0; i < size; ++i)
 		{
 			const uint8_t letter = Str[i];
