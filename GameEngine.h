@@ -725,7 +725,7 @@ namespace game
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 	std::wstring g_textBuffer; // part of unicode hack
 
-	static wchar_t pendingHighSurrogate = 0; // Store high surrogate if waiting
+
 	// Convert surrogate pair to full Unicode code point
 	//uint32_t combineSurrogates(wchar_t high, wchar_t low) {
 	//	return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
@@ -733,6 +733,7 @@ namespace game
 
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		static wchar_t pendingHighSurrogate = 0;
 		switch (uMsg)
 		{
 		case WM_MOUSEMOVE:
