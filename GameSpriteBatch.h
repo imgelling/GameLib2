@@ -195,7 +195,7 @@ namespace game
 		_maxSprites = 0;
 		_spritesDrawnLastFrame = 0;
 		_currentSpritesDrawn = 0;
-
+		_currentTexture = nullptr;
 #if defined(GAME_OPENGL)
 		//if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
@@ -922,7 +922,7 @@ namespace game
 			float_t r, g, b, a = 0.0f;
 			Vector2i windowSize = enginePointer->geGetWindowSize();
 
-			glBindTexture(GL_TEXTURE_2D, _currentTexture.bind);
+			glBindTexture(GL_TEXTURE_2D, _currentTexture->bind);
 
 			_spriteVertexGL* access = &_spriteVertices[0];
 
@@ -998,10 +998,10 @@ namespace game
 #if defined(GAME_OPENGL)
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
-			if (texture.bind != _currentTexture.bind)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 			}
 			_spriteVertexGL* access = &_spriteVertices[_numberOfSpritesUsed * 4];
 
@@ -1203,10 +1203,10 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			Vector2i windowSize = enginePointer->geGetWindowSize();
-			if (texture.bind != _currentTexture.bind)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 			}
 			_spriteVertexGL* access = &_spriteVertices[_numberOfSpritesUsed * 4];
 
@@ -1417,10 +1417,10 @@ namespace game
 		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			Vector2i windowSize = enginePointer->geGetWindowSize();
-			if (texture.bind != _currentTexture.bind)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 			}
 			_spriteVertexGL* access = &_spriteVertices[_numberOfSpritesUsed * 4];
 
