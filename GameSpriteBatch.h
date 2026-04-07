@@ -1711,7 +1711,7 @@ namespace game
 
 			currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
 
-			Draw(font._texture, destination, source, color);
+			Draw(font.texture, destination, source, color);
 		}
 	}
 
@@ -1789,7 +1789,7 @@ namespace game
 
 				currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
 
-				Draw(font._texture, destination, source, s.color);
+				Draw(font.texture, destination, source, s.color);
 
 			}
 		}

@@ -218,12 +218,11 @@ namespace game
 	
 		bool Load(const std::string &filename, const std::string& texture, const TextureFilterType filter = TextureFilterType::Point);
 		void UnLoad();
-		Texture2D Texture() const;
 		std::shared_ptr<Charset> characterSet;
 		bool isLoaded;
 
 
-		Texture2D _texture;
+		Texture2D texture;
 	private:
 	};
 
@@ -250,9 +249,9 @@ namespace game
 
 		if (!characterSet) characterSet = std::make_shared<Charset>();
 
-		_texture.isMipMapped = true;
-		_texture.filterType = filter;// TextureFilterType::Trilinear;
-		if (!enginePointer->geLoadTexture(texture, _texture))
+		this->texture.isMipMapped = true;
+		this->texture.filterType = filter;// TextureFilterType::Trilinear;
+		if (!enginePointer->geLoadTexture(texture, this->texture))
 		{
 			lastError = { GameErrors::GameContent, "Could not load \"" + texture + "\" for SpriteFont." };
 			return false;
@@ -351,7 +350,7 @@ namespace game
 
 	inline void SpriteFont::UnLoad()
 	{
-		enginePointer->geUnLoadTexture(_texture);
+		enginePointer->geUnLoadTexture(texture);
 		characterSet = nullptr;
 		isLoaded = false;
 	}
@@ -422,8 +421,4 @@ namespace game
 		return ret;
 	}
 
-	inline Texture2D SpriteFont::Texture() const
-	{
-		return _texture;
-	}
 }
