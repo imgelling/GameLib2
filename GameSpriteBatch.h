@@ -890,7 +890,7 @@ namespace game
 			toHandle.Offset(_currentSRVIndex, _descriptorSize);
 
 			// Copy from the various CPU-visible descriptors you have for it.
-			CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle(_currentTexture.srvHeap->GetCPUDescriptorHandleForHeapStart());
+			CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle(_currentTexture->srvHeap->GetCPUDescriptorHandleForHeapStart());
 			enginePointer->d3d12Device->CopyDescriptorsSimple(1, toHandle, cpuHandle, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 			// Draw the sprites
@@ -1115,10 +1115,10 @@ namespace game
 			Rectf scaledPos;
 
 			// If texture changed, render and change SRV
-			if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				_currentSRVIndex++;
 				if (_currentSRVIndex >= _maxSRVIndex)
 				{
@@ -1324,10 +1324,10 @@ namespace game
 			Rectf scaledUV;
 
 			// If texture changed, render and change SRV
-			if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				_currentSRVIndex++;
 				if (_currentSRVIndex >= _maxSRVIndex)
 				{
@@ -1538,10 +1538,10 @@ namespace game
 			Rectf scaledUV;
 
 			// If texture changed, render and change SRV
-			if (texture.name != _currentTexture.name)
+			if (&texture != _currentTexture)
 			{
 				Render();
-				_currentTexture = texture;
+				_currentTexture = &texture;
 				_currentSRVIndex++;
 				if (_currentSRVIndex >= _maxSRVIndex)
 				{
@@ -1711,7 +1711,7 @@ namespace game
 
 			currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
 
-			Draw(font.Texture(), destination, source, color);
+			Draw(font._texture, destination, source, color);
 		}
 	}
 
@@ -1789,7 +1789,7 @@ namespace game
 
 				currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
 
-				Draw(font.Texture(), destination, source, s.color);
+				Draw(font._texture, destination, source, s.color);
 
 			}
 		}

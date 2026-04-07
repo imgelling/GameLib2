@@ -223,8 +223,8 @@ namespace game
 		bool isLoaded;
 
 
-	private:
 		Texture2D _texture;
+	private:
 	};
 
 	inline SpriteFont::SpriteFont()
