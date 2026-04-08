@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <string>
 
 #include "GameAttributes.h"
@@ -19,7 +19,7 @@ namespace game
 		void ToggleFullScreen();
 		void DoMessagePump();
 #if defined(_WIN32)
-		HWND GetHandle();
+		const HWND GetHandle();
 #elif defined(__linux__)
 
 #endif
@@ -69,7 +69,7 @@ namespace game
 		wc.cbWndExtra = 0;
 		wc.lpszMenuName = nullptr;
 		wc.hbrBackground = nullptr;
-		wc.lpszClassName = Wide("GAME_ENGINE");
+		wc.lpszClassName = L"GAME_ENGINE";
 		RegisterClass(&wc);
 
 		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
@@ -138,7 +138,7 @@ namespace game
 		}
 
 		// Create the actual window
-		_windowHandle = CreateWindowEx(dwExStyle, Wide("GAME_ENGINE"), Wide(""), dwStyle,
+		_windowHandle = CreateWindowEx(dwExStyle, L"GAME_ENGINE", L"", dwStyle,
 			windowLeftPosition, windowTopPosition, adjustedWidth, adjustedHeight, NULL, NULL, GetModuleHandle(nullptr), this);
 		if (!_windowHandle)
 		{
@@ -231,7 +231,7 @@ namespace game
 	}
 
 #if defined(_WIN32)
-	inline HWND Window::GetHandle()
+	inline const HWND Window::GetHandle()
 	{
 		return _windowHandle;
 	}

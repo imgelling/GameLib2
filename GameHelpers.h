@@ -1,4 +1,4 @@
-#if !defined(GAMEHELPERS_H)
+﻿#if !defined(GAMEHELPERS_H)
 #define GAMEHELPERS_H
 
 #include <string>
@@ -14,7 +14,7 @@ namespace game
 		DirectX12
 	};
 
-	inline std::wstring ConvertToWide(const std::string s)
+	inline std::wstring ConvertToWide(const std::string &s)
 	{
 #if defined(_WIN32)
 		uint32_t count = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, NULL, 0);
@@ -42,13 +42,13 @@ namespace game
 		return cyclesStart;
 #endif
 	}
-
-	// Macro to state a literal string is a wide string
-#if defined(UNICODE) || defined(_UNICODE)
-#define Wide(s) L##s
-#else
-#define Wide(s) s
-#endif
+//
+//	// Macro to state a literal string is a wide string
+//#if defined(UNICODE) || defined(_UNICODE)
+//#define Wide(s) L##s
+//#else
+//#define Wide(s) s
+//#endif
 }
 
 #endif
