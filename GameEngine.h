@@ -39,13 +39,6 @@
 #include "GameTexture2D.h"
 #include "GameMath.h"
 
-template <typename I> std::wstring n2hexstr(I w, size_t hex_len = sizeof(I) << 1) {
-	static const char* digits = "0123456789ABCDEF";
-	std::wstring rc(hex_len, L'0');
-	for (size_t i = 0, j = (hex_len - 1) * 4; i < hex_len; ++i, j -= 4)
-		rc[i] = digits[(w >> j) & 0x0f];
-	return rc;
-}
 
 namespace game
 {
@@ -736,13 +729,6 @@ namespace game
 
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
-	std::wstring g_textBuffer; // part of unicode hack
-
-
-	// Convert surrogate pair to full Unicode code point
-	//uint32_t combineSurrogates(wchar_t high, wchar_t low) {
-	//	return 0x10000 + (((high - 0xD800) << 10) | (low - 0xDC00));
-	//}
 
 	inline LRESULT CALLBACK Window::_WindowEventProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
@@ -842,59 +828,6 @@ namespace game
 		//	enginePointer->HandleWindowResize(enginePointer->geGetWindowSize().x, enginePointer->geGetWindowSize().y);
 		//	return 0;
 		//}
-		case WM_CHAR:
-		{
-			//// unicode hack
-			//std::locale::global(std::locale("en_US.UTF-8"));
-			//std::wcout.imbue(std::locale());
-			wchar_t ch = static_cast<wchar_t>(wParam);
-
-			if (ch >= 0xD800 && ch <= 0xDBFF) {
-				// High surrogate received — store it
-				pendingHighSurrogate = ch;
-			}
-			else if (ch >= 0xDC00 && ch <= 0xDFFF) {
-				// Low surrogate received — combine if we have a pending high surrogate
-				if (pendingHighSurrogate) 
-				{
-					uint32_t codepoint = 0x10000 + (((pendingHighSurrogate - 0xD800) << 10) | (ch - 0xDC00)); //combineSurrogates(pendingHighSurrogate, ch);
-					std::wcout << L"Full code point: U+"
-						<< n2hexstr(codepoint) << L"\n";
-					pendingHighSurrogate = 0; // Reset
-					g_textBuffer.push_back(pendingHighSurrogate);
-					g_textBuffer.push_back(ch);
-				}
-				else {
-					std::wcout << L"Unexpected low surrogate: U+"
-						<< std::hex << (int)ch << L"\n";
-				}
-			}
-			else {
-				// BMP character — no surrogate handling needed
-				// Handle backspace
-				if (ch == VK_BACK) {
-					if (!g_textBuffer.empty()) {
-						g_textBuffer.pop_back();
-					}
-				}
-				// Handle Enter (example: print and clear buffer)
-				else if (ch == L'\r') {
-					std::wcout << L"BMP char: <Return>" << L" (U+" << std::hex << (int)ch << L")\n";
-					//std::wcout << L"Entered text :" << g_textBuffer << std::endl;
-					HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
-					DWORD n_written;
-					WriteConsoleW(handle, g_textBuffer.c_str(), (DWORD)g_textBuffer.size(), &n_written, NULL);
-					g_textBuffer.clear();
-				}
-				// Ignore control characters except newline
-				else if (ch >= 0x20) {
-					std::wcout << L"BMP char: " << ch
-						<< L" (U+" << n2hexstr((int)ch) << L")\n";
-					g_textBuffer.push_back(ch);
-				}
-			}
-			return 0;
-		}
 		case WM_KEYDOWN:
 		{
 			int repeatCount = lParam & 0xFFFF;
