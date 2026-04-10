@@ -45,8 +45,8 @@ namespace game
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
-		void DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		void DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
 #if defined(GAME_DIRECTX11)
@@ -1646,7 +1646,7 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	void SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1713,9 +1713,10 @@ namespace game
 
 			Draw(font.texture, destination, source, color);
 		}
+		return (uint32_t)currentX;
 	}
 
-	void SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1793,5 +1794,6 @@ namespace game
 
 			}
 		}
+		return (uint32_t)currentX;
 	}
 }
