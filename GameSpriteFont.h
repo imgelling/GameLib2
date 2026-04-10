@@ -192,6 +192,7 @@ namespace game
 				tagEnd = input.find('>', colorCodeStart + 8);
 				if (tagEnd == std::string::npos)
 				{
+					segments.push_back({ input.substr(pos), currentColor });
 					break; // malformed tag
 				}
 
@@ -199,6 +200,7 @@ namespace game
 				closeTag = input.find("</color>", tagEnd);
 				if (closeTag == std::string::npos)
 				{
+					segments.push_back({ input.substr(pos), currentColor });
 					break; // malformed tag
 				}
 
