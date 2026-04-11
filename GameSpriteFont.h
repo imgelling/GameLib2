@@ -182,11 +182,6 @@ namespace game
 					segments.push_back({ input.substr(pos, tagStart - pos), currentColor });
 				}
 
-				// Parse color code
-				colorCodeStart = tagStart + 8; // skip "<color=#"
-				colorCode = input.substr(colorCodeStart, 8);
-				currentColor = defaultColor;
-				currentColor.Set(colorCode);
 
 				// Find closing '>'
 				tagEnd = input.find('>', colorCodeStart + 8);
@@ -195,6 +190,11 @@ namespace game
 					segments.push_back({ input.substr(tagStart), currentColor });
 					break; // malformed tag
 				}
+				// Parse color code
+				colorCodeStart = tagStart + 8; // skip "<color=#"
+				colorCode = input.substr(colorCodeStart, 8);
+				currentColor = defaultColor;
+				currentColor.Set(colorCode);
 
 				// Find closing </color>
 				closeTag = input.find("</color>", tagEnd);
