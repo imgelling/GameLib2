@@ -13,7 +13,7 @@ namespace game
 		SpriteSheet(Texture2D& texure, const int width, const int height);
 		void Initialize(Texture2D &texure, const int width, const int height) noexcept;
 		void Initialize(Texture2D &texure, const Pointi &size) noexcept;
-		void SetTexture(Texture2D& texure) {};
+		void SetTexture(Texture2D& texture) { _texture = &texture; };
 		Recti GetRectFromId(int id) noexcept;
 	private:
 		uint32_t _tileWidth;
