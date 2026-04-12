@@ -205,7 +205,7 @@ namespace game
 				// Parse color code
 				colorCodeStart = tagStart + 8; // skip "<color=#"
 				colorCode = input.substr(colorCodeStart, 8);
-				currentColor = defaultColor; // ??
+				//currentColor = defaultColor; // ??
 				if (Valid32Hex(colorCode))
 				{
 					currentColor.Set(colorCode);
