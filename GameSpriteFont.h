@@ -151,6 +151,18 @@ namespace game
 			Color color; // 0xRRGGBB
 		};
 
+		bool Valid32Hex(const std::string& hex) const
+		{
+			for (auto ch : hex)
+			{
+				if (!std::isxdigit(ch))
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 		// Parser function
 		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
 		{
@@ -193,8 +205,17 @@ namespace game
 				// Parse color code
 				colorCodeStart = tagStart + 8; // skip "<color=#"
 				colorCode = input.substr(colorCodeStart, 8);
-				currentColor = defaultColor;
-				currentColor.Set(colorCode);
+				currentColor = defaultColor; // ??
+				if (Valid32Hex(colorCode))
+				{
+					currentColor.Set(colorCode);
+				}
+				else
+				{
+					segments.push_back({ input.substr(tagStart), currentColor });
+					// Invalid hex, just push the rest of string
+					break;
+				}
 
 				// Find closing </color>
 				closeTag = input.find("</color>", tagEnd);
