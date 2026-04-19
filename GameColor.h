@@ -84,18 +84,18 @@ namespace game
 
 	inline std::string Color::ToHex() const
 	{
-		char hexColor[10] = { 0 }; // "#RRGGBBAA"
+		char hexColor[9] = { 0 }; // "RRGGBBAA"
 		auto byteToHex = [&](const uint8_t byte, char* out) 
 			{
 			const char hexDigits[] = "0123456789ABCDEF";
 			out[0] = hexDigits[(byte >> 4) & 0x0F]; // high nibble
 			out[1] = hexDigits[byte & 0x0F];        // low nibble)
 			};
-		hexColor[0] = '#';
-		byteToHex((uint8_t)r, &hexColor[1]);
-		byteToHex((uint8_t)g, &hexColor[3]);
-		byteToHex((uint8_t)b, &hexColor[5]);
-		byteToHex((uint8_t)a, &hexColor[7]);
+		//hexColor[0] = '#';
+		byteToHex((uint8_t)r, &hexColor[0]);
+		byteToHex((uint8_t)g, &hexColor[2]);
+		byteToHex((uint8_t)b, &hexColor[4]);
+		byteToHex((uint8_t)a, &hexColor[6]);
 		//hexColor[9] = '\0';
 		return std::string(hexColor);
 	}
