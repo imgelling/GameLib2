@@ -63,7 +63,7 @@ namespace game
 				Set((double)rf, (double)gf, (double)bf, alpha);
 			}
 		}
-		void Set(const uint32_t alpha, Color* out = nullptr)
+		void SetAlpha(const uint32_t alpha, Color* out = nullptr)
 		{
 			if (out)
 			{
