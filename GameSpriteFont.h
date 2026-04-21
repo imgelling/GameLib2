@@ -195,7 +195,7 @@ namespace game
 
 			while (pos < size)
 			{
-				tagStart = input.find("<c", pos);
+				tagStart = input.find("\\|", pos);
 				//tagStart = input.find("\124", pos);
 
 				if (tagStart == std::string::npos)
@@ -213,12 +213,13 @@ namespace game
 
 
 				// Find closing '>'
-				tagEnd = input.find('>', colorCodeStart + 8);
-				if (tagEnd == std::string::npos)
-				{
-					segments.push_back({ input.substr(tagStart), currentColor });
-					break; // malformed tag
-				}
+				//tagEnd = input.find('>', colorCodeStart + 8);
+				//if (tagEnd == std::string::npos)
+				//{
+				//	segments.push_back({ input.substr(tagStart), currentColor });
+				//	break; // malformed tag
+				//}
+				tagEnd = tagStart + 8/*color code*/ + 1;
 				// Parse color code
 				//colorCodeStart = tagStart + 8; // skip "<color=#"
 				colorCodeStart = tagStart + 2;// "//124c
@@ -236,7 +237,7 @@ namespace game
 				}
 
 				// Find closing </color>
-				closeTag = input.find("</c>", tagEnd);
+				closeTag = input.find("\\e", tagEnd);
 				//closeTag = input.find("\\100c", tagEnd);
 				if (closeTag == std::string::npos)
 				{
@@ -252,7 +253,7 @@ namespace game
 				currentColor = defaultColor;
 
 				// Move position after closing tag
-				pos = closeTag + 4; // length of "</color>"
+				pos = closeTag + 2; // length of "</color>"
 				//pos = closeTag + 1;// length of "\\100c"
 			}
 
@@ -458,9 +459,9 @@ namespace game
 	inline std::string SpriteFont::ColorTagWrap(const std::string& str, const game::Color& color)
 	{
 		std::string ret;
-		ret = "<c" + color.hexidecimal + ">";
+		ret = "\\|" + color.hexidecimal;// +">";
 		ret += str;
-		ret += "</c>";
+		ret += "\\e";
 		return ret;
 	}
 
