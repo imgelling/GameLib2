@@ -195,8 +195,8 @@ namespace game
 
 			while (pos < size)
 			{
+				// Color escape = "\|"
 				tagStart = input.find("\\|", pos);
-				//tagStart = input.find("\124", pos);
 
 				if (tagStart == std::string::npos)
 				{
@@ -221,10 +221,8 @@ namespace game
 				//}
 				tagEnd = tagStart + 8/*color code*/ + 1;
 				// Parse color code
-				//colorCodeStart = tagStart + 8; // skip "<color=#"
-				colorCodeStart = tagStart + 2;// "//124c
+				colorCodeStart = tagStart + 2; // skip "//|"
 				colorCode = input.substr(colorCodeStart, 8);
-				//currentColor = defaultColor; // ??
 				if (Valid32Hex(colorCode))
 				{
 					currentColor.Set(colorCode);
@@ -236,9 +234,8 @@ namespace game
 					break;
 				}
 
-				// Find closing </color>
+				// Find closing \e
 				closeTag = input.find("\\e", tagEnd);
-				//closeTag = input.find("\\100c", tagEnd);
 				if (closeTag == std::string::npos)
 				{
 					segments.push_back({ input.substr(tagStart), currentColor });
@@ -253,8 +250,7 @@ namespace game
 				currentColor = defaultColor;
 
 				// Move position after closing tag
-				pos = closeTag + 2; // length of "</color>"
-				//pos = closeTag + 1;// length of "\\100c"
+				pos = closeTag + 2; // length of "\e"
 			}
 
 			return segments;
