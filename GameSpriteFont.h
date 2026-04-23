@@ -164,22 +164,6 @@ namespace game
 			return true;
 		}
 
-		//print("|cRRGGBBYour text|r")
-		//	| c = color prefix
-
-		//	RRGGBB = 6 - digit hex color code(e.g., FF0000 = red)
-
-		//	Your text = the message you want to color
-
-		//	| r = reset color to default WoWInterface
-		//	Example :
-
-		//print("|cFF00FF00This text is green|r")
-		//	This will print “This text is green” in bright green.
-
-		// \\124 (124 is | in ascii)
-		//If you’re typing in the chat box, escape sequences are filtered out.Use \\124c instead to bypass filtering, but this is only needed in chat input WoWInterface.
-
 		// Parser function
 		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
 		{
