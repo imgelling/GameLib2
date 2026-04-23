@@ -11,6 +11,7 @@
 #include "GameTexture2D.h"
 #include "GameMath.h"
 #include "GameColor.h"
+#include "Game_SpriteSubSheet.h"
 
 namespace game
 {
