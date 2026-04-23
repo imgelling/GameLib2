@@ -41,6 +41,7 @@ namespace game
 		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		// Will draw a specified rectangle portion of a texture to location x,y
+		void DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
@@ -1186,6 +1187,21 @@ namespace game
 #endif
 
 		_numberOfSpritesUsed++;
+	}
+
+	inline void SpriteBatch::DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
+	{
+		auto it = subSheet.subTexture.find(subSheetName);
+		if (it == subSheet.subTexture.end()) return;
+
+		game::Recti rect;
+		rect = portion;
+		rect.top += subSheet.subTexture.at(subSheetName).top;
+		rect.left += subSheet.subTexture.at(subSheetName).left;
+		rect.bottom += subSheet.subTexture.at(subSheetName).top;
+		rect.right += subSheet.subTexture.at(subSheetName).left;
+
+		Draw(subSheet.texture, destination, rect, color);
 	}
 
 	inline void SpriteBatch::Draw(const Texture2D& texture, const Recti& destination, const Recti& portion, const Color& color)
