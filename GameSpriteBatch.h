@@ -37,18 +37,27 @@ namespace game
 		void End();
 		// Render a complete batch of sprites
 		void Render();
+		
 		// Will draw entire texture to location x,y
 		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		
+		// Does as above, needs subsheet
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
+		
 		// Will draw a specified rectangle portion of a texture to location x,y
 		void DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
+		
+		
 		// Draws using floating point
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
+		// Draws a string
 		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		
+		
 		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
