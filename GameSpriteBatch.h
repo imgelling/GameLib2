@@ -42,8 +42,9 @@ namespace game
 		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		
-		// Does as above, needs subsheet
+		// Will draw entire texture to location "position"
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
+		void DrawSub(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
 		
 		// Will draw a specified rectangle portion of a texture to location x,y
 		void DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
@@ -59,6 +60,7 @@ namespace game
 		
 		
 		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
 #if defined(GAME_DIRECTX11)
@@ -992,6 +994,11 @@ namespace game
 	inline void SpriteBatch::Draw(const Texture2D& texture, const Pointi& position, const Color color)
 	{
 		Draw(texture, position.x, position.y, color);
+	}
+
+	void SpriteBatch::DrawSub(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color)
+	{
+		Draw(subSheet, subSheetName, position.x, position.y, color);
 	}
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color)
