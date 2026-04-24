@@ -165,7 +165,7 @@ namespace game
 		}
 
 		// Parser function
-		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White) const
+		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White, const bool removeCode = true) const
 		{
 			std::vector<ColorTextSegment> segments;
 			uint64_t pos = 0;
@@ -204,13 +204,20 @@ namespace game
 				//	segments.push_back({ input.substr(tagStart), currentColor });
 				//	break; // malformed tag
 				//}
+
+
 				tagEnd = tagStart + 8/*color code*/ + 1;
+				
 				// Parse color code
 				colorCodeStart = tagStart + 2; // skip "//|"
 				colorCode = input.substr(colorCodeStart, 8);
 				if (Valid32Hex(colorCode))
 				{
 					currentColor.Set(colorCode);
+					if (!removeCode)
+					{
+						segments.push_back({ input.substr(tagStart,10), currentColor });
+					}
 				}
 				else
 				{
@@ -218,6 +225,7 @@ namespace game
 					// Invalid hex, just push the rest of string
 					break;
 				}
+
 
 				// Find closing \e
 				closeTag = input.find("\\e", tagEnd);
