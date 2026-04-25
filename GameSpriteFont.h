@@ -154,6 +154,7 @@ namespace game
 
 		bool Valid32Hex(const std::string& hex) const
 		{
+			if (hex.length() < 8) return false;
 			for (auto ch : hex)
 			{
 				if (!std::isxdigit(ch))
@@ -231,13 +232,18 @@ namespace game
 				closeTag = input.find("\\e", tagEnd);
 				if (closeTag == std::string::npos)
 				{
-					segments.push_back({ input.substr(tagStart), currentColor });
+					if (!removeCode) segments.push_back({ input.substr(tagStart+10), currentColor });
 					break; // malformed tag
 				}
 
 				// Extract colored text
 				coloredText = input.substr(tagEnd + 1, closeTag - (tagEnd + 1));
 				segments.push_back({ coloredText, currentColor });
+
+				if (!removeCode)
+				{
+					segments.push_back({ input.substr(closeTag,2), currentColor });
+				}
 
 				// Reset color after closing tag
 				currentColor = defaultColor;
