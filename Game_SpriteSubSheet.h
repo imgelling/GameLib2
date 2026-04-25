@@ -1,6 +1,14 @@
 ﻿#pragma once
 
+#include <fstream>
+#include <iostream>
+#include <ostream>
+#include <sstream>
+#include <string>
+#include <unordered_map>
 #include <Game.h>
+#include "GameMath.h"
+#include "GameTexture2D.h"
 
 namespace game
 {
@@ -55,6 +63,8 @@ namespace game
 				// Close the file
 				f.close();
 			}
+			//texture.isMipMapped = true;
+			//texture.filterType = TextureFilterType::Trilinear;
 			if (!game::enginePointer->geLoadTexture(filename + ".png", texture))
 			{
 				return false;
