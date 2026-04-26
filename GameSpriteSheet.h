@@ -13,6 +13,7 @@ namespace game
 		SpriteSheet();
 		SpriteSheet(Texture2D& texure, const int width, const int height);
 		void Initialize(Texture2D &texure, const int width, const int height) noexcept;
+		void Initialize(game::SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height);
 		void Initialize(Texture2D &texure, const Pointi &size) noexcept;
 		void SetTexture(Texture2D& texture) { _texture = &texture; };
 		Recti GetRectFromId(int id) noexcept;
@@ -21,6 +22,7 @@ namespace game
 		uint32_t _tileHeight;
 		uint32_t _tilesPerRow;
 		Texture2D* _texture;
+		game::Pointi _textureOffset;
 	};
 
 	inline SpriteSheet::SpriteSheet()
@@ -39,6 +41,22 @@ namespace game
 		_tileWidth = width;
 		_tileHeight = height;
 		_tilesPerRow = _texture->width / _tileWidth;
+	}
+
+	void SpriteSheet::Initialize(game::SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
+	{
+		auto it = subSheet.subTexture.find(subName);
+		if (it == subSheet.subTexture.end())
+			return;
+
+		_texture = &subSheet.texture;
+		_tileWidth = width;
+		_tileHeight = height;
+		int32_t textureWidth = subSheet.subTexture[subName].right - subSheet.subTexture[subName].left;
+		int32_t textureHeight = subSheet.subTexture[subName].bottom - subSheet.subTexture[subName].top;
+		_tilesPerRow = textureWidth / _tileWidth;
+		//_textureOffset.y = subSheet.subTexture[subName].top;
+		//_textureOffset.x = subSheet.subTexture[subName].left;
 	}
 
 	inline void SpriteSheet::Initialize(Texture2D &texture, const int width, const int height) noexcept
@@ -62,8 +80,8 @@ namespace game
 			return rectangle;
 		}
 
-		rectangle.left = id % _tilesPerRow * _tileWidth;
-		rectangle.top = id / _tilesPerRow * _tileHeight;
+		rectangle.left = (id % _tilesPerRow * _tileWidth) + _textureOffset.x;
+		rectangle.top = (id / _tilesPerRow * _tileHeight) + _textureOffset.y;
 		rectangle.right = rectangle.left + _tileWidth;
 		rectangle.bottom = rectangle.top + _tileHeight;
 

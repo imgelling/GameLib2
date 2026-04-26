@@ -1304,6 +1304,7 @@ namespace game
 			if (&texture != _currentTexture)
 			{
 				Render();
+				std::cout << "texture change!\n";
 				_currentTexture = &texture;
 				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
 			}
@@ -1518,7 +1519,7 @@ namespace game
 			if (&texture != _currentTexture)
 			{
 				Render();
-				//if (!_currentTexture) std::cout << "Texture swap\n";
+				//if (_currentTexture) std::cout << "Texture swap\n";
 				_currentTexture = &texture;
 				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
 			}
