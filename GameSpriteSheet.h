@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "GameMath.h"
 #include "GameTexture2D.h"
+#include "Game_SpriteSubSheet.h"
 
 namespace game
 {

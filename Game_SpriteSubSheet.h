@@ -20,13 +20,10 @@ namespace game
 		game::Texture2D texture;
 		bool Load(std::string filename)
 		{
-			// Open the text file named 
-	// "textFile.txt"
 			std::ifstream f(filename + ".txt");
 
-			// Check if the file is 
-			// successfully opened
-			if (!f.is_open()) {
+			if (!f.is_open()) 
+			{
 				return false;
 			}
 			else
