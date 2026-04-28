@@ -56,7 +56,7 @@ namespace game
 
 		// Draws a string
 		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(const game::SpriteFont& font,  game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
 		
 		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
@@ -1702,7 +1702,7 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	//uint32_t SpriteBatch::DrawString(const game::SpriteFont &font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float_t scaleY)
 	{
 		auto it = subSheet.subTexture.find(subSheetName);
@@ -1759,7 +1759,7 @@ namespace game
 			const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
 			const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
 
-			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture.at(subSheetName).top;
+			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture[subSheetName].top;
 			source.left = font.characterSet->letters[letter].x +(float)subSheet.subTexture.at(subSheetName).left;
 			source.bottom = source.top + heightOfLetter;// +(float)subSheet.subTexture.at(subSheetName).top;
 			source.right = source.left + widthOfLetter;// +(float)subSheet.subTexture.at(subSheetName).left;
