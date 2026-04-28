@@ -48,7 +48,7 @@ namespace game
 		void DrawSub(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
 		
 		// Will draw a specified rectangle portion of a texture to location x,y
-		void DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
+		void Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 		
 		
@@ -1020,7 +1020,7 @@ namespace game
 		dest.bottom = y + subSheet.subTexture.at(subSheetName).bottom;
 		dest.right = x + subSheet.subTexture.at(subSheetName).right;
 
-		DrawSub(subSheet, subSheetName, dest, src, color);
+		Draw(subSheet, subSheetName, dest, src, color);
 	}
 
 	inline void SpriteBatch::Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color)
@@ -1228,7 +1228,7 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
-	inline void SpriteBatch::DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
+	inline void SpriteBatch::Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
 	{
 		//auto it = subSheet.subTexture.find(subSheetName);
 		//if (it == subSheet.subTexture.end()) return;
