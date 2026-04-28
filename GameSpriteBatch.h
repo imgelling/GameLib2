@@ -5,6 +5,7 @@
 
 
 #include <GameEngine.h>
+#include <Game_Assert.h>
 #include "GameErrors.h"
 #include "GameMath.h"
 #include "GameSpriteFont.h"
@@ -1003,8 +1004,9 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color)
 	{
-		auto it = subSheet.subTexture.find(subSheetName);
-		if (it == subSheet.subTexture.end()) return;
+		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
+		//auto it = subSheet.subTexture.find(subSheetName);
+		//if (it == subSheet.subTexture.end()) return;
 		game::Recti src;
 		game::Recti dest;
 
@@ -1228,8 +1230,9 @@ namespace game
 
 	inline void SpriteBatch::DrawSub(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
 	{
-		auto it = subSheet.subTexture.find(subSheetName);
-		if (it == subSheet.subTexture.end()) return;
+		//auto it = subSheet.subTexture.find(subSheetName);
+		//if (it == subSheet.subTexture.end()) return;
+		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
 
 		game::Recti rect;
 		rect = portion;
@@ -1704,9 +1707,10 @@ namespace game
 
 	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		auto it = subSheet.subTexture.find(subSheetName);
-		if (it == subSheet.subTexture.end())
-			return 0;
+		//auto it = subSheet.subTexture.find(subSheetName);
+		//if (it == subSheet.subTexture.end())
+		//	return 0;
+		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
 
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1847,9 +1851,10 @@ namespace game
 
 	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		auto it = subSheet.subTexture.find(subSheetName);
-		if (it == subSheet.subTexture.end())
-			return 0;
+		//auto it = subSheet.subTexture.find(subSheetName);
+		//if (it == subSheet.subTexture.end())
+		//	return 0;
+		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float)x;
