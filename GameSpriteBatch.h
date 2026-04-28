@@ -56,9 +56,9 @@ namespace game
 
 		// Draws a string
 		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawString(const game::SpriteFont& font,  game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
-		
+		uint32_t DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
 		// How many sprites did it draw last frame
@@ -1702,8 +1702,7 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
-	//uint32_t SpriteBatch::DrawString(const game::SpriteFont &font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float_t scaleY)
+	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		auto it = subSheet.subTexture.find(subSheetName);
 		if (it == subSheet.subTexture.end())
@@ -1759,7 +1758,7 @@ namespace game
 			const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
 			const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
 
-			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture[subSheetName].top;
+			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture.at(subSheetName).top;
 			source.left = font.characterSet->letters[letter].x +(float)subSheet.subTexture.at(subSheetName).left;
 			source.bottom = source.top + heightOfLetter;// +(float)subSheet.subTexture.at(subSheetName).top;
 			source.right = source.left + widthOfLetter;// +(float)subSheet.subTexture.at(subSheetName).left;
@@ -1846,6 +1845,91 @@ namespace game
 		return (uint32_t)currentX;
 	}
 
+	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	{
+		auto it = subSheet.subTexture.find(subSheetName);
+		if (it == subSheet.subTexture.end())
+			return 0;
+		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
+		const float_t _scaleX = scaleX;
+		float_t currentX = (float)x;
+		float_t currentY = (float)y;
+		Rectf source;
+		Rectf destination;
+
+		auto segments = font.parseColoredString(str, color);
+
+		if (centered)
+		{
+			game::Recti bbox;
+			Rectf box;// (20000, 20000, -20000, -20000);
+			std::string segmentsCombined;
+			for (auto& s : segments)
+			{
+				//const uint64_t size = s.text.size();
+				//for (uint64_t i = 0; i < size; ++i)
+				//{
+				//	const uint8_t letter = Str[i];
+				//	const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
+				//	const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
+
+				//	destination.left = currentX + (font._characterSet.letters[letter].xOffset);
+				//	destination.top = currentY + (font._characterSet.letters[letter].yOffset);
+				//	destination.right = destination.left + (widthOfLetter);
+				//	destination.bottom = destination.top + (heightOfLetter);
+
+				//	// Find the bounding box
+				//	if (destination.left < box.left)
+				//		box.left = destination.left;
+				//	if (destination.top < box.top)
+				//		box.top = destination.top;
+				//	if (destination.bottom > box.bottom)
+				//		box.bottom = destination.bottom;
+				//	if (destination.right > box.right)
+				//		box.right = destination.right;
+				//	currentX += (font._characterSet.letters[letter].xAdvance);
+				//}
+				segmentsCombined = segmentsCombined + s.text;
+			}
+			bbox = font.BoundingBox(segmentsCombined);
+			box.left = (float_t)bbox.left;
+			box.top = (float_t)bbox.top;
+			box.right = (float_t)bbox.right;
+			box.bottom = (float_t)bbox.bottom;
+			ScaleRectOnCenter(box, _scaleX, _scaleY);
+			currentX = box.left + (float)x;
+			currentY = box.top + (float)y;
+		}
+
+		for (auto& s : segments)
+		{
+			const uint64_t size = s.text.size();
+			for (uint64_t i = 0; i < size; ++i)
+			{
+				const uint8_t letter = s.text[i];
+				const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
+				const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
+
+				//source.left = font.characterSet->letters[letter].x;
+				//source.top = font.characterSet->letters[letter].y;
+				source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture.at(subSheetName).top;
+				source.left = font.characterSet->letters[letter].x +(float)subSheet.subTexture.at(subSheetName).left;
+				source.right = source.left + widthOfLetter;
+				source.bottom = source.top + heightOfLetter;
+
+				destination.left = currentX + (font.characterSet->letters[letter].xOffset * _scaleX);
+				destination.top = currentY + (font.characterSet->letters[letter].yOffset * _scaleY);
+				destination.right = destination.left + (widthOfLetter * _scaleX);
+				destination.bottom = destination.top + (heightOfLetter * _scaleY);
+
+				currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
+
+				Draw(subSheet.texture, destination, source, s.color);
+
+			}
+		}
+		return (uint32_t)currentX;
+	}
 	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
