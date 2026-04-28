@@ -1901,6 +1901,8 @@ namespace game
 			currentY = box.top + (float)y;
 		}
 
+		game::Color temp;
+		const uint32_t alpha = color.a;
 		for (auto& s : segments)
 		{
 			const uint64_t size = s.text.size();
@@ -1921,10 +1923,10 @@ namespace game
 				destination.top = currentY + (font.characterSet->letters[letter].yOffset * _scaleY);
 				destination.right = destination.left + (widthOfLetter * _scaleX);
 				destination.bottom = destination.top + (heightOfLetter * _scaleY);
-
+				s.color.SetAlpha(alpha,&temp);
 				currentX += (font.characterSet->letters[letter].xAdvance * _scaleX);
 
-				Draw(subSheet.texture, destination, source, s.color);
+				Draw(subSheet.texture, destination, source, temp);
 
 			}
 		}
