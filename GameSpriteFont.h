@@ -255,7 +255,7 @@ namespace game
 			return segments;
 		}
 	
-		bool Load(const std::string &filename, const std::string& texture, const TextureFilterType filter = TextureFilterType::Point);
+		bool Load(const std::string &filename, const std::string& textureIn, const TextureFilterType filter = TextureFilterType::Point);
 		void UnLoad();
 		std::shared_ptr<Charset> characterSet;
 		bool isLoaded;
@@ -276,7 +276,7 @@ namespace game
 		UnLoad();
 	}
 
-	inline bool SpriteFont::Load(const std::string &fileName, const std::string& texture, const TextureFilterType filter)
+	inline bool SpriteFont::Load(const std::string &fileName, const std::string& textureIn, const TextureFilterType filter)
 	{
 
 		std::string line;
@@ -290,9 +290,9 @@ namespace game
 
 		this->texture.isMipMapped = true;
 		this->texture.filterType = filter;// TextureFilterType::Trilinear;
-		if (!enginePointer->geLoadTexture(texture, this->texture))
+		if (!enginePointer->geLoadTexture(textureIn, this->texture))
 		{
-			lastError = { GameErrors::GameContent, "Could not load \"" + texture + "\" for SpriteFont." };
+			lastError = { GameErrors::GameContent, "Could not load \"" + textureIn + "\" for SpriteFont." };
 			return false;
 		}
 

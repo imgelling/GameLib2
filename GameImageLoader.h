@@ -1,4 +1,4 @@
-#if !defined(GAMEIMAGELOADER_H)
+﻿#if !defined(GAMEIMAGELOADER_H)
 #define GAMEIMAGELOADER_H
 #include <wincodec.h>
 
@@ -21,6 +21,7 @@ namespace game
 
     inline bool ImageSaver::Save(const uint32_t* data, const char* filename, const uint32_t width, const uint32_t height, uint32_t extra) const
     {
+		extra;
 		Microsoft::WRL::ComPtr<IWICImagingFactory> factory;
 		HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(factory.GetAddressOf()));
 		if (FAILED(hr))

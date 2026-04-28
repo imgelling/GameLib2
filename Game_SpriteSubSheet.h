@@ -30,15 +30,15 @@ namespace game
 			{
 				std::string s;
 
-				std::string filename;
+				std::string filenameInput;
 				game::Recti rect;
-				std::stringstream  ss;
+				//std::stringstream  ss;
 				while (getline(f, s))
 				{
 					std::stringstream ss(s);
 					// filename
 					getline(ss, s, ',');
-					filename = s;
+					filenameInput = s;
 					// x,y,width,height
 					getline(ss, s, ',');
 					rect.left = std::stoul(s);
@@ -52,9 +52,9 @@ namespace game
 					getline(ss, s, ',');
 					rect.bottom = std::stoul(s);
 
-					subTexture[filename] = rect;
+					subTexture[filenameInput] = rect;
 
-					std::cout << filename << "," << rect.left << "," << rect.top << "," << rect.right << "," << rect.bottom << std::endl;
+					std::cout << filenameInput << "," << rect.left << "," << rect.top << "," << rect.right << "," << rect.bottom << std::endl;
 				}
 
 				// Close the file

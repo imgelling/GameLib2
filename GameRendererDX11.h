@@ -1,4 +1,4 @@
-#if !defined(GAMERENDERERDX11_H)
+﻿#if !defined(GAMERENDERERDX11_H)
 #define GAMERENDERERDX11_H
 #include <d3d11.h>
 #include <d3dcompiler.h>
@@ -41,6 +41,10 @@ namespace game
 		bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader)
 		{
+			vertex;
+			fragment;
+			geometry;
+			shader;
 			lastError = { GameErrors::GameDirectX11Specific, "Geometry shaders not implemented yet." };
 			return false;
 		}
@@ -573,6 +577,7 @@ namespace game
 
 	inline void RendererDX11::UnLoadShader(Shader& shader)
 	{
+		shader;
 		// Maybe should be resets?
 		//SAFE_RELEASE(shader.compiledVertexShader11);
 		//SAFE_RELEASE(shader.vertexShader11);
