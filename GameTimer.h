@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <chrono>
 
 namespace game
@@ -7,7 +7,7 @@ namespace game
 	{
 	public:
 		Timer();
-		float_t Elapsed();
+		double Elapsed() const;
 		void Reset();
 	private:
 		std::chrono::high_resolution_clock::time_point _startTime;
@@ -23,10 +23,10 @@ namespace game
 		_startTime = std::chrono::high_resolution_clock::now();
 	}
 
-	inline float_t Timer::Elapsed()
+	inline double Timer::Elapsed() const
 	{
 		std::chrono::microseconds _ticks = std::chrono::duration_cast<std::chrono::microseconds>((std::chrono::high_resolution_clock::now() - _startTime));
-		float_t diff = (float)(_ticks.count()) / 1000.0f;
+		double diff = (float)(_ticks.count()) / 1000.0;
 		return diff;
 	}
 }

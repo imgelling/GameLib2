@@ -156,8 +156,8 @@ namespace game
 		
 		// Created by end user		
 
-		virtual void Update(const float_t msElapsed) = 0;
-		virtual void Render(const float_t msElapsed) = 0;
+		virtual void Update(const double_t msElapsed) = 0;
+		virtual void Render(const double_t msElapsed) = 0;
 		virtual void Initialize() = 0;
 		virtual void LoadContent() = 0;
 		virtual void Shutdown() = 0;
@@ -259,12 +259,12 @@ namespace game
 	inline void Engine::geStartEngine()
 	{
 		// Storage of time
-		float_t msElapsed = 0.0f;
+		double_t msElapsed = 0.0f;
 		// Tracks updates per second
 		double_t upsTime = 0.0f;
 		uint32_t updatesCounted = 0;
 		// Tracks frames per second
-		float_t fpsTime = 0.0f;
+		double_t fpsTime = 0.0f;
 		uint32_t framesCounted = 0;
 	
 
