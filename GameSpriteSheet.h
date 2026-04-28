@@ -35,7 +35,6 @@ namespace game
 	{
 		SpriteSheet();
 		if (!width || !height) return;
-		//_texture = &texture;
 		tileWidth = width;
 		tileHeight = height;
 		_tilesPerRow = texture.width / tileWidth;
@@ -53,7 +52,6 @@ namespace game
 
 	inline void SpriteSheet::Initialize(const Texture2D &texture, const int width, const int height) noexcept
 	{
-		//_texture = &texture;
 		tileWidth = width;
 		tileHeight = height;
 		_tilesPerRow = texture.width / tileWidth;
