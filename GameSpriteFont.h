@@ -12,6 +12,7 @@
 #include "GameMath.h"
 #include "GameColor.h"
 #include "Game_SpriteSubSheet.h"
+#include "GameGUI_StringFunction.h"
 
 namespace game
 {
@@ -57,9 +58,9 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		int32_t Height(const std::string& text) const;
-		game::Recti BoundingBox(const std::string& string) const;
-		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const;
+		int32_t Height(const std::string& text);
+		game::Recti BoundingBox(const std::string& string);
+		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height);
 		inline int32_t WidthOfTextInPixels(const std::string& string) const
 		{
 			//const uint64_t size = string.size();
@@ -94,7 +95,6 @@ namespace game
 			}
 			return count;
 		}
-		std::string ColorTagWrap(const std::string& str, const game::Color& color);
 
 		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
 		{
@@ -143,117 +143,6 @@ namespace game
 			rect.right = centerX + halfWidth;// / 2.0f;
 			rect.bottom = centerY + halfHeight;// / 2.0f;
 		}
-
-		// Structure to hold a text segment and its color
-		class ColorTextSegment
-		{
-		public:
-			std::string text;
-			Color color; // 0xRRGGBB
-		};
-
-		bool Valid32Hex(const std::string& hex) const
-		{
-			if (hex.length() < 8) return false;
-			for (auto ch : hex)
-			{
-				if (!std::isxdigit(ch))
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
-		// Parser function
-		std::vector<ColorTextSegment> parseColoredString(const std::string& input, const Color& defaultColor = Colors::White, const bool removeCode = true) const
-		{
-			std::vector<ColorTextSegment> segments;
-			uint64_t pos = 0;
-			Color currentColor = defaultColor;
-			const uint64_t size = input.size();
-			std::string coloredText;
-			std::string colorCode;
-			uint64_t colorCodeStart = 0;
-			uint64_t tagEnd = 0;
-			uint64_t closeTag = 0;
-			uint64_t tagStart = 0;
-
-			while (pos < size)
-			{
-				// Color escape = "\|"
-				tagStart = input.find("\\|", pos);
-
-				if (tagStart == std::string::npos)
-				{
-					// No more tags, push remaining text
-					segments.push_back({ input.substr(pos), currentColor });
-					break;
-				}
-
-				// Push text before tag
-				if (tagStart > pos)
-				{
-					segments.push_back({ input.substr(pos, tagStart - pos), currentColor });
-				}
-
-
-				// Find closing '>'
-				//tagEnd = input.find('>', colorCodeStart + 8);
-				//if (tagEnd == std::string::npos)
-				//{
-				//	segments.push_back({ input.substr(tagStart), currentColor });
-				//	break; // malformed tag
-				//}
-
-
-				tagEnd = tagStart + 8/*color code*/ + 1;
-				
-				// Parse color code
-				colorCodeStart = tagStart + 2; // skip "//|"
-				colorCode = input.substr(colorCodeStart, 8);
-				if (Valid32Hex(colorCode))
-				{
-					currentColor.Set(colorCode);
-					if (!removeCode)
-					{
-						segments.push_back({ input.substr(tagStart,10), currentColor });
-					}
-				}
-				else
-				{
-					segments.push_back({ input.substr(tagStart), currentColor });
-					// Invalid hex, just push the rest of string
-					break;
-				}
-
-
-				// Find closing \e
-				closeTag = input.find("\\e", tagEnd);
-				if (closeTag == std::string::npos)
-				{
-					if (!removeCode) segments.push_back({ input.substr(tagStart+10), currentColor });
-					break; // malformed tag
-				}
-
-				// Extract colored text
-				coloredText = input.substr(tagEnd + 1, closeTag - (tagEnd + 1));
-				segments.push_back({ coloredText, currentColor });
-
-				if (!removeCode)
-				{
-					segments.push_back({ input.substr(closeTag,2), currentColor });
-				}
-
-				// Reset color after closing tag
-				currentColor = defaultColor;
-
-				// Move position after closing tag
-				pos = closeTag + 2; // length of "\e"
-			}
-
-			return segments;
-		}
 	
 		bool Load(const std::string &filename, const std::string& textureIn, const TextureFilterType filter = TextureFilterType::Point);
 		void UnLoad();
@@ -263,6 +152,7 @@ namespace game
 
 		Texture2D texture;
 	private:
+		game::GUI::StringFunction stringFunction;
 	};
 
 	inline SpriteFont::SpriteFont()
@@ -395,21 +285,21 @@ namespace game
 	}
 
 
-	inline game::Recti SpriteFont::BoundingBox(const std::string& string) const
+	inline game::Recti SpriteFont::BoundingBox(const std::string& string) 
 	{
 		if (string == "")
 		{
 			Recti e;
 			return e;
 		}
-
-		auto segments = parseColoredString(string, game::Colors::White);
+		
+		stringFunction.ParseColoredString(string, game::Colors::White);
 
 		Recti destination;
 		Recti box(20000, 20000, -20000, -20000);
 		int32_t currentX = 0;
 		int32_t currentY = 0;
-		for (auto &seg : segments)
+		for (auto &seg : stringFunction.segments)
 		{
 			const uint64_t size = seg.text.size();
 			for (uint64_t i = 0; i < size; ++i)
@@ -438,26 +328,18 @@ namespace game
 		return box;
 	}
 
-	inline void SpriteFont::GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height) const
+	inline void SpriteFont::GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height)
 	{
 		boundingBox = BoundingBox(string);
 		width = boundingBox.right - boundingBox.left;
 		height = boundingBox.bottom - boundingBox.top;
 	}
 
-	inline int32_t SpriteFont::Height(const std::string& text) const
+	inline int32_t SpriteFont::Height(const std::string& text)
 	{
 		game::Recti bbox = BoundingBox(text);
 		return bbox.bottom - bbox.top;
 	}
 
-	inline std::string SpriteFont::ColorTagWrap(const std::string& str, const game::Color& color)
-	{
-		std::string ret;
-		ret = "\\|" + color.hexidecimal;// +">";
-		ret += str;
-		ret += "\\e";
-		return ret;
-	}
 
 }

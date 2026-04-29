@@ -11,6 +11,7 @@
 #include "GameSpriteFont.h"
 #include "GameTexture2D.h"
 #include "GameTextShaders.h"
+#include "GameGUI_StringFunction.h"
 
 #include <string>
 #include <vector>
@@ -56,48 +57,48 @@ namespace game
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
 		// Draws a string
-		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
-		uint32_t DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawStringWithTags(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
 #if defined(GAME_DIRECTX11)
-		void CreateNewRasterizerState(const std::string& name, const bool scissor = false)
-		{
-			// set up per renderer
-			// 
-			// dx11
-			Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster;
-			D3D11_RASTERIZER_DESC rasterDescription;
-			ZeroMemory(&rasterDescription, sizeof(D3D11_RASTERIZER_DESC));
-			rasterDescription.ScissorEnable = scissor;
-			//rasterDescription.DepthClipEnable = TRUE;
-			//rasterDescription.MultisampleEnable = false;
-			rasterDescription.FillMode = D3D11_FILL_SOLID; // must be filled
-			rasterDescription.CullMode = D3D11_CULL_BACK;	// must be filled
-			//rasterDescription.FrontCounterClockwise = FALSE;
-			//rasterDescription.DepthClipEnable = TRUE;
-			//rasterDescription.ScissorEnable = TRUE; // Enable scissor testing
-			HRESULT hr = 0;
-			if ((hr = (enginePointer->d3d11Device->CreateRasterizerState(&rasterDescription, raster.GetAddressOf()))) != 0)
-			{
-				std::cout << "create raster failed - " << hr << "\n";
-			}
-			// needs error checking
-			_rasterStates[name] = raster;
-		}
+		//void CreateNewRasterizerState(const std::string& name, const bool scissor = false)
+		//{
+		//	// set up per renderer
+		//	// 
+		//	// dx11
+		//	Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster;
+		//	D3D11_RASTERIZER_DESC rasterDescription;
+		//	ZeroMemory(&rasterDescription, sizeof(D3D11_RASTERIZER_DESC));
+		//	rasterDescription.ScissorEnable = scissor;
+		//	//rasterDescription.DepthClipEnable = TRUE;
+		//	//rasterDescription.MultisampleEnable = false;
+		//	rasterDescription.FillMode = D3D11_FILL_SOLID; // must be filled
+		//	rasterDescription.CullMode = D3D11_CULL_BACK;	// must be filled
+		//	//rasterDescription.FrontCounterClockwise = FALSE;
+		//	//rasterDescription.DepthClipEnable = TRUE;
+		//	//rasterDescription.ScissorEnable = TRUE; // Enable scissor testing
+		//	HRESULT hr = 0;
+		//	if ((hr = (enginePointer->d3d11Device->CreateRasterizerState(&rasterDescription, raster.GetAddressOf()))) != 0)
+		//	{
+		//		std::cout << "create raster failed - " << hr << "\n";
+		//	}
+		//	// needs error checking
+		//	_rasterStates[name] = raster;
+		//}
 
-		void SetRasterizerState(const std::string name)
-		{
-			Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster = _rasterStates[name];
-			// error check
-			enginePointer->d3d11DeviceContext->RSSetState(raster.Get()); //getaddressof?
-			//D3D11_RECT clipRect = { 100, 100, 400, 300 };
-			//enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clipRect);
-		}
+		//void SetRasterizerState(const std::string name)
+		//{
+		//	Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster = _rasterStates[name];
+		//	// error check
+		//	enginePointer->d3d11DeviceContext->RSSetState(raster.Get()); //getaddressof?
+		//	//D3D11_RECT clipRect = { 100, 100, 400, 300 };
+		//	//enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clipRect);
+		//}
 
 		void SetScissorRect(const game::Recti rect)
 		{
@@ -120,6 +121,7 @@ namespace game
 		const Texture2D* _currentTexture;
 		uint32_t _spritesDrawnLastFrame;
 		uint32_t _currentSpritesDrawn;
+		game::GUI::StringFunction stringFunction;
 #if defined(GAME_OPENGL)
 		struct _spriteVertexGL
 		{
@@ -146,7 +148,7 @@ namespace game
 		Microsoft::WRL::ComPtr<ID3D11BlendState> _spriteBatchBlendState11;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> _depthStencilState11;
 		//Microsoft::WRL::ComPtr<ID3D11RasterizerState> WireFrame;
-		std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11RasterizerState>> _rasterStates;
+		//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11RasterizerState>> _rasterStates;
 
 
 
@@ -1706,7 +1708,7 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		//auto it = subSheet.subTexture.find(subSheetName);
 		//if (it == subSheet.subTexture.end())
@@ -1780,7 +1782,7 @@ namespace game
 		return (uint32_t)currentX;
 	}
 
-	uint32_t SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1850,7 +1852,7 @@ namespace game
 		return (uint32_t)currentX;
 	}
 
-	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		//auto it = subSheet.subTexture.find(subSheetName);
 		//if (it == subSheet.subTexture.end())
@@ -1863,14 +1865,14 @@ namespace game
 		Rectf source;
 		Rectf destination;
 
-		auto segments = font.parseColoredString(str, color);
+		stringFunction.ParseColoredString(str, color);
 
 		if (centered)
 		{
 			game::Recti bbox;
 			Rectf box;// (20000, 20000, -20000, -20000);
 			std::string segmentsCombined;
-			for (auto& s : segments)
+			for (auto& s : stringFunction.segments)
 			{
 				//const uint64_t size = s.text.size();
 				//for (uint64_t i = 0; i < size; ++i)
@@ -1909,7 +1911,7 @@ namespace game
 
 		game::Color temp;
 		const uint32_t alpha = color.a;
-		for (auto& s : segments)
+		for (auto& s : stringFunction.segments)
 		{
 			const uint64_t size = s.text.size();
 			for (uint64_t i = 0; i < size; ++i)
@@ -1938,7 +1940,7 @@ namespace game
 		}
 		return (uint32_t)currentX;
 	}
-	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawStringWithTags(SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1947,14 +1949,14 @@ namespace game
 		Rectf source;
 		Rectf destination;
 
-		auto segments = font.parseColoredString(str, color);
+		stringFunction.ParseColoredString(str, color);
 
 		if (centered)
 		{
 			game::Recti bbox;
 			Rectf box;// (20000, 20000, -20000, -20000);
 			std::string segmentsCombined;
-			for (auto& s : segments)
+			for (auto& s : stringFunction.segments)
 			{
 				//const uint64_t size = s.text.size();
 				//for (uint64_t i = 0; i < size; ++i)
@@ -1991,7 +1993,7 @@ namespace game
 			currentY = box.top + (float)y;
 		}
 
-		for (auto &s:segments)
+		for (auto &s:stringFunction.segments)
 		{
 			const uint64_t size = s.text.size();
 			for (uint64_t i = 0; i < size; ++i)
