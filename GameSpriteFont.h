@@ -58,9 +58,7 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		//int32_t Height(const std::string& text);
-//		game::Recti BoundingBox(const std::string& string);
-		//void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height);
+
 		inline int32_t WidthOfTextInPixels(const std::string& string) const
 		{
 			//const uint64_t size = string.size();
@@ -75,25 +73,6 @@ namespace game
 				currentX += (characterSet->letters[i].xAdvance);
 			}
 			return width;
-		}
-
-		// shouldn't need widthInPixels.
-		int32_t NumberTextCharsInAWidth(const std::string& in, const int32_t maxPixels) const
-		{
-			int32_t count = 0;
-			int32_t width = 0;
-			int32_t currentX = 0;
-			std::string test;
-			for (uint8_t c : in)
-			{
-				test += c;
-				width = currentX + characterSet->letters[c].xOffset + characterSet->letters[c].width;
-				if (width >= maxPixels)
-					return count;// 
-				count++;
-				currentX += characterSet->letters[c].xAdvance;
-			}
-			return count;
 		}
 
 		void ScaleBoundingBoxOnCenter(game::Rectf& rect, float scaleFactorX, float scaleFactorY)

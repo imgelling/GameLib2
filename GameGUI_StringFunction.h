@@ -32,6 +32,24 @@ namespace game
 				return true;
 			}
 
+			// shouldn't need widthInPixels.
+			int32_t NumberTextCharsInAWidth(const game::SpriteFont &font, const std::string & in, const int32_t maxPixels) const
+			{
+				int32_t count = 0;
+				int32_t width = 0;
+				int32_t currentX = 0;
+				std::string test;
+				for (uint8_t c : in)
+				{
+					test += c;
+					width = currentX + font.characterSet->letters[c].xOffset + font.characterSet->letters[c].width;
+					if (width >= maxPixels)
+						return count;// 
+					count++;
+					currentX += font.characterSet->letters[c].xAdvance;
+				}
+				return count;
+			}
 
 
 			void GetSizes(const game::SpriteFont &font, const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height)
