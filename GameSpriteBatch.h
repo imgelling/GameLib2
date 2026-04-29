@@ -1749,7 +1749,7 @@ namespace game
 			//		box.right = destination.right;
 			//	currentX += (font._characterSet.letters[letter].xAdvance);
 			//}
-			bbox = font.BoundingBox(Str);
+			bbox = stringFunction.BoundingBox(font, Str);
 			box.top = (float_t)bbox.top;
 			box.left = (float_t)bbox.left;
 			box.bottom = (float_t)bbox.bottom;
@@ -1818,7 +1818,7 @@ namespace game
 			//		box.right = destination.right;
 			//	currentX += (font._characterSet.letters[letter].xAdvance);
 			//}
-			bbox = font.BoundingBox(Str);
+			bbox = stringFunction.BoundingBox(font, Str);
 			box.left = (float_t)bbox.left;
 			box.top = (float_t)bbox.top;
 			box.right = (float_t)bbox.right;
@@ -1899,7 +1899,7 @@ namespace game
 				//}
 				segmentsCombined = segmentsCombined + s.text;
 			}
-			bbox = font.BoundingBox(segmentsCombined);
+			bbox = stringFunction.BoundingBox(font, segmentsCombined);
 			box.left = (float_t)bbox.left;
 			box.top = (float_t)bbox.top;
 			box.right = (float_t)bbox.right;
@@ -1983,7 +1983,7 @@ namespace game
 				//}
 				segmentsCombined = segmentsCombined + s.text;
 			}
-			bbox = font.BoundingBox(segmentsCombined);
+			bbox = stringFunction.BoundingBox(font, segmentsCombined);
 			box.left = (float_t)bbox.left;
 			box.top = (float_t)bbox.top;
 			box.right = (float_t)bbox.right;

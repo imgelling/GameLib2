@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <GameColor.h>
+#include <GameSpriteFont.h>
 
 namespace game
 {
@@ -29,6 +30,84 @@ namespace game
 					}
 				}
 				return true;
+			}
+
+
+
+			void GetSizes(const game::SpriteFont &font, const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height)
+			{
+				boundingBox = BoundingBox(font, string);
+				width = boundingBox.right - boundingBox.left;
+				height = boundingBox.bottom - boundingBox.top;
+			}
+
+			int32_t Height(const game::SpriteFont &font, const std::string& text)
+			{
+				game::Recti bbox = BoundingBox(font, text);
+				return bbox.bottom - bbox.top;
+			}
+
+			game::Recti BoundingBox(const game::SpriteFont &font, const std::string& string)
+			{
+				if (string == "")
+				{
+					Recti e;
+					return e;
+				}
+
+				ParseColoredString(string, game::Colors::White);
+
+				Recti destination;
+				Recti box(20000, 20000, -20000, -20000);
+				int32_t currentX = 0;
+				int32_t currentY = 0;
+				for (auto& seg : segments)
+				{
+					const uint64_t size = seg.text.size();
+					for (uint64_t i = 0; i < size; ++i)
+					{
+						const uint8_t letter = string[i];
+						const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
+						const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
+
+						destination.left = currentX + (font.characterSet->letters[letter].xOffset);
+						destination.top = currentY + (font.characterSet->letters[letter].yOffset);
+						destination.right = destination.left + (widthOfLetter);
+						destination.bottom = destination.top + (heightOfLetter);
+
+						// Find the bounding box
+						if (destination.left < box.left)
+							box.left = destination.left;
+						if (destination.top < box.top)
+							box.top = destination.top;
+						if (destination.bottom > box.bottom)
+							box.bottom = destination.bottom;
+						if (destination.right > box.right)
+							box.right = destination.right;
+						currentX += (font.characterSet->letters[letter].xAdvance);
+					}
+				}
+				return box;
+			}
+
+
+			int32_t GetCursorPositionInText(const game::SpriteFont &font, const int32_t cursorPosition, const std::string& text) const
+			{
+				int32_t offset = 0;
+				int32_t currentX = 0;
+
+				if (cursorPosition <= 0) return 0;
+
+				for (uint64_t i = 0; i < cursorPosition; i++)
+				{
+					const uint8_t letter = text[i];
+					const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
+					offset = currentX + font.characterSet->letters[letter].xOffset;
+					offset = offset + (widthOfLetter);
+					if (letter == ' ') offset += font.characterSet->letters[letter].xAdvance;
+					currentX += (font.characterSet->letters[letter].xAdvance);// *_scaleX);
+				}
+				return offset;
 			}
 
 			std::string ColorTagWrap(const std::string& str, const game::Color& color)

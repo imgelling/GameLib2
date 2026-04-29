@@ -12,7 +12,7 @@
 #include "GameMath.h"
 #include "GameColor.h"
 #include "Game_SpriteSubSheet.h"
-#include "GameGUI_StringFunction.h"
+//#include "GameGUI_StringFunction.h"
 
 namespace game
 {
@@ -58,9 +58,9 @@ namespace game
 	public:
 		SpriteFont();
 		~SpriteFont();
-		int32_t Height(const std::string& text);
-		game::Recti BoundingBox(const std::string& string);
-		void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height);
+		//int32_t Height(const std::string& text);
+//		game::Recti BoundingBox(const std::string& string);
+		//void GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height);
 		inline int32_t WidthOfTextInPixels(const std::string& string) const
 		{
 			//const uint64_t size = string.size();
@@ -96,24 +96,6 @@ namespace game
 			return count;
 		}
 
-		int32_t GetCursorPositionInText(const int32_t cursorPosition, const std::string& text) const
-		{
-			int32_t offset = 0;
-			int32_t currentX = 0;
-
-			if (cursorPosition <= 0) return 0;
-
-			for (uint64_t i = 0; i < cursorPosition; i++)
-			{
-				const uint8_t letter = text[i];
-				const uint32_t widthOfLetter = characterSet->letters[letter].width;
-				offset = currentX + characterSet->letters[letter].xOffset;
-				offset = offset + (widthOfLetter);
-				if (letter == ' ') offset += characterSet->letters[letter].xAdvance;
-				currentX += (characterSet->letters[letter].xAdvance);// *_scaleX);
-			}
-			return offset;
-		}
 		void ScaleBoundingBoxOnCenter(game::Rectf& rect, float scaleFactorX, float scaleFactorY)
 		{
 			// Negative scaling bad m'kay!
@@ -152,7 +134,7 @@ namespace game
 
 		Texture2D texture;
 	private:
-		game::GUI::StringFunction stringFunction;
+		//game::GUI::StringFunction stringFunction;
 	};
 
 	inline SpriteFont::SpriteFont()
@@ -283,63 +265,4 @@ namespace game
 		characterSet = nullptr;
 		isLoaded = false;
 	}
-
-
-	inline game::Recti SpriteFont::BoundingBox(const std::string& string) 
-	{
-		if (string == "")
-		{
-			Recti e;
-			return e;
-		}
-		
-		stringFunction.ParseColoredString(string, game::Colors::White);
-
-		Recti destination;
-		Recti box(20000, 20000, -20000, -20000);
-		int32_t currentX = 0;
-		int32_t currentY = 0;
-		for (auto &seg : stringFunction.segments)
-		{
-			const uint64_t size = seg.text.size();
-			for (uint64_t i = 0; i < size; ++i)
-			{
-				const uint8_t letter = string[i];
-				const uint32_t widthOfLetter = characterSet->letters[letter].width;
-				const uint32_t heightOfLetter = characterSet->letters[letter].height;
-
-				destination.left = currentX + (characterSet->letters[letter].xOffset);
-				destination.top = currentY + (characterSet->letters[letter].yOffset);
-				destination.right = destination.left + (widthOfLetter);
-				destination.bottom = destination.top + (heightOfLetter);
-
-				// Find the bounding box
-				if (destination.left < box.left)
-					box.left = destination.left;
-				if (destination.top < box.top)
-					box.top = destination.top;
-				if (destination.bottom > box.bottom)
-					box.bottom = destination.bottom;
-				if (destination.right > box.right)
-					box.right = destination.right;
-				currentX += (characterSet->letters[letter].xAdvance);
-			}
-		}
-		return box;
-	}
-
-	inline void SpriteFont::GetSizes(const std::string& string, game::Recti& boundingBox, int32_t& width, int32_t& height)
-	{
-		boundingBox = BoundingBox(string);
-		width = boundingBox.right - boundingBox.left;
-		height = boundingBox.bottom - boundingBox.top;
-	}
-
-	inline int32_t SpriteFont::Height(const std::string& text)
-	{
-		game::Recti bbox = BoundingBox(text);
-		return bbox.bottom - bbox.top;
-	}
-
-
 }
