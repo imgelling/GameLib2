@@ -131,9 +131,9 @@ namespace game
 			std::string ColorTagWrap(const std::string& str, const game::Color& color)
 			{
 				std::string ret;
-				ret = "\\|" + color.hexidecimal;// +">";
+				ret = R"(\|)" + color.hexidecimal;// +">";
 				ret += str;
-				ret += "\\e";
+				ret += R"(\e)";
 				return ret;
 			}
 
@@ -155,7 +155,7 @@ namespace game
 				while (pos < size)
 				{
 					// Color escape = "\|"
-					tagStart = input.find("\\|", pos);
+					tagStart = input.find(R"(\|)", pos);
 
 					if (tagStart == std::string::npos)
 					{
@@ -203,7 +203,7 @@ namespace game
 
 
 					// Find closing \e
-					closeTag = input.find("\\e", tagEnd);
+					closeTag = input.find(R"(\e)", tagEnd);
 					if (closeTag == std::string::npos)
 					{
 						if (!removeCode) segments.push_back({ input.substr(tagStart + 10), currentColor });
