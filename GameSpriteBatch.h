@@ -1006,21 +1006,21 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color)
 	{
-		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
-		//auto it = subSheet.subTexture.find(subSheetName);
-		//if (it == subSheet.subTexture.end()) return;
+		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
+		//auto it = subSheet.subTextureRegistry.find(subSheetName);
+		//if (it == subSheet.subTextureRegistry.end()) return;
 		game::Recti src;
 		game::Recti dest;
 
-		//src.top = 0;// subSheet.subTexture.at(subSheetName).top;
-		//src.left = 0;// subSheet.subTexture.at(subSheetName).left;
-		src.bottom = subSheet.subTexture.at(subSheetName).bottom;
-		src.right = subSheet.subTexture.at(subSheetName).right;
+		//src.top = 0;// subSheet.subTextureRegistry.at(subSheetName).top;
+		//src.left = 0;// subSheet.subTextureRegistry.at(subSheetName).left;
+		src.bottom = subSheet.subTextureRegistry.at(subSheetName).bottom;
+		src.right = subSheet.subTextureRegistry.at(subSheetName).right;
 
 		dest.top = y;
 		dest.left = x;
-		dest.bottom = y + subSheet.subTexture.at(subSheetName).bottom;
-		dest.right = x + subSheet.subTexture.at(subSheetName).right;
+		dest.bottom = y + subSheet.subTextureRegistry.at(subSheetName).bottom;
+		dest.right = x + subSheet.subTextureRegistry.at(subSheetName).right;
 
 		Draw(subSheet, subSheetName, dest, src, color);
 	}
@@ -1233,16 +1233,16 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
 	{
-		//auto it = subSheet.subTexture.find(subSheetName);
-		//if (it == subSheet.subTexture.end()) return;
-		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
+		//auto it = subSheet.subTextureRegistry.find(subSheetName);
+		//if (it == subSheet.subTextureRegistry.end()) return;
+		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
 
 		game::Recti rect;
 		rect = portion;
-		rect.top += subSheet.subTexture.at(subSheetName).top;
-		rect.left += subSheet.subTexture.at(subSheetName).left;
-		rect.bottom += subSheet.subTexture.at(subSheetName).top;
-		rect.right += subSheet.subTexture.at(subSheetName).left;
+		rect.top += subSheet.subTextureRegistry.at(subSheetName).top;
+		rect.left += subSheet.subTextureRegistry.at(subSheetName).left;
+		rect.bottom += subSheet.subTextureRegistry.at(subSheetName).top;
+		rect.right += subSheet.subTextureRegistry.at(subSheetName).left;
 
 		Draw(subSheet.texture, destination, rect, color);
 	}
@@ -1710,10 +1710,10 @@ namespace game
 
 	uint32_t SpriteBatch::DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		//auto it = subSheet.subTexture.find(subSheetName);
-		//if (it == subSheet.subTexture.end())
+		//auto it = subSheet.subTextureRegistry.find(subSheetName);
+		//if (it == subSheet.subTextureRegistry.end())
 		//	return 0;
-		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
+		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
 
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1765,10 +1765,10 @@ namespace game
 			const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
 			const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
 
-			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture.at(subSheetName).top;
-			source.left = font.characterSet->letters[letter].x +(float)subSheet.subTexture.at(subSheetName).left;
-			source.bottom = source.top + heightOfLetter;// +(float)subSheet.subTexture.at(subSheetName).top;
-			source.right = source.left + widthOfLetter;// +(float)subSheet.subTexture.at(subSheetName).left;
+			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTextureRegistry.at(subSheetName).top;
+			source.left = font.characterSet->letters[letter].x +(float)subSheet.subTextureRegistry.at(subSheetName).left;
+			source.bottom = source.top + heightOfLetter;// +(float)subSheet.subTextureRegistry.at(subSheetName).top;
+			source.right = source.left + widthOfLetter;// +(float)subSheet.subTextureRegistry.at(subSheetName).left;
 
 			destination.top = currentY + (font.characterSet->letters[letter].yOffset * _scaleY);
 			destination.left = currentX + (font.characterSet->letters[letter].xOffset * _scaleX);
@@ -1854,10 +1854,10 @@ namespace game
 
 	uint32_t SpriteBatch::DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
-		//auto it = subSheet.subTexture.find(subSheetName);
-		//if (it == subSheet.subTexture.end())
+		//auto it = subSheet.subTextureRegistry.find(subSheetName);
+		//if (it == subSheet.subTextureRegistry.end())
 		//	return 0;
-		GAME_ASSERT(!(subSheet.subTexture.find(subSheetName) == subSheet.subTexture.end()));
+		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
 		float_t currentX = (float)x;
@@ -1922,8 +1922,8 @@ namespace game
 
 				//source.left = font.characterSet->letters[letter].x;
 				//source.top = font.characterSet->letters[letter].y;
-				source.top = font.characterSet->letters[letter].y +(float)subSheet.subTexture.at(subSheetName).top;
-				source.left = font.characterSet->letters[letter].x +(float)subSheet.subTexture.at(subSheetName).left;
+				source.top = font.characterSet->letters[letter].y +(float)subSheet.subTextureRegistry.at(subSheetName).top;
+				source.left = font.characterSet->letters[letter].x +(float)subSheet.subTextureRegistry.at(subSheetName).left;
 				source.right = source.left + widthOfLetter;
 				source.bottom = source.top + heightOfLetter;
 

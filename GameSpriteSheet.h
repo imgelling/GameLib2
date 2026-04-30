@@ -42,11 +42,11 @@ namespace game
 
 	void SpriteSheet::Initialize(game::SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
 	{
-		GAME_ASSERT(!(subSheet.subTexture.find(subName) == subSheet.subTexture.end()));
+		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subName) == subSheet.subTextureRegistry.end()));
 
 		tileWidth = width;
 		tileHeight = height;
-		int32_t textureWidth = subSheet.subTexture[subName].right;
+		int32_t textureWidth = subSheet.subTextureRegistry[subName].right;
 		_tilesPerRow = textureWidth / tileWidth;
 	}
 

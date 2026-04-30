@@ -17,7 +17,7 @@ namespace game
 	class SpriteSubSheet
 	{
 	public:
-		std::unordered_map<std::string, game::Recti> subTexture;
+		std::unordered_map<std::string, game::Recti> subTextureRegistry;
 		game::Texture2D texture;
 		~SpriteSubSheet()
 		{
@@ -25,17 +25,18 @@ namespace game
 		}
 		game::Recti RectOf(const std::string& name)
 		{
-			GAME_ASSERT(!(subTexture.find(name) == subTexture.end()));
+			GAME_ASSERT(!(subTextureRegistry.find(name) == subTextureRegistry.end()));
 			game::Recti ret;
 			ret.top = 0;
 			ret.left = 0;
-			ret.bottom = subTexture.at(name).bottom;
-			ret.right = subTexture.at(name).right;
+			ret.bottom = subTextureRegistry.at(name).bottom;
+			ret.right = subTextureRegistry.at(name).right;
 			return ret;
 		}
 		void Unload()
 		{
-			if (enginePointer)
+			GAME_ASSERT(enginePointer);
+			//if (enginePointer)
 			{
 				if (texture.isLoaded) enginePointer->geUnLoadTexture(texture);
 			}
@@ -74,7 +75,7 @@ namespace game
 					getline(ss, s, ',');
 					rect.bottom = std::stoul(s);
 
-					subTexture[filenameInput] = rect;
+					subTextureRegistry[filenameInput] = rect;
 
 					std::cout << filenameInput << "," << rect.left << "," << rect.top << "," << rect.right << "," << rect.bottom << std::endl;
 				}
