@@ -29,6 +29,7 @@ namespace game
 			Pointi size;
 			size.height = subTextureRegistry.at(name).bottom;
 			size.width = subTextureRegistry.at(name).right;
+			return size;
 		}
 
 		game::Recti RectOf(const std::string& name)

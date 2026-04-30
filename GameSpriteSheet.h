@@ -17,6 +17,7 @@ namespace game
 		void Initialize(const Texture2D &texture, const int width, const int height) noexcept;
 		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height);
 		void Initialize(const Texture2D &texture, const Pointi &size) noexcept;
+		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const Pointi& size);
 		Recti GetRectFromId(const int32_t id) const noexcept;
 		uint32_t tileWidth;
 		uint32_t tileHeight;
@@ -41,6 +42,11 @@ namespace game
 		tileWidth = width;
 		tileHeight = height;
 		_tilesPerRow = texture.width / tileWidth;
+	}
+
+	void SpriteSheet::Initialize(SpriteSubSheet& subSheet, const std::string& subName, const Pointi& size)
+	{
+		Initialize(subSheet, subName, size.width, size.height);
 	}
 
 	void SpriteSheet::Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
