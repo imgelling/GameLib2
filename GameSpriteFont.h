@@ -139,12 +139,15 @@ namespace game
 
 		if (!characterSet) characterSet = std::make_shared<Charset>();
 
-		this->texture.isMipMapped = true;
-		this->texture.filterType = filter;// TextureFilterType::Trilinear;
-		if (!enginePointer->geLoadTexture(textureIn, this->texture))
+		if (textureIn != "")
 		{
-			lastError = { GameErrors::GameContent, "Could not load \"" + textureIn + "\" for SpriteFont." };
-			return false;
+			this->texture.isMipMapped = true;
+			this->texture.filterType = filter;// TextureFilterType::Trilinear;
+			if (!enginePointer->geLoadTexture(textureIn, this->texture))
+			{
+				lastError = { GameErrors::GameContent, "Could not load \"" + textureIn + "\" for SpriteFont." };
+				return false;
+			}
 		}
 
 		stream.open(fileName.c_str());
