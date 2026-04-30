@@ -23,6 +23,7 @@ namespace game
 		{
 			if (texture.isLoaded) Unload();
 		}
+
 		Pointi SizeOf(const std::string& name)
 		{
 			GAME_ASSERT(!(subTextureRegistry.find(name) == subTextureRegistry.end()));
@@ -42,6 +43,7 @@ namespace game
 			ret.right = subTextureRegistry.at(name).right;
 			return ret;
 		}
+
 		void Unload()
 		{
 			GAME_ASSERT(enginePointer);
@@ -49,7 +51,9 @@ namespace game
 			{
 				if (texture.isLoaded) enginePointer->geUnLoadTexture(texture);
 			}
+			subTextureRegistry.clear();
 		}
+
 		bool Load(std::string filename)
 		{
 			std::ifstream f(filename + ".txt");
