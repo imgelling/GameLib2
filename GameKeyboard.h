@@ -173,7 +173,8 @@ namespace game
 		{
 			if (_cursorPosition < _textInput.length())
 			{
-				_textInput[_cursorPosition] = (char)shiftedKey;
+				//_textInput[_cursorPosition] = (char)shiftedKey;
+				_textInput.insert(_textInput.begin() + _cursorPosition, (char)shiftedKey);
 			}
 			else
 			{
@@ -184,7 +185,8 @@ namespace game
 		{
 			if (_cursorPosition < _textInput.length())
 			{
-				_textInput[_cursorPosition] = (char)key;
+				//_textInput[_cursorPosition] = (char)key;
+				_textInput.insert(_textInput.begin() + _cursorPosition, (char)key);
 			}
 			else
 			{
@@ -367,7 +369,8 @@ namespace game
 					}
 					if (_cursorPosition < _textInput.length())
 					{
-						_textInput[_cursorPosition] = (char)key;
+						//_textInput[_cursorPosition] = (char)key;
+						_textInput.insert(_textInput.begin() + _cursorPosition, (char)key);
 					}
 					else
 					{
