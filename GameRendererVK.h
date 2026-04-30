@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -147,7 +147,7 @@ namespace game
 
 	inline void RendererVK::UnLoadTexture(Texture2D& texture)
 	{
-
+		texture.isLoaded = false;
 	}
 
 	inline bool RendererVK::LoadShader(const std::string vertex, const std::string fragment, Shader& shader)

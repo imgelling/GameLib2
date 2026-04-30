@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <fstream>
 #include <GL/gl.h>
@@ -996,6 +996,7 @@ namespace game
 
 	inline void RendererGL::UnLoadTexture(Texture2D& texture)
 	{
+		texture.isLoaded = false;
 		glDeleteTextures(1, &texture.bind);
 		texture.bind = 0;
 		texture.width = 0;

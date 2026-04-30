@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "d3dx12.h"
 #include <d3dcompiler.h>
@@ -59,7 +59,7 @@ namespace game
 		void FillOutRendererInfo() {};
 		bool CreateTexture(Texture2D& texture);
 		bool LoadTexture(const std::string& fileName, Texture2D& texture);
-		void UnLoadTexture(Texture2D& texture) {};
+		void UnLoadTexture(Texture2D& texture) { texture.isLoaded = false; };
 		bool LoadShader(const std::string vertex, const std::string fragment, Shader& shader);
 		bool LoadShader(const std::string vertex, const std::string fragment, const std::string geometry, Shader& shader)
 		{

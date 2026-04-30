@@ -9,15 +9,37 @@
 #include <Game.h>
 #include "GameMath.h"
 #include "GameTexture2D.h"
+#include "Game_Assert.h"
 
 namespace game
 {
-
+#include "Game.h"
 	class SpriteSubSheet
 	{
 	public:
 		std::unordered_map<std::string, game::Recti> subTexture;
 		game::Texture2D texture;
+		~SpriteSubSheet()
+		{
+			if (texture.isLoaded) Unload();
+		}
+		game::Recti RectOf(const std::string& name)
+		{
+			GAME_ASSERT(!(subTexture.find(name) == subTexture.end()));
+			game::Recti ret;
+			ret.top = 0;
+			ret.left = 0;
+			ret.bottom = subTexture.at(name).bottom;
+			ret.right = subTexture.at(name).right;
+			return ret;
+		}
+		void Unload()
+		{
+			if (enginePointer)
+			{
+				if (texture.isLoaded) enginePointer->geUnLoadTexture(texture);
+			}
+		}
 		bool Load(std::string filename)
 		{
 			std::ifstream f(filename + ".txt");

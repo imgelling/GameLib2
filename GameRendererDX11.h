@@ -399,6 +399,7 @@ namespace game
 
 	inline void RendererDX11::UnLoadTexture(Texture2D& texture)
 	{
+		texture.isLoaded = false;
 		texture.textureInterface11.Reset();
 		texture.textureSRV11.Reset();
 		texture.width = 0;
