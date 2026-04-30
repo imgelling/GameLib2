@@ -23,6 +23,14 @@ namespace game
 		{
 			if (texture.isLoaded) Unload();
 		}
+		Pointi SizeOf(const std::string& name)
+		{
+			GAME_ASSERT(!(subTextureRegistry.find(name) == subTextureRegistry.end()));
+			Pointi size;
+			size.height = subTextureRegistry.at(name).bottom;
+			size.width = subTextureRegistry.at(name).right;
+		}
+
 		game::Recti RectOf(const std::string& name)
 		{
 			GAME_ASSERT(!(subTextureRegistry.find(name) == subTextureRegistry.end()));

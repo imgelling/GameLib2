@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include <cstdint>
-#include <Game_Assert.h>
+#include <string>
+#include "Game_Assert.h"
 #include "GameMath.h"
 #include "GameTexture2D.h"
 #include "Game_SpriteSubSheet.h"
@@ -14,14 +15,14 @@ namespace game
 		SpriteSheet();
 		SpriteSheet(const Texture2D& texture, const int width, const int height);
 		void Initialize(const Texture2D &texture, const int width, const int height) noexcept;
-		void Initialize(game::SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height);
+		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height);
 		void Initialize(const Texture2D &texture, const Pointi &size) noexcept;
-		Recti GetRectFromId(int id) const noexcept;
+		Recti GetRectFromId(const int32_t id) const noexcept;
 		uint32_t tileWidth;
 		uint32_t tileHeight;
 	private:
 		uint32_t _tilesPerRow;
-		game::Pointi _textureOffset;
+		Pointi _textureOffset;
 	};
 
 	inline SpriteSheet::SpriteSheet()
@@ -34,13 +35,15 @@ namespace game
 	SpriteSheet::SpriteSheet(const Texture2D& texture, const int width, const int height)
 	{
 		SpriteSheet();
-		if (!width || !height) return;
+		GAME_ASSERT(width);
+		GAME_ASSERT(height);
+		//if (!width || !height) return;
 		tileWidth = width;
 		tileHeight = height;
 		_tilesPerRow = texture.width / tileWidth;
 	}
 
-	void SpriteSheet::Initialize(game::SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
+	void SpriteSheet::Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
 	{
 		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subName) == subSheet.subTextureRegistry.end()));
 
@@ -62,7 +65,7 @@ namespace game
 		Initialize(texture, size.width, size.height);
 	}
 
-	inline Recti SpriteSheet::GetRectFromId(int id) const noexcept
+	inline Recti SpriteSheet::GetRectFromId(const int32_t id) const noexcept
 	{
 		Recti rectangle;
 
