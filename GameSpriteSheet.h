@@ -13,9 +13,9 @@ namespace game
 	{
 	public:
 		SpriteSheet();
-		SpriteSheet(const Texture2D& texture, const int width, const int height);
-		void Initialize(const Texture2D &texture, const int width, const int height) noexcept;
-		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height);
+		SpriteSheet(const Texture2D& texture, const uint32_t width, const uint32_t height);
+		void Initialize(const Texture2D &texture, const uint32_t width, const uint32_t height) noexcept;
+		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const uint32_t width, const uint32_t height);
 		void Initialize(const Texture2D &texture, const Pointi &size) noexcept;
 		void Initialize(SpriteSubSheet& subSheet, const std::string& subName, const Pointi& size);
 		Recti GetRectFromId(const int32_t id) const noexcept;
@@ -33,7 +33,7 @@ namespace game
 		_tilesPerRow = 0;
 	}
 	
-	SpriteSheet::SpriteSheet(const Texture2D& texture, const int width, const int height)
+	SpriteSheet::SpriteSheet(const Texture2D& texture, const uint32_t width, const uint32_t height)
 	{
 		SpriteSheet();
 		GAME_ASSERT(width);
@@ -49,17 +49,17 @@ namespace game
 		Initialize(subSheet, subName, size.width, size.height);
 	}
 
-	void SpriteSheet::Initialize(SpriteSubSheet& subSheet, const std::string& subName, const int32_t width, const int32_t height)
+	void SpriteSheet::Initialize(SpriteSubSheet& subSheet, const std::string& subName, const uint32_t width, const uint32_t height)
 	{
 		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subName) == subSheet.subTextureRegistry.end()));
 
 		tileWidth = width;
 		tileHeight = height;
-		int32_t textureWidth = subSheet.subTextureRegistry[subName].right;
-		_tilesPerRow = textureWidth / tileWidth;
+		//int32_t textureWidth = subSheet.subTextureRegistry[subName].right;
+		_tilesPerRow = subSheet.subTextureRegistry[subName].right / tileWidth;
 	}
 
-	inline void SpriteSheet::Initialize(const Texture2D &texture, const int width, const int height) noexcept
+	inline void SpriteSheet::Initialize(const Texture2D &texture, const uint32_t width, const uint32_t height) noexcept
 	{
 		tileWidth = width;
 		tileHeight = height;
