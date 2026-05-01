@@ -47,16 +47,15 @@ namespace game
 		void Unload()
 		{
 			GAME_ASSERT(enginePointer);
-			//if (enginePointer)
 			{
 				if (texture.isLoaded) enginePointer->geUnLoadTexture(texture);
 			}
 			subTextureRegistry.clear();
 		}
 
-		bool Load(std::string filename)
+		bool Load(const std::string& spriteListFileName, const std::string& spriteTexture)
 		{
-			std::ifstream f(filename + ".txt");
+			std::ifstream f(spriteListFileName);
 
 			if (!f.is_open()) 
 			{
@@ -96,11 +95,12 @@ namespace game
 				// Close the file
 				f.close();
 			}
-			//texture.isMipMapped = true;
-			//texture.filterType = TextureFilterType::Trilinear;
-			if (!game::enginePointer->geLoadTexture(filename + ".png", texture))
+			if (spriteTexture != "")
 			{
-				return false;
+				if (!game::enginePointer->geLoadTexture(spriteTexture, texture))
+				{
+					return false;
+				}
 			}
 			return true;
 		}
