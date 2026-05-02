@@ -66,10 +66,12 @@ namespace game
 			int32_t width = 0; 
 			for (uint16_t i : string) // = 0; i < size; ++i)
 			{
-				//const uint8_t letter = string[i];
 				const uint32_t widthOfLetter = characterSet->letters[i].width;
 				// this can be cleaned up.
 				width = currentX + (characterSet->letters[i].xOffset) + (widthOfLetter);
+				if (i == ' ')
+					width += (characterSet->letters[i].xAdvance);
+
 				currentX += (characterSet->letters[i].xAdvance);
 			}
 			return width;

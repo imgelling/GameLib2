@@ -1,6 +1,11 @@
 ﻿#pragma once
+#include <cctype>
+#include <cstdint>
+#include <string>
+#include <vector>
 #include <GameColor.h>
 #include <GameSpriteFont.h>
+#include "GameMath.h"
 
 namespace game
 {
@@ -12,6 +17,7 @@ namespace game
 		public:
 			std::string text;
 			Color color; // 0xRRGGBB
+			uint32_t lengthInPixels = 0;
 		};
 
 		class StringFunction
