@@ -18,6 +18,7 @@ namespace game
 			std::string text;
 			Color color; // 0xRRGGBB
 			uint32_t lengthInPixels = 0;
+			uint32_t heightInPixels = 0;
 		};
 
 		class StringFunction
