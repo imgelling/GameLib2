@@ -3,8 +3,9 @@
 #include <cstdint>
 #include <string>
 #include <vector>
-#include <GameColor.h>
-#include <GameSpriteFont.h>
+#include "GameColor.h"
+#include "GameSpriteFont.h"
+#include "GameColor.h"
 #include "GameMath.h"
 
 namespace game
@@ -147,7 +148,6 @@ namespace game
 			// Parser function
 			void ParseColoredString(const std::string& input, const Color& defaultColor = Colors::White, const bool removeCode = true)
 			{
-				/*std::vector<ColorTextSegment> segments;*/
 				segments.clear();
 				uint64_t pos = 0;
 				Color currentColor = defaultColor;

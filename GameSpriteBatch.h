@@ -1,23 +1,24 @@
 ﻿#pragma once
-#if defined(GAME_OPENGL)
-#include <GL/gl.h>
-#endif
+//#if defined(GAME_OPENGL)
+//#include <GL/gl.h>
+//#endif
 
-
-#include <GameEngine.h>
-#include <Game_Assert.h>
-#include "GameErrors.h"
-#include "GameMath.h"
-#include "GameSpriteFont.h"
-#include "GameTexture2D.h"
-#include "GameTextShaders.h"
-#include "GameGUI_StringFunction.h"
 
 #include <string>
 #include <vector>
 #include <string.h>
 #include <cmath>
 #include <cstdint>
+
+#include "GameEngine.h"
+#include "Game_Assert.h"
+#include "GameErrors.h"
+#include "GameMath.h"
+#include "GameSpriteFont.h"
+#include "GameTexture2D.h"
+#include "GameTextShaders.h"
+#include "GameGUI_StringFunction.h"
+#include "GameSpriteSheet.h"
 #include "Game.h"
 #include "GameColor.h"
 #include "GameShader.h"

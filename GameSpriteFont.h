@@ -4,14 +4,15 @@
 #include <sstream>
 #include <string>
 #include <memory>
-#include <vector>
 
 #include "GameEngine.h"
 #include "GameErrors.h"
 #include "GameTexture2D.h"
 #include "GameMath.h"
-#include "GameColor.h"
-#include "Game_SpriteSubSheet.h"
+
+//#include "GameColor.h"
+//#include "Game_SpriteSubSheet.h"
+
 //#include "GameGUI_StringFunction.h"
 
 namespace game
