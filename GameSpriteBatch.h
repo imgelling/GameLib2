@@ -43,13 +43,19 @@ namespace game
 		void Render();
 
 		// Clipping stuff
-		void SetScissorRegion(Recti rect)
+		Recti SetScissorRegion(Recti rect)
 		{
+			Recti ret = _scissorRect;
 			_scissorRect = rect;
+			return ret;
 		}
-		void EnableScissorClip(bool use)
+		void EnableScissor()
 		{
-			_useScissorClip = use;
+			_useScissorClip = true;
+		}
+		void DisableScissor()
+		{
+			_useScissorClip = false;
 		}
 		
 		// Will draw entire texture to location x,y Needs clip
