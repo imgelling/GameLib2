@@ -26,8 +26,8 @@
 
 namespace game
 {
-	extern GameError lastError;
-	extern Engine* enginePointer;
+	//extern GameError lastError;
+	//extern Engine* enginePointer;
 
 	class SpriteBatch
 	{
@@ -49,10 +49,10 @@ namespace game
 		}
 		
 		// Will draw entire texture to location x,y Needs clip
-		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color = game::Colors::White);
 		
 		// Adding clip to following should at it to rest
-		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		void Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color = game::Colors::White);
 		
 		// Will draw entire texture to location "position" Needs clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
@@ -1018,7 +1018,7 @@ namespace game
 		Draw(subSheet, subSheetName, position.x, position.y, color);
 	}
 
-	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color)
+	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color)
 	{
 		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
 		//auto it = subSheet.subTextureRegistry.find(subSheetName);
@@ -1039,7 +1039,7 @@ namespace game
 		Draw(subSheet, subSheetName, dest, src, color);
 	}
 
-	inline void SpriteBatch::Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color)
+	inline void SpriteBatch::Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color)
 	{
 		if (_numberOfSpritesUsed + 1 >= _maxSprites)
 		{
