@@ -1,4 +1,4 @@
-#pragma warning(disable : 4100)
+﻿//#pragma warning(disable : 4100)
 #include "GameIOCP.h"
 
 #define NETWORK_COMPLETION_TYPE pad[0]

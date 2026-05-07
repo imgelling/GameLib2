@@ -13,7 +13,6 @@
 
 namespace game
 {
-#include "Game.h"
 	class SpriteSubSheet
 	{
 	public:

@@ -1,6 +1,12 @@
 ﻿#pragma once
-#include <GameColor.h>
-#include <GameSpriteFont.h>
+#include <cctype>
+#include <cstdint>
+#include <string>
+#include <vector>
+#include "GameColor.h"
+#include "GameSpriteFont.h"
+#include "GameColor.h"
+#include "GameMath.h"
 
 namespace game
 {
@@ -12,6 +18,8 @@ namespace game
 		public:
 			std::string text;
 			Color color; // 0xRRGGBB
+			uint32_t widthInPixels = 0;
+			uint32_t heightInPixels = 0;
 		};
 
 		class StringFunction
@@ -140,7 +148,6 @@ namespace game
 			// Parser function
 			void ParseColoredString(const std::string& input, const Color& defaultColor = Colors::White, const bool removeCode = true)
 			{
-				/*std::vector<ColorTextSegment> segments;*/
 				segments.clear();
 				uint64_t pos = 0;
 				Color currentColor = defaultColor;

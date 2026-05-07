@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Digits
 
@@ -92,3 +92,73 @@
 
 #define geK_RETURN 0x0D
 
+
+//Windows Keypad(Numeric Pad) Virtual - Key Codes
+//In Windows, the numeric keypad keys have specific virtual - key codes(VK codes) that can be used in programming, automation, or input handling.These codes are defined in the WinUser.h header and are distinct from the main keyboard’s number keys.
+//
+//Numeric Keypad Key Codes
+//From the Microsoft WinUser.h reference Microsoft Learn :
+//
+//Key	Decimal	Hex
+//Description
+//
+//VK_NUMPAD0	96	0x60
+//Numeric keypad 0
+//
+//VK_NUMPAD1	97	0x61
+//Numeric keypad 1
+//
+//VK_NUMPAD2	98	0x62
+//Numeric keypad 2
+//
+//VK_NUMPAD3	99	0x63
+//Numeric keypad 3
+//
+//VK_NUMPAD4	100	0x64
+//Numeric keypad 4
+//
+//VK_NUMPAD5	101	0x65
+//Numeric keypad 5
+//
+//VK_NUMPAD6	102	0x66
+//Numeric keypad 6
+//
+//VK_NUMPAD7	103	0x67
+//Numeric keypad 7
+//
+//VK_NUMPAD8	104	0x68
+//Numeric keypad 8
+//
+//VK_NUMPAD9	105	0x69
+//Numeric keypad 9
+//
+//Keypad Operation Keys
+//These are the function keys on the numeric pad :
+//
+//Key	Decimal	Hex
+//Description
+//
+//VK_MULTIPLY	106	0x6A
+//Multiply key
+//
+//VK_ADD	107	0x6B
+//Add key
+//
+//VK_SEPARATOR	108	0x6C
+//Separator key
+//
+//VK_SUBTRACT	109	0x6D
+//Subtract key
+//
+//VK_DECIMAL	110	0x6E
+//Decimal key
+//
+//VK_DIVIDE	111	0x6F	Divide key
+//Notes
+//These codes are virtual - key codes, not scan codes.They are used in APIs like GetAsyncKeyState, GetKeyState, or in automation scripts.
+//
+//The numeric keypad keys are only active when the Num Lock key is on.
+//
+//In C / C++ or other languages, you can use these constants(e.g., VK_NUMPAD0) in if (GetAsyncKeyState(VK_NUMPAD0) & 0x8000) to detect when the key is pressed.
+//
+//If you need to map these to Unicode characters, you may need to use MapVirtualKey or similar functions, as keypad keys don’t directly produce the same character as their main keyboard counterparts.
