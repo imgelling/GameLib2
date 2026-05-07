@@ -40,27 +40,36 @@ namespace game
 		void End();
 		// Render a complete batch of sprites
 		void Render();
+
+		// Clipping stuff
+		Recti* scissorRect = nullptr;
+		void SetScissorRegion(Recti* rect)
+		{
+			scissorRect = rect;
+		}
 		
-		// Will draw entire texture to location x,y
-		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		// Will draw entire texture to location x,y Needs clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		
-		// Will draw entire texture to location "position"
-		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
+		// Will draw entire texture to location "position" Needs clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
+		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		
-		// Will draw a specified rectangle portion of a texture to location x,y
+		// Will draw a specified rectangle portion of a texture to an integer rectangle destination Needs clip
 		void Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 		
 		
-		// Draws using floating point
+		// Will draw a specified rectangle portion of a texture to an floating point rectangle destination
+		// Mostly used by text (because of scaling)
+		// Can clip
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
 		// Draws a string
 		uint32_t DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		
+		//uint32_t DrawStringClipped(game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawStringWithTags(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
@@ -101,20 +110,20 @@ namespace game
 		//	//enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clipRect);
 		//}
 
-		void SetScissorRect(const game::Recti rect)
-		{
-			D3D11_RECT clip = { 0 };
-			clip.left = rect.left;
-			clip.top = rect.top;
-			clip.right = rect.right;
-			clip.bottom = rect.bottom;
-			enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clip);
-		}
+		//void SetScissorRect(const game::Recti rect)
+		//{
+		//	D3D11_RECT clip = { 0 };
+		//	clip.left = rect.left;
+		//	clip.top = rect.top;
+		//	clip.right = rect.right;
+		//	clip.bottom = rect.bottom;
+		//	enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clip);
+		//}
 
-		void SetRasterizerToDefault()
-		{
-			enginePointer->d3d11DeviceContext->RSSetState(NULL);
-		}
+		//void SetRasterizerToDefault()
+		//{
+		//	enginePointer->d3d11DeviceContext->RSSetState(NULL);
+		//}
 #endif
 	private:
 		uint32_t _maxSprites;
@@ -1244,6 +1253,16 @@ namespace game
 		rect.left += subSheet.subTextureRegistry.at(subSheetName).left;
 		rect.bottom += subSheet.subTextureRegistry.at(subSheetName).top;
 		rect.right += subSheet.subTextureRegistry.at(subSheetName).left;
+		
+		// clipping
+		if (scissorRect)
+		{
+			// If destination is out of scissor rect, just return
+			if (destination.left > scissorRect->right) return;
+			if (destination.right < scissorRect->left) return;
+			if (destination.top > scissorRect->bottom) return;
+			if (destination.bottom < scissorRect->top) return;
+		}
 
 		Draw(subSheet.texture, destination, rect, color);
 	}
@@ -1463,8 +1482,59 @@ namespace game
 		_numberOfSpritesUsed++;
 	}
 
+
+
 	inline void SpriteBatch::Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color)
 	{
+		Rectf clippedRect;
+		Rectf clippedPortion;
+		// clipping
+		if (scissorRect)
+		{
+			////// If destination is out of scissor rect, just return
+			//if (destination.left > scissorRect->right) return;
+			//if (destination.right < scissorRect->left) return;
+			//if (destination.top > scissorRect->bottom) return;
+			//if (destination.bottom < scissorRect->top) return;
+			
+			// Find the intersection window
+			clippedRect.left = max(destination.left, scissorRect->left);
+			clippedRect.top = max(destination.top, scissorRect->top);
+			clippedRect.right = min(destination.right, scissorRect->right);
+			clippedRect.bottom = min(destination.bottom, scissorRect->bottom);
+
+			// If no overlap, return false
+			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
+			{
+				return;
+			}
+			
+			// Compute scaling factors for UV adjustment
+			float quadWidth = destination.right - destination.left;
+			float quadHeight = destination.bottom - destination.top;
+
+			if (quadWidth <= 0 || quadHeight <= 0) 
+			{
+				return; // Degenerate quad, probably not needed as checked above
+			}
+
+			float uScale = (portion.right - portion.left) / quadWidth;
+			float vScale = (portion.bottom - portion.top) / quadHeight;
+
+			// Scale the uv coordinates
+			clippedPortion = portion;
+			clippedPortion.left = portion.left + (clippedRect.left - destination.left) * uScale;
+			clippedPortion.top = portion.top + (clippedRect.top - destination.top) * vScale;
+			clippedPortion.right = portion.right + (clippedRect.right - destination.right) * uScale;
+			clippedPortion.bottom = portion.bottom + (clippedRect.bottom - destination.bottom) * vScale;
+
+		}
+		else
+		{
+			clippedRect = destination;
+			clippedPortion = portion;
+		}
+
 		if (_numberOfSpritesUsed + 1 >= _maxSprites)
 		{
 			Render();
@@ -1534,15 +1604,15 @@ namespace game
 			access = &_spriteVertices11[_numberOfSpritesUsed * 4];
 			window = enginePointer->geGetWindowSize();
 			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPosition.left = ((float_t)destination.left * 2.0f / (float_t)window.width) - 1.0f;
-			scaledPosition.top = 1.0f - ((float_t)destination.top * 2.0f / (float_t)window.height);// -1.0f;
-			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
-			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
+			scaledPosition.left = ((float_t)clippedRect.left * 2.0f / (float_t)window.width) - 1.0f;
+			scaledPosition.top = 1.0f - ((float_t)clippedRect.top * 2.0f / (float_t)window.height);// -1.0f;
+			scaledPosition.right = (((float_t)clippedRect.right) * 2.0f / (float)window.width) - 1.0f;
+			scaledPosition.bottom = 1.0f - (((float_t)clippedRect.bottom) * 2.0f / (float)window.height);// -1.0f;
 			// Homogenise UV coords to 0.0f - 1.0f
-			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
-			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
-			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
-			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
+			scaledUV.left = (float_t)clippedPortion.left * texture.oneOverWidth;
+			scaledUV.top = (float_t)clippedPortion.top * texture.oneOverHeight;
+			scaledUV.right = (float_t)clippedPortion.right * texture.oneOverWidth;
+			scaledUV.bottom = (float_t)clippedPortion.bottom * texture.oneOverHeight;
 
 			// Fill vertices
 
@@ -1782,6 +1852,7 @@ namespace game
 		}
 		return (uint32_t)currentX;
 	}
+
 
 	uint32_t SpriteBatch::DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
