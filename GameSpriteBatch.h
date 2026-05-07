@@ -43,9 +43,13 @@ namespace game
 		void Render();
 
 		// Clipping stuff
-		void SetScissorRegion(Recti* rect)
+		void SetScissorRegion(Recti rect)
 		{
 			_scissorRect = rect;
+		}
+		void EnableScissorClip(bool use)
+		{
+			_useScissorClip = use;
 		}
 		
 		// Will draw entire texture to location x,y Needs clip
@@ -129,7 +133,8 @@ namespace game
 		//}
 #endif
 	private:
-		Recti* _scissorRect = nullptr;
+		Recti _scissorRect;
+		bool _useScissorClip;
 		uint32_t _maxSprites;
 		uint32_t _numberOfSpritesUsed;
 		const Texture2D* _currentTexture;
@@ -224,6 +229,7 @@ namespace game
 	inline SpriteBatch::SpriteBatch()
 	{
 		_maxSprites = 0;
+		_useScissorClip = false;
 		_spritesDrawnLastFrame = 0;
 		_currentSpritesDrawn = 0;
 		_currentTexture = nullptr;
@@ -1266,13 +1272,13 @@ namespace game
 		Recti clippedRect;
 		Recti clippedPortion;
 		// clipping
-		if (_scissorRect)
+		if (_useScissorClip)
 		{
 			// Find the intersection window
-			clippedRect.top = max(destination.top, _scissorRect->top);
-			clippedRect.left = max(destination.left, _scissorRect->left);
-			clippedRect.bottom = min(destination.bottom, _scissorRect->bottom);
-			clippedRect.right = min(destination.right, _scissorRect->right);
+			clippedRect.top = max(destination.top, _scissorRect.top);
+			clippedRect.left = max(destination.left, _scissorRect.left);
+			clippedRect.bottom = min(destination.bottom, _scissorRect.bottom);
+			clippedRect.right = min(destination.right, _scissorRect.right);
 
 			// If no overlap, return false
 			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
@@ -1524,13 +1530,13 @@ namespace game
 		Rectf clippedRect;
 		Rectf clippedPortion;
 		// clipping
-		if (_scissorRect)
+		if (_useScissorClip)
 		{
 			// Find the intersection window
-			clippedRect.top = max(destination.top, _scissorRect->top);
-			clippedRect.left = max(destination.left, _scissorRect->left);
-			clippedRect.bottom = min(destination.bottom, _scissorRect->bottom);
-			clippedRect.right = min(destination.right, _scissorRect->right);
+			clippedRect.top = max(destination.top, _scissorRect.top);
+			clippedRect.left = max(destination.left, _scissorRect.left);
+			clippedRect.bottom = min(destination.bottom, _scissorRect.bottom);
+			clippedRect.right = min(destination.right, _scissorRect.right);
 
 			// If no overlap, return false
 			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
