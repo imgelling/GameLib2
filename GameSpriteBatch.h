@@ -22,6 +22,7 @@
 #include "Game.h"
 #include "GameColor.h"
 #include "GameShader.h"
+#include "Game_SpriteSubSheet.h"
 
 namespace game
 {
@@ -42,21 +43,23 @@ namespace game
 		void Render();
 
 		// Clipping stuff
-		Recti* scissorRect = nullptr;
 		void SetScissorRegion(Recti* rect)
 		{
-			scissorRect = rect;
+			_scissorRect = rect;
 		}
 		
 		// Will draw entire texture to location x,y Needs clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
+		
+		// Adding clip to following should at it to rest
 		void Draw(const Texture2D& texture, const uint32_t x, const uint32_t y, const Color color = game::Colors::White);
 		
 		// Will draw entire texture to location "position" Needs clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		
-		// Will draw a specified rectangle portion of a texture to an integer rectangle destination Needs clip
+		// Will draw a specified rectangle portion of a texture to an integer rectangle destination
+		// Can clip
 		void Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 		
@@ -126,6 +129,7 @@ namespace game
 		//}
 #endif
 	private:
+		Recti* _scissorRect = nullptr;
 		uint32_t _maxSprites;
 		uint32_t _numberOfSpritesUsed;
 		const Texture2D* _currentTexture;
@@ -1254,21 +1258,52 @@ namespace game
 		rect.bottom += subSheet.subTextureRegistry.at(subSheetName).top;
 		rect.right += subSheet.subTextureRegistry.at(subSheetName).left;
 		
-		// clipping
-		if (scissorRect)
-		{
-			// If destination is out of scissor rect, just return
-			if (destination.left > scissorRect->right) return;
-			if (destination.right < scissorRect->left) return;
-			if (destination.top > scissorRect->bottom) return;
-			if (destination.bottom < scissorRect->top) return;
-		}
-
 		Draw(subSheet.texture, destination, rect, color);
 	}
 
 	inline void SpriteBatch::Draw(const Texture2D& texture, const Recti& destination, const Recti& portion, const Color& color)
 	{
+		Recti clippedRect;
+		Recti clippedPortion;
+		// clipping
+		if (_scissorRect)
+		{
+			// Find the intersection window
+			clippedRect.top = max(destination.top, _scissorRect->top);
+			clippedRect.left = max(destination.left, _scissorRect->left);
+			clippedRect.bottom = min(destination.bottom, _scissorRect->bottom);
+			clippedRect.right = min(destination.right, _scissorRect->right);
+
+			// If no overlap, return false
+			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
+			{
+				return;
+			}
+
+			// Compute scaling factors for UV adjustment
+			const float quadWidth = (float)destination.right - destination.left;
+			const float quadHeight = (float)destination.bottom - destination.top;
+
+			//if (quadWidth <= 0 || quadHeight <= 0) 
+			//{
+			//	return; // probably not needed as checked above
+			//}
+
+			const float uScale = (portion.right - portion.left) / quadWidth;
+			const float vScale = (portion.bottom - portion.top) / quadHeight;
+
+			// Scale the uv coordinates
+			clippedPortion = portion;
+			clippedPortion.top = (int32_t)(portion.top + (clippedRect.top - destination.top) * vScale);
+			clippedPortion.left = (int32_t)(portion.left + (clippedRect.left - destination.left) * uScale);
+			clippedPortion.bottom = (int32_t)(portion.bottom + (clippedRect.bottom - destination.bottom) * vScale);
+			clippedPortion.right = (int32_t)(portion.right + (clippedRect.right - destination.right) * uScale);
+		}
+		else
+		{
+			clippedRect = destination;
+			clippedPortion = portion;
+		}
 		if (_numberOfSpritesUsed + 1 >= _maxSprites)
 		{
 			Render();
@@ -1338,15 +1373,15 @@ namespace game
 			access = &_spriteVertices11[_numberOfSpritesUsed * 4];
 			window = enginePointer->geGetWindowSize();
 			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPosition.left = ((float_t)destination.left * 2.0f / (float_t)window.width) - 1.0f;
-			scaledPosition.top = 1.0f - ((float_t)destination.top * 2.0f / (float_t)window.height);// -1.0f;
-			scaledPosition.right = (((float_t)destination.right) * 2.0f / (float)window.width) - 1.0f;
-			scaledPosition.bottom = 1.0f - (((float_t)destination.bottom) * 2.0f / (float)window.height);// -1.0f;
+			scaledPosition.left = ((float_t)clippedRect.left * 2.0f / (float_t)window.width) - 1.0f;
+			scaledPosition.top = 1.0f - ((float_t)clippedRect.top * 2.0f / (float_t)window.height);// -1.0f;
+			scaledPosition.right = (((float_t)clippedRect.right) * 2.0f / (float)window.width) - 1.0f;
+			scaledPosition.bottom = 1.0f - (((float_t)clippedRect.bottom) * 2.0f / (float)window.height);// -1.0f;
 			// Homogenise UV coords to 0.0f - 1.0f
-			scaledUV.left = (float_t)portion.left * texture.oneOverWidth;
-			scaledUV.top = (float_t)portion.top * texture.oneOverHeight;
-			scaledUV.right = (float_t)portion.right * texture.oneOverWidth;
-			scaledUV.bottom = (float_t)portion.bottom * texture.oneOverHeight;
+			scaledUV.left = (float_t)clippedPortion.left * texture.oneOverWidth;
+			scaledUV.top = (float_t)clippedPortion.top * texture.oneOverHeight;
+			scaledUV.right = (float_t)clippedPortion.right * texture.oneOverWidth;
+			scaledUV.bottom = (float_t)clippedPortion.bottom * texture.oneOverHeight;
 
 			// Fill vertices
 
@@ -1489,13 +1524,13 @@ namespace game
 		Rectf clippedRect;
 		Rectf clippedPortion;
 		// clipping
-		if (scissorRect)
+		if (_scissorRect)
 		{
 			// Find the intersection window
-			clippedRect.top = max(destination.top, scissorRect->top);
-			clippedRect.left = max(destination.left, scissorRect->left);
-			clippedRect.bottom = min(destination.bottom, scissorRect->bottom);
-			clippedRect.right = min(destination.right, scissorRect->right);
+			clippedRect.top = max(destination.top, _scissorRect->top);
+			clippedRect.left = max(destination.left, _scissorRect->left);
+			clippedRect.bottom = min(destination.bottom, _scissorRect->bottom);
+			clippedRect.right = min(destination.right, _scissorRect->right);
 
 			// If no overlap, return false
 			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
