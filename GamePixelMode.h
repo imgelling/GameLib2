@@ -1,4 +1,4 @@
-#if !defined(GAMEPIXELMODE_H)
+﻿#if !defined(GAMEPIXELMODE_H)
 #define GAMEPIXELMODE_H
 
 #if defined(GAME_OPENGL)
