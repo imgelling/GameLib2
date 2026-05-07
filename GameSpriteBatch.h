@@ -1491,17 +1491,11 @@ namespace game
 		// clipping
 		if (scissorRect)
 		{
-			////// If destination is out of scissor rect, just return
-			//if (destination.left > scissorRect->right) return;
-			//if (destination.right < scissorRect->left) return;
-			//if (destination.top > scissorRect->bottom) return;
-			//if (destination.bottom < scissorRect->top) return;
-			
 			// Find the intersection window
-			clippedRect.left = max(destination.left, scissorRect->left);
 			clippedRect.top = max(destination.top, scissorRect->top);
-			clippedRect.right = min(destination.right, scissorRect->right);
+			clippedRect.left = max(destination.left, scissorRect->left);
 			clippedRect.bottom = min(destination.bottom, scissorRect->bottom);
+			clippedRect.right = min(destination.right, scissorRect->right);
 
 			// If no overlap, return false
 			if (clippedRect.top >= clippedRect.bottom || clippedRect.left >= clippedRect.right)
@@ -1510,24 +1504,23 @@ namespace game
 			}
 			
 			// Compute scaling factors for UV adjustment
-			float quadWidth = destination.right - destination.left;
-			float quadHeight = destination.bottom - destination.top;
+			const float quadWidth = destination.right - destination.left;
+			const float quadHeight = destination.bottom - destination.top;
 
-			if (quadWidth <= 0 || quadHeight <= 0) 
-			{
-				return; // Degenerate quad, probably not needed as checked above
-			}
+			//if (quadWidth <= 0 || quadHeight <= 0) 
+			//{
+			//	return; // probably not needed as checked above
+			//}
 
-			float uScale = (portion.right - portion.left) / quadWidth;
-			float vScale = (portion.bottom - portion.top) / quadHeight;
+			const float uScale = (portion.right - portion.left) / quadWidth;
+			const float vScale = (portion.bottom - portion.top) / quadHeight;
 
 			// Scale the uv coordinates
 			clippedPortion = portion;
-			clippedPortion.left = portion.left + (clippedRect.left - destination.left) * uScale;
 			clippedPortion.top = portion.top + (clippedRect.top - destination.top) * vScale;
-			clippedPortion.right = portion.right + (clippedRect.right - destination.right) * uScale;
+			clippedPortion.left = portion.left + (clippedRect.left - destination.left) * uScale;
 			clippedPortion.bottom = portion.bottom + (clippedRect.bottom - destination.bottom) * vScale;
-
+			clippedPortion.right = portion.right + (clippedRect.right - destination.right) * uScale;
 		}
 		else
 		{
