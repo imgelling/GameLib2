@@ -61,31 +61,27 @@ namespace game
 		// Will draw entire texture to location x,y
 		// Can clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color = game::Colors::White);
-				// Adding clip to following should at it to rest
-		// This can just call the rectangle version
 		void Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color = game::Colors::White);
 		
 		// Will draw entire texture to location "position"
 		// Can clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
-		// Below will be clipped when Draw(tex,x,y,color) just calls rect version
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		
 		// Will draw a specified rectangle portion of a texture to an integer rectangle destination
 		// Can clip
 		void Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
-		
-		
+				
 		// Will draw a specified rectangle portion of a texture to an floating point rectangle destination
-		// Mostly used by text (because of scaling)
 		// Can clip
 		void Draw(const Texture2D& texture, const Rectf& destination, const Rectf& portion, const Color& color = game::Colors::White);
 
 		// Draws a string
+		// Can clip
 		uint32_t DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		//uint32_t DrawStringClipped(game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		
 		uint32_t DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		uint32_t DrawStringWithTags(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
@@ -1056,208 +1052,18 @@ namespace game
 
 	inline void SpriteBatch::Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color)
 	{
-		if (_numberOfSpritesUsed + 1 >= _maxSprites)
-		{
-			Render();
-		}
+		game::Recti src;
+		game::Recti dest;
 
-#if defined(GAME_OPENGL)
-		if (enginePointer->geIsUsing(GAME_OPENGL))
-		{
-			if (&texture != _currentTexture)
-			{
-				Render();
-				_currentTexture = &texture;
-			}
-			_spriteVertexGL* access = &_spriteVertices[_numberOfSpritesUsed * 4];
+		src.bottom = texture.height;
+		src.right = texture.width;
 
-			// bl
-			access->x = (float_t)x;
-			access->y = (float_t)y + (float_t)texture.height;
-			access->u = 0.0f;
-			access->v = 1.0f;
-			access->color = color.packedABGR;
-			access++;
+		dest.top = y;
+		dest.left = x;
+		dest.bottom = y + src.bottom;
+		dest.right = x + src.right;
 
-			// br
-			access->x = (float_t)x + (float_t)texture.width;
-			access->y = (float_t)y + (float_t)texture.height;
-			access->u = 1.0f;
-			access->v = 1.0f;
-			access->color = color.packedABGR;
-			access++;
-
-			// tr
-			access->x = (float_t)x + (float_t)texture.width;
-			access->y = (float_t)y;
-			access->u = 1.0f;
-			access->v = 0.0f;
-			access->color = color.packedABGR;
-			access++;
-
-			// tl
-			access->x = (float_t)x;
-			access->y = (float_t)y;
-			access->u = 0.0f;
-			access->v = 0.0f;
-			access->color = color.packedABGR;
-			//access++;
-
-		}
-#endif
-
-#if defined (GAME_DIRECTX11)
-		if (enginePointer->geIsUsing(GAME_DIRECTX11))
-		{
-			_spriteVertex11* access = nullptr;
-			Vector2i windowSize;
-			Rectf scaledPos;
-
-			// If texture changed, render and change SRV
-			//if (texture.name != _currentTexture.name)
-			if (&texture != _currentTexture)
-			{
-				Render();
-				//if (_currentTexture) std::cout << "texture change\n";
-				_currentTexture = &texture;
-				enginePointer->d3d11DeviceContext->PSSetShaderResources(0, 1, texture.textureSRV11.GetAddressOf());
-			}
-
-			access = &_spriteVertices11[_numberOfSpritesUsed * 4];
-			windowSize = enginePointer->geGetWindowSize();
-			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPos.left = ((float_t)x * 2.0f / (float_t)windowSize.width) - 1.0f;
-			scaledPos.top = 1.0f - ((float_t)y * 2.0f / (float_t)windowSize.height);// -1.0f;
-			scaledPos.right = (((float_t)x + (float_t)texture.width) * 2.0f / (float)windowSize.width) - 1.0f;
-			scaledPos.bottom = 1.0f - (((float_t)y + (float_t)texture.height) * 2.0f / (float)windowSize.height);// -1.0f;
-
-
-			// Fill vertices
-
-			// Top left
-			access->x = scaledPos.left;
-			access->y = scaledPos.top;
-			access->u = 0.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-
-			access++;
-
-			// Top right
-			access->x = scaledPos.right;
-			access->y = scaledPos.top;
-			access->u = 1.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom left
-			access->x = scaledPos.left;
-			access->y = scaledPos.bottom;
-			access->u = 0.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom right
-			access->x = scaledPos.right;
-			access->y = scaledPos.bottom;
-			access->u = 1.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-		}
-#endif
-#if defined (GAME_DIRECTX12)
-		if (enginePointer->geIsUsing(GAME_DIRECTX12))
-		{
-			_spriteVertex12* access = nullptr;
-			Vector2i windowSize;
-			Rectf scaledPos;
-
-			// If texture changed, render and change SRV
-			if (&texture != _currentTexture)
-			{
-				Render();
-				_currentTexture = &texture;
-				_currentSRVIndex++;
-				if (_currentSRVIndex >= _maxSRVIndex)
-				{
-					_currentSRVIndex = 0;
-				}
-				_spritesUsed = _numberOfSpritesUsed;
-			}
-			access = &_spriteVertices12[_numberOfSpritesUsed * 4];
-			windowSize = enginePointer->geGetWindowSize();
-			// Homogenise coordinates to -1.0f to 1.0f
-			scaledPos.left = ((float_t)x * 2.0f / (float_t)windowSize.width) - 1.0f;
-			scaledPos.top = 1.0f - ((float_t)y * 2.0f / (float_t)windowSize.height);
-			scaledPos.right = (((float_t)x + (float_t)texture.width) * 2.0f / (float)windowSize.width) - 1.0f;
-			scaledPos.bottom = 1.0f - (((float_t)y + (float_t)texture.height) * 2.0f / (float)windowSize.height);
-
-
-			// Fill vertices
-
-			// Top left
-			access->x = scaledPos.left;
-			access->y = scaledPos.top;
-			access->u = 0.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-
-			access++;
-
-			// Top right
-			access->x = scaledPos.right;
-			access->y = scaledPos.top;
-			access->u = 1.0f;
-			access->v = 0.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom left
-			access->x = scaledPos.left;
-			access->y = scaledPos.bottom;
-			access->u = 0.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-
-			// Bottom right
-			access->x = scaledPos.right;
-			access->y = scaledPos.bottom;
-			access->u = 1.0f;
-			access->v = 1.0f;
-			access->r = color.rf;
-			access->g = color.gf;
-			access->b = color.bf;
-			access->a = color.af;
-			access++;
-		}
-#endif
-
-		_numberOfSpritesUsed++;
+		Draw(texture, dest, src, color);
 	}
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
