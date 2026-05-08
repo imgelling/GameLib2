@@ -79,11 +79,11 @@ namespace game
 
 		// Draws a string
 		// Can clip
-		uint32_t DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet,const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
-		uint32_t DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
-		uint32_t DrawStringWithTags(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
+		uint32_t DrawStringWithTags(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color = game::Colors::White, const bool centered = false, const float_t scaleX = 1.0f, const float scaleY = -99999);
 		
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
@@ -1628,7 +1628,7 @@ namespace game
 		rect.bottom = centerY + halfHeight;// / 2.0f;
 	}
 
-	uint32_t SpriteBatch::DrawString(game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(const game::SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		//auto it = subSheet.subTextureRegistry.find(subSheetName);
 		//if (it == subSheet.subTextureRegistry.end())
@@ -1703,7 +1703,7 @@ namespace game
 	}
 
 
-	uint32_t SpriteBatch::DrawString(SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawString(const SpriteFont& font, const std::string& Str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1773,7 +1773,7 @@ namespace game
 		return (uint32_t)currentX;
 	}
 
-	uint32_t SpriteBatch::DrawStringWithTags(SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		//auto it = subSheet.subTextureRegistry.find(subSheetName);
 		//if (it == subSheet.subTextureRegistry.end())
@@ -1861,7 +1861,8 @@ namespace game
 		}
 		return (uint32_t)currentX;
 	}
-	uint32_t SpriteBatch::DrawStringWithTags(SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
+
+	uint32_t SpriteBatch::DrawStringWithTags(const SpriteFont& font, const std::string& str, const int x, const int y, const Color& color, const bool centered, const float_t scaleX, const float scaleY)
 	{
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
