@@ -58,14 +58,17 @@ namespace game
 			_useScissorClip = false;
 		}
 		
-		// Will draw entire texture to location x,y Needs clip
+		// Will draw entire texture to location x,y
+		// Can clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color = game::Colors::White);
-		
-		// Adding clip to following should at it to rest
+				// Adding clip to following should at it to rest
+		// This can just call the rectangle version
 		void Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color = game::Colors::White);
 		
-		// Will draw entire texture to location "position" Needs clip
+		// Will draw entire texture to location "position"
+		// Can clip
 		void Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const Pointi& position, const Color color = game::Colors::White);
+		// Below will be clipped when Draw(tex,x,y,color) just calls rect version
 		void Draw(const Texture2D& texture, const Pointi& position, const Color color = game::Colors::White);
 		
 		// Will draw a specified rectangle portion of a texture to an integer rectangle destination
