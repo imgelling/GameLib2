@@ -46,10 +46,10 @@ namespace game
 				int32_t count = 0;
 				int32_t width = 0;
 				int32_t currentX = 0;
-				std::string test;
+				//std::string test;
 				for (uint8_t c : in)
 				{
-					test += c;
+					//test += c;
 					width = currentX + font.characterSet->letters[c].xOffset + font.characterSet->letters[c].width;
 					if (width >= maxPixels)
 						return count;// 
