@@ -87,56 +87,6 @@ namespace game
 		
 		// How many sprites did it draw last frame
 		uint32_t SpritesDrawnLastFrame() const noexcept;
-#if defined(GAME_DIRECTX11)
-		//void CreateNewRasterizerState(const std::string& name, const bool scissor = false)
-		//{
-		//	// set up per renderer
-		//	// 
-		//	// dx11
-		//	Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster;
-		//	D3D11_RASTERIZER_DESC rasterDescription;
-		//	ZeroMemory(&rasterDescription, sizeof(D3D11_RASTERIZER_DESC));
-		//	rasterDescription.ScissorEnable = scissor;
-		//	//rasterDescription.DepthClipEnable = TRUE;
-		//	//rasterDescription.MultisampleEnable = false;
-		//	rasterDescription.FillMode = D3D11_FILL_SOLID; // must be filled
-		//	rasterDescription.CullMode = D3D11_CULL_BACK;	// must be filled
-		//	//rasterDescription.FrontCounterClockwise = FALSE;
-		//	//rasterDescription.DepthClipEnable = TRUE;
-		//	//rasterDescription.ScissorEnable = TRUE; // Enable scissor testing
-		//	HRESULT hr = 0;
-		//	if ((hr = (enginePointer->d3d11Device->CreateRasterizerState(&rasterDescription, raster.GetAddressOf()))) != 0)
-		//	{
-		//		std::cout << "create raster failed - " << hr << "\n";
-		//	}
-		//	// needs error checking
-		//	_rasterStates[name] = raster;
-		//}
-
-		//void SetRasterizerState(const std::string name)
-		//{
-		//	Microsoft::WRL::ComPtr<ID3D11RasterizerState> raster = _rasterStates[name];
-		//	// error check
-		//	enginePointer->d3d11DeviceContext->RSSetState(raster.Get()); //getaddressof?
-		//	//D3D11_RECT clipRect = { 100, 100, 400, 300 };
-		//	//enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clipRect);
-		//}
-
-		//void SetScissorRect(const game::Recti rect)
-		//{
-		//	D3D11_RECT clip = { 0 };
-		//	clip.left = rect.left;
-		//	clip.top = rect.top;
-		//	clip.right = rect.right;
-		//	clip.bottom = rect.bottom;
-		//	enginePointer->d3d11DeviceContext->RSSetScissorRects(1, &clip);
-		//}
-
-		//void SetRasterizerToDefault()
-		//{
-		//	enginePointer->d3d11DeviceContext->RSSetState(NULL);
-		//}
-#endif
 	private:
 		Recti _scissorRect;
 		bool _useScissorClip;
@@ -171,11 +121,6 @@ namespace game
 		Microsoft::WRL::ComPtr<ID3D11Buffer> _indexBuffer11;
 		Microsoft::WRL::ComPtr<ID3D11BlendState> _spriteBatchBlendState11;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> _depthStencilState11;
-		//Microsoft::WRL::ComPtr<ID3D11RasterizerState> WireFrame;
-		//std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11RasterizerState>> _rasterStates;
-
-
-
 
 		// saves state of dx11 states we change to restore
 		uint32_t _oldStride11;
@@ -192,8 +137,6 @@ namespace game
 		D3D11_PRIMITIVE_TOPOLOGY _oldPrimitiveTopology11;
 		ID3D11BlendState* _oldBlendState11;
 		ID3D11DepthStencilState* _oldDepthStencilState11;
-
-
 
 		float_t _oldBlendFactor11[4];
 		uint32_t _oldSampleMask11;
@@ -239,7 +182,7 @@ namespace game
 		_currentSpritesDrawn = 0;
 		_currentTexture = nullptr;
 #if defined(GAME_OPENGL)
-		//if (enginePointer->geIsUsing(GAME_OPENGL))
+		if (enginePointer->geIsUsing(GAME_OPENGL))
 		{
 			_spriteVertices = nullptr;
 			_oldTextureBound = 0;
@@ -1032,8 +975,7 @@ namespace game
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color)
 	{
 		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
-		//auto it = subSheet.subTextureRegistry.find(subSheetName);
-		//if (it == subSheet.subTextureRegistry.end()) return;
+
 		game::Recti src;
 		game::Recti dest;
 

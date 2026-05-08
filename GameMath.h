@@ -500,4 +500,40 @@ namespace game
 
 #pragma endregion
 
+	// Seperate place, might be elsewhere in engine
+	inline bool PointRectIntersect(const game::Recti rect, const game::Pointi point) noexcept
+	{
+		if (point.x < rect.left) return false;
+		if (point.x > rect.right) return false;
+		if (point.y < rect.top) return false;
+		if (point.y > rect.bottom) return false;
+		return true;
+	}
+
+	inline float Lerp(const float a, const float b, const float t) noexcept
+	{
+		return a + t * (b - a);
+	}
+
+	inline double Lerp(const double a, const double b, const double t) noexcept
+	{
+		return a + t * (b - a);
+	}
+
+	inline double EaseInOutCubic(const double t) noexcept
+	{
+		return (t < 0.5) ? 
+			4 * t * t * t
+			: 
+			1 - std::pow(-2 * t + 2, 3) / 2.0;
+	}
+
+	inline float EaseInOutCubic(const float t) noexcept
+	{
+		return (t < 0.5f) ?
+			4 * t * t * t
+			:
+			1 - (float)std::pow(-2 * t + 2, 3) / 2.0f;
+	}
+
 }
