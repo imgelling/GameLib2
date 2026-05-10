@@ -288,4 +288,26 @@ namespace game
 		const Color DarkRed(0.75f, 0.0f, 0, 1.0f);
 		const Color DarkOrange(1.0f, 0.55f, 0, 1.0f);
 	}
+
+	Color BlendAlpha(const Color& color1, const Color& color2)
+	{
+		// Normalize alpha to [0, 1]
+		//const float alpha = color1.af;
+
+		// Blend each channel
+		//uint32_t outR = static_cast<uint32_t>(color1.r * alpha + color2.r * (1 - alpha));
+		//uint32_t outG = static_cast<uint32_t>(color1.g * alpha + color2.g * (1 - alpha));
+		//uint32_t outB = static_cast<uint32_t>(color1.b * alpha + color2.b * (1 - alpha));
+
+		uint32_t outR = static_cast<uint32_t>((color1.r + color2.r) >> 1);
+		uint32_t outG = static_cast<uint32_t>((color1.g + color2.g) >> 1);
+		uint32_t outB = static_cast<uint32_t>((color1.b + color2.b) >> 1);
+
+
+		// For alpha channel, we can choose to keep srcA or blend
+		uint32_t outA = static_cast<uint32_t>((color1.a + color2.a) >> 1);
+
+		Color ret(outR, outG, outB, outA);
+		return ret;
+	}
 }
