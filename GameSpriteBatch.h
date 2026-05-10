@@ -182,11 +182,8 @@ namespace game
 		_currentSpritesDrawn = 0;
 		_currentTexture = nullptr;
 #if defined(GAME_OPENGL)
-		if (enginePointer->geIsUsing(GAME_OPENGL))
-		{
-			_spriteVertices = nullptr;
-			_oldTextureBound = 0;
-		}
+		_spriteVertices = nullptr;
+		_oldTextureBound = 0;
 #endif
 #if defined (GAME_DIRECTX11)
 		_spriteVertices11 = nullptr;
@@ -203,6 +200,7 @@ namespace game
 		_oldTextureSamplerState11 = nullptr;
 		_oldPrimitiveTopology11 = {};
 		_oldBlendState11 = nullptr;
+		
 		ZeroMemory(_oldBlendFactor11, 4 * sizeof(float_t));
 		_oldDepthStencilState11 = nullptr;
 		_oldSampleMask11 = 0;
