@@ -51,7 +51,7 @@ namespace game
 				{
 					//test += c;
 					width = currentX + font.characterSet->letters[c].xOffset + font.characterSet->letters[c].width;
-					if (width >= maxPixels)
+					if (width > maxPixels)
 						return count;// 
 					count++;
 					currentX += font.characterSet->letters[c].xAdvance;
