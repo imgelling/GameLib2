@@ -1735,29 +1735,6 @@ namespace game
 			std::string segmentsCombined;
 			for (auto& s : stringFunction.segments)
 			{
-				//const uint64_t size = s.text.size();
-				//for (uint64_t i = 0; i < size; ++i)
-				//{
-				//	const uint8_t letter = Str[i];
-				//	const uint32_t widthOfLetter = font._characterSet.letters[letter].width;
-				//	const uint32_t heightOfLetter = font._characterSet.letters[letter].height;
-
-				//	destination.left = currentX + (font._characterSet.letters[letter].xOffset);
-				//	destination.top = currentY + (font._characterSet.letters[letter].yOffset);
-				//	destination.right = destination.left + (widthOfLetter);
-				//	destination.bottom = destination.top + (heightOfLetter);
-
-				//	// Find the bounding box
-				//	if (destination.left < box.left)
-				//		box.left = destination.left;
-				//	if (destination.top < box.top)
-				//		box.top = destination.top;
-				//	if (destination.bottom > box.bottom)
-				//		box.bottom = destination.bottom;
-				//	if (destination.right > box.right)
-				//		box.right = destination.right;
-				//	currentX += (font._characterSet.letters[letter].xAdvance);
-				//}
 				segmentsCombined = segmentsCombined + s.text;
 			}
 			bbox = stringFunction.BoundingBox(font, segmentsCombined);
