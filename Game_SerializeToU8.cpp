@@ -6,6 +6,8 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include "GameIOCPNetwork.h"
+#include "Game_SerializeToU8.h"
 
 namespace game
 {

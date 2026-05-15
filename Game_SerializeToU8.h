@@ -1,10 +1,10 @@
 #pragma once
 #include <vector>
 #include <string>
-#include <intrin.h>
 #include <string.h>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 
 namespace game
 {
