@@ -972,20 +972,19 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color)
 	{
-		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
+		auto temp = subSheet.subTextureRegistry.find(subSheetName);
+		GAME_ASSERT((temp != subSheet.subTextureRegistry.end()));
 
 		game::Recti src;
 		game::Recti dest;
 
-		//src.top = 0;// subSheet.subTextureRegistry.at(subSheetName).top;
-		//src.left = 0;// subSheet.subTextureRegistry.at(subSheetName).left;
-		src.bottom = subSheet.subTextureRegistry.at(subSheetName).bottom;
-		src.right = subSheet.subTextureRegistry.at(subSheetName).right;
+		src.bottom = temp->second.bottom;
+		src.right = temp->second.right;
 
 		dest.top = y;
 		dest.left = x;
-		dest.bottom = y + subSheet.subTextureRegistry.at(subSheetName).bottom;
-		dest.right = x + subSheet.subTextureRegistry.at(subSheetName).right;
+		dest.bottom = y + temp->second.bottom;
+		dest.right = x + temp->second.right;
 
 		Draw(subSheet, subSheetName, dest, src, color);
 	}
@@ -1008,16 +1007,15 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
 	{
-		//auto it = subSheet.subTextureRegistry.find(subSheetName);
-		//if (it == subSheet.subTextureRegistry.end()) return;
-		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
+		auto temp = subSheet.subTextureRegistry.find(subSheetName);
+		GAME_ASSERT((temp != subSheet.subTextureRegistry.end()));
 
-		game::Recti rect;
-		rect = portion;
-		rect.top += subSheet.subTextureRegistry.at(subSheetName).top;
-		rect.left += subSheet.subTextureRegistry.at(subSheetName).left;
-		rect.bottom += subSheet.subTextureRegistry.at(subSheetName).top;
-		rect.right += subSheet.subTextureRegistry.at(subSheetName).left;
+		game::Recti rect(portion);
+
+		rect.top += temp->second.top;
+		rect.left += temp->second.left;
+		rect.bottom += temp->second.top;
+		rect.right += temp->second.left;
 		
 		Draw(subSheet.texture, destination, rect, color);
 	}
@@ -1573,7 +1571,9 @@ namespace game
 		//auto it = subSheet.subTextureRegistry.find(subSheetName);
 		//if (it == subSheet.subTextureRegistry.end())
 		//	return 0;
-		GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
+		//GAME_ASSERT(!(subSheet.subTextureRegistry.find(subSheetName) == subSheet.subTextureRegistry.end()));
+		auto temp = subSheet.subTextureRegistry.find(subSheetName);
+		GAME_ASSERT((temp != subSheet.subTextureRegistry.end()));
 
 		const float_t _scaleY = scaleY == -99999 ? scaleX : scaleY;
 		const float_t _scaleX = scaleX;
@@ -1625,10 +1625,10 @@ namespace game
 			const uint32_t widthOfLetter = font.characterSet->letters[letter].width;
 			const uint32_t heightOfLetter = font.characterSet->letters[letter].height;
 
-			source.top = font.characterSet->letters[letter].y +(float)subSheet.subTextureRegistry.at(subSheetName).top;
-			source.left = font.characterSet->letters[letter].x +(float)subSheet.subTextureRegistry.at(subSheetName).left;
-			source.bottom = source.top + heightOfLetter;// +(float)subSheet.subTextureRegistry.at(subSheetName).top;
-			source.right = source.left + widthOfLetter;// +(float)subSheet.subTextureRegistry.at(subSheetName).left;
+			source.top = font.characterSet->letters[letter].y +(float)temp->second.top;
+			source.left = font.characterSet->letters[letter].x +(float)temp->second.left;
+			source.bottom = source.top + heightOfLetter;
+			source.right = source.left + widthOfLetter;
 
 			destination.top = currentY + (font.characterSet->letters[letter].yOffset * _scaleY);
 			destination.left = currentX + (font.characterSet->letters[letter].xOffset * _scaleX);
