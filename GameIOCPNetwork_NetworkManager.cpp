@@ -819,15 +819,31 @@ namespace game
 				if (!result) // GetQueuedCompletionStatus failed
 				{
 					int32_t error = WSAGetLastError();
+					NetworkError err;
+					err.errorNumber = error;
 					switch (error)
 					{
 					case WSA_OPERATION_ABORTED:
-					case ERROR_CONNECTION_ABORTED: _CloseConnection(ioData, __LINE__, true); return;
+					case ERROR_CONNECTION_ABORTED:
+#if defined(DEBUG) | defined(_DEBUG)
+						std::cout << "Remote connection disconnected\n";
+#endif
+						err.errorString = "Remote socket disconnected";
+						_OnReceive(ioData->socket, nullptr, 0, 0, err);
+						_CloseConnection(ioData, __LINE__, true); 
+						return;
 					case WSA_INVALID_HANDLE:
 					case ERROR_ABANDONED_WAIT_0: if (_stopping.load()) { return; }
 											   else game::IOCP::ErrorOutput("GetQueuedCompletionStatus", __LINE__); break;
 					case ERROR_NETNAME_DELETED: /*std::cout << "---- Socket disconnected!\n";*/ break;
-					case ERROR_CONNECTION_REFUSED: ioData->socket = INVALID_SOCKET; std::cout << "--- Connection Refused\n"; break;
+					case ERROR_CONNECTION_REFUSED: 
+						ioData->socket = INVALID_SOCKET;
+#if defined(DEBUG) | defined(_DEBUG)
+						std::cout << "Connection Refused\n";
+#endif
+						err.errorString = "Connection Refused";
+						_OnConnect(ioData->socket, err);
+						break;
 					default: game::IOCP::ErrorOutput("GetQueuedCompletionStatus fail", __LINE__);
 					}
 					_CloseConnection(ioData, __LINE__);
@@ -837,6 +853,13 @@ namespace game
 				// If bytes transferred == 0, then the socket a send or receive was used on disconnected 
 				if ((bytesTransferred == 0) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_ACCEPT_COMPLETION_TYPE) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_CONNECT_COMPLETION_TYPE))
 				{
+#if defined(DEBUG) | defined(_DEBUG)
+					std::cout << "Remote socket disconnected\n";
+#endif
+					NetworkError err;
+					err.errorNumber = 1;
+					err.errorString = "Remote socket disconnected";
+					_OnReceive(ioData->socket, nullptr, 0, 0, err);
 					_CloseConnection(ioData, __LINE__);
 					return;
 				}

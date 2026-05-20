@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <ws2tcpip.h>
 #include <mswsock.h>
 #include <unordered_map>
@@ -110,8 +110,8 @@ namespace game
 
 			struct NetworkError
 			{
-				//std::string errorString;
-				//uint32_t errorNumber = 0;
+				std::string errorString;
+				uint32_t errorNumber = 0;
 				//std::string errorName;
 				//std::string errorDetail;
 			};
