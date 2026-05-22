@@ -1,4 +1,4 @@
-#include "GameIOCP.h"
+//#include "GameIOCP.h"
 #include <string.h>
 #include <cmath>
 #include <cstdint>
@@ -6,6 +6,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <Game_Assert.h>
 #include "GameIOCPNetwork.h"
 #include "Game_SerializeToU8.h"
 

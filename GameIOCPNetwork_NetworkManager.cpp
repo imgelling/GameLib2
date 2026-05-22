@@ -1,5 +1,22 @@
 ﻿//#pragma warning(disable : 4100)
+#include <string.h>
+#include <WinSock2.h>
+#include <ws2ipdef.h>
+#include <ws2def.h>
+#include <WS2tcpip.h>
+#include <cstdint>
+#include <functional>
+#include <iostream>
+#include <mutex>
+#include <ostream>
+#include <string>
+#include <vector>
+#include <Game_Assert.h>
 #include "GameIOCP.h"
+#include "GameIOCPNetwork.h"
+#include "GameIOCPNetwork_NetworkManager.h"
+#include "GameIOCP_ErrorOutput.h"
+#include "GameIOCP_IOCPManager.h"
 
 #define NETWORK_COMPLETION_TYPE pad[0]
 #define NETWORK_CHANNEL pad[1]
@@ -826,7 +843,7 @@ namespace game
 					case WSA_OPERATION_ABORTED:
 					case ERROR_CONNECTION_ABORTED:
 #if defined(DEBUG) | defined(_DEBUG)
-						std::cout << "Remote connection disconnected\n";
+						//std::cout << "Remote connection disconnected\n";
 #endif
 						err.errorString = "Remote socket disconnected";
 						_OnReceive(ioData->socket, nullptr, 0, 0, err);
@@ -839,7 +856,7 @@ namespace game
 					case ERROR_CONNECTION_REFUSED: 
 						ioData->socket = INVALID_SOCKET;
 #if defined(DEBUG) | defined(_DEBUG)
-						std::cout << "Connection Refused\n";
+						//std::cout << "Connection Refused\n";
 #endif
 						err.errorString = "Connection Refused";
 						_OnConnect(ioData->socket, err);
@@ -854,7 +871,7 @@ namespace game
 				if ((bytesTransferred == 0) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_ACCEPT_COMPLETION_TYPE) && (ioData->NETWORK_COMPLETION_TYPE != NETWORK_CONNECT_COMPLETION_TYPE))
 				{
 #if defined(DEBUG) | defined(_DEBUG)
-					std::cout << "Remote socket disconnected\n";
+					//std::cout << "Remote socket disconnected\n";
 #endif
 					NetworkError err;
 					err.errorNumber = 1;

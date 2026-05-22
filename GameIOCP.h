@@ -8,6 +8,7 @@
 #include <ios>
 #include <sstream>
 #include <string>
+//#include <Game_Assert.h>
 #include "GameIOCP_ErrorOutput.h"
 #include "GameIOCP_IOCPManager.h"
 #include "GameIOCPNetwork.h"
@@ -18,18 +19,6 @@
 #include "GameIOCPTimer_TimerManager.h"
 #include "GameIOCPFile_FileManager.h"
 
-#if defined(_DEBUG)
-#define GAME_ASSERT(condition)                                      \
-    do																\
-	{                                                               \
-        if (!(condition))                                           \
-		{                                                           \
-            __debugbreak();                                         \
-        }                                                           \
-    } while (false)
-#else
-#define GAME_ASSERT(condition)
-#endif
 
 // TODO: Needs to go somewhere else game helpers?
 static const std::string FormatDataSize(const uint64_t bytes)
