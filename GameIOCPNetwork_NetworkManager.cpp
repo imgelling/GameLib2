@@ -17,6 +17,9 @@
 #include "GameIOCPNetwork_NetworkManager.h"
 #include "GameIOCP_ErrorOutput.h"
 #include "GameIOCP_IOCPManager.h"
+#include "Game_SerializeToU8.h"
+#include <MSWSock.h>
+#include <Windows.h>
 
 #define NETWORK_COMPLETION_TYPE pad[0]
 #define NETWORK_CHANNEL pad[1]
@@ -587,6 +590,12 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 				}
 			}
+
+			void NetworkManager::Send(const SOCKET socket, game::SerializeToU8& packet, const uint8_t channel, PER_IO_DATA_NETWORK* ioData_in)
+			{
+				Send(socket, packet.GetData(), packet.Size(), channel, ioData_in);
+			}
+
 			void NetworkManager::Send(const SOCKET socket, const unsigned char* data, const uint64_t length, const uint8_t channel, PER_IO_DATA_NETWORK* ioData_in)
 			{
 				PER_IO_DATA_NETWORK* ioData = ioData_in;

@@ -1,5 +1,19 @@
 #pragma once
+#include <ws2def.h>
+#include <MSWSock.h>
+#include <Windows.h>
+#include <WinSock2.h>
+#include <atomic>
+#include <cstdint>
+#include <functional>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "GameIOCPNetwork.h"
+#include "GameIOCP_IOCPManager.h"
+#include "Game_MemoryPool.h"
+#include "Game_SerializeToU8.h"
 
 // TODO: add ONCONNECT
 #define NETWORK_ONACCEPT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
@@ -94,6 +108,7 @@ namespace game
 
 				void Receive(const SOCKET socket, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void ReceiveFrom(const SOCKET socket, PER_IO_DATA_NETWORK* ioData_in = nullptr);
+				void Send(const SOCKET socket, game::SerializeToU8& packet, const uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void Send(const SOCKET socket, const unsigned char* data, const uint64_t length, const uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void SendTo(const SOCKET socket, const sockaddr_in& addr, const unsigned char* data, const uint64_t length, uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void BroadCast(const unsigned char* data, const uint64_t length, const uint8_t channel, const SOCKET except = INVALID_SOCKET);
