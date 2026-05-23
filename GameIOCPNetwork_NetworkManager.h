@@ -1,8 +1,8 @@
 #pragma once
+#include <WinSock2.h>
 #include <ws2def.h>
 #include <MSWSock.h>
 #include <Windows.h>
-#include <WinSock2.h>
 #include <atomic>
 #include <cstdint>
 #include <functional>
@@ -89,7 +89,7 @@ namespace game
 				std::mutex _connectionsMutex;
 				std::unordered_map<SOCKET, Connection> _connections;
 
-
+				void SendError(PER_IO_DATA_NETWORK* ioDataIn, const game::IOCP::Network::NetworkError& err);
 
 				// Returns true if it could extract header of size and channel
 				// Returns false if it could not extract header

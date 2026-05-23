@@ -11,7 +11,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include <Game_Assert.h>
+#include "Game_Assert.h"
 #include "GameIOCP.h"
 #include "GameIOCPNetwork.h"
 #include "GameIOCPNetwork_NetworkManager.h"
@@ -839,6 +839,23 @@ namespace game
 				}
 			}
 
+			void NetworkManager::SendError(PER_IO_DATA_NETWORK* ioData, const game::IOCP::Network::NetworkError& err)
+			{
+				if (ioData)
+				{
+					//err.errorString = "Remote socket disconnected";
+					switch (ioData->NETWORK_COMPLETION_TYPE)
+					{
+					case NETWORK_SEND_COMPLETION_TYPE: _OnSend(ioData->socket, 0, 0, err); break;
+					case NETWORK_RECEIVE_COMPLETION_TYPE: _OnReceive(ioData->socket, nullptr, 0, 0, err); break;
+					case NETWORK_ACCEPT_COMPLETION_TYPE: _OnAccept(ioData->socket, err); break;
+					case NETWORK_CONNECT_COMPLETION_TYPE: _OnConnect(ioData->socket, err); break;
+
+					default: /*"GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"*/; break;
+					}
+				}
+			}
+
 			void NetworkManager::_DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn)
 			{
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)ioDataIn;
@@ -854,8 +871,8 @@ namespace game
 #if defined(DEBUG) | defined(_DEBUG)
 						//std::cout << "Remote connection disconnected\n";
 #endif
-						err.errorString = "Remote socket disconnected";
-						_OnReceive(ioData->socket, nullptr, 0, 0, err);
+						err.errorString = "Remote connection disconnected";
+						if (!_stopping.load()) SendError(ioData, err);
 						_CloseConnection(ioData, __LINE__, true); 
 						return;
 					case WSA_INVALID_HANDLE:
