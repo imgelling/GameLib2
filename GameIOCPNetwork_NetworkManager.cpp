@@ -194,9 +194,9 @@ namespace game
 				else
 					temp.assign(ioData->buffer.buf, ioData->buffer.buf + ioData->expectedTransferLeft);
 
-				temp.emplace_back('\0');
+				//temp.emplace_back('\0');
 
-				_OnReceive(ioData->socket, temp.data(), temp.size() - 1, ioData->NETWORK_CHANNEL, error);
+				_OnReceive(ioData->socket, temp.data(), temp.size(), ioData->NETWORK_CHANNEL, error);
 				_vectorPool.Deallocate(temp);
 				ioData->bytesTransferred = ioData->expectedTransferLeft;
 				return true;
@@ -328,7 +328,7 @@ namespace game
 					_connections[ioData->socket].AddBytesSentTo(bytesSent);
 				}
 				NetworkError error;
-				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfUInt, (uint32_t)ioData->NETWORK_CHANNEL, error);
+				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfHeader, (uint32_t)ioData->NETWORK_CHANNEL, error);
 				_DeleteIoData(ioData);
 			}
 			void NetworkManager::_HandleAccept(PER_IO_DATA_NETWORK* ioData)
