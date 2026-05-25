@@ -874,7 +874,7 @@ namespace game
 						err.errorString = "Remote connection disconnected";
 						if (!_stopping.load()) SendError(ioData, err);
 						_CloseConnection(ioData, __LINE__, true); 
-						return;
+						return; // could just be break and ignore line above
 					case WSA_INVALID_HANDLE:
 					case ERROR_ABANDONED_WAIT_0: if (_stopping.load()) { return; }
 											   else game::IOCP::ErrorOutput("GetQueuedCompletionStatus", __LINE__); break;
