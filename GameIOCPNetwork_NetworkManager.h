@@ -15,7 +15,6 @@
 #include "Game_MemoryPool.h"
 #include "Game_SerializeToU8.h"
 
-// TODO: add ONCONNECT
 #define NETWORK_ONACCEPT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
 #define NETWORK_ONACCEPT_PARAMETERS socket , error
 #define NETWORK_ONDISCONNECT_SIGNATURE const SOCKET socket, const game::IOCP::Network::NetworkError& error
@@ -91,7 +90,7 @@ namespace game
 
 				void SendError(PER_IO_DATA_NETWORK* ioDataIn, const game::IOCP::Network::NetworkError& err);
 
-				// Returns true if it could extract header of size and channel
+				// Returns true if it could extract header for size and channel
 				// Returns false if it could not extract header
 				bool _ExtractHeaderForReceive(PER_IO_DATA_NETWORK* ioData, uint32_t& bytesReceived);
 				bool _DoOnReceive(PER_IO_DATA_NETWORK* ioData);

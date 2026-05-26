@@ -103,7 +103,7 @@ namespace game
 						}
 						else
 						{
-							std::cout << "Not enough data to extract header.\n";
+							// Not enough data to extract header
 							if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 							{
 								std::lock_guard<std::mutex> lock(_connectionsMutex);
@@ -127,10 +127,6 @@ namespace game
 					ioData->bytesTransferred = (uint32_t)(sizeOfConnection - bytesFromConnection);
 					ioData->expectedTransferLeft = ioData->expectedTransferTotal - ioData->bytesTransferred;
 					ioData->NETWORK_CHANNEL = encodedHeader[4];
-					//std::cout << "Expected data length is : " << ioData->expectedTransferTotal << "\n";
-					//std::cout << "Data transferred is : " << ioData->bytesTransferred << "\n";
-					//std::cout << "Expected data left is : " << ioData->expectedTransferLeft << "\n";
-					//std::cout << "Channel is : " << (uint32_t)ioData->channel << "\n";
 				}
 				return true;
 			}
@@ -206,21 +202,14 @@ namespace game
 			{
 				_stats.AddBytesReceived(bytesReceived);
 
-				//std::cout << "NEW Data received, " << bytesReceived << " bytes.\n";
-				// -------- comment below to web serve
 				uint32_t totalReceivedData = bytesReceived;
 				do
 				{
 					if (_ExtractHeaderForReceive(ioData, totalReceivedData))
 					{
-						//std::cout << "passed extract length\n";
 						if (ioData->expectedTransferLeft > totalReceivedData)
 						{
-							//std::cout << "!!!! NotEnoughData\n";
 							_HandleNotEnoughDataReceived(ioData, totalReceivedData);
-							//std::cout << "Data size is " << totalReceivedData << "\n";
-							//std::cout << "Expected is  " << ioData->expectedTransferTotal << "\n";
-							//std::cout << "Expected left is " << ioData->expectedTransferLeft << "\n";
 							totalReceivedData = 0;
 							return;
 						}
@@ -231,14 +220,10 @@ namespace game
 					}
 					_DoOnReceive(ioData);
 					totalReceivedData = _RemoveProcessedData(ioData, totalReceivedData);
-					//std::cout << "New Data size is " << totalReceivedData << "\n";
 				} while (totalReceivedData > 0);
-				//std::cout << "Data done processing!!!!!\n";
-				if (ioData->expectedTransferLeft)
-					std::cout << "Left over data to get!\n";
-				// comment above to webserve
-				//ioData->expectedTransferLeft = bytesReceived; // used for web serve
-				//_DoOnReceive(ioData); // used for web serve
+
+				//if (ioData->expectedTransferLeft)
+				//	std::cout << "Left over data to get!\n";
 
 				Receive(ioData->socket);
 				_DeleteIoData(ioData);
@@ -253,14 +238,9 @@ namespace game
 				{
 					if (_ExtractHeaderForReceive(ioData, totalReceivedData))
 					{
-						//std::cout << "passed extract length\n";
 						if (ioData->expectedTransferLeft > totalReceivedData)
 						{
-							//std::cout << "!!!! NotEnoughData\n";
 							_HandleNotEnoughDataReceived(ioData, totalReceivedData);
-							//std::cout << "Data size is " << totalReceivedData << "\n";
-							//std::cout << "Expected is  " << ioData->expectedTransferTotal << "\n";
-							//std::cout << "Expected left is " << ioData->expectedTransferLeft << "\n";
 							totalReceivedData = 0;
 							return;
 						}
@@ -271,11 +251,9 @@ namespace game
 					}
 					_DoOnReceive(ioData);
 					totalReceivedData = _RemoveProcessedData(ioData, totalReceivedData);
-					//std::cout << "New Data size is " << totalReceivedData << "\n";
 				} while (totalReceivedData > 0);
-				std::cout << "Data done processing!!!!!\n";
-				if (ioData->expectedTransferLeft)
-					std::cout << "Left over data to get!\n";
+				//if (ioData->expectedTransferLeft)
+				//	std::cout << "Left over data to get!\n";
 
 				ReceiveFrom(ioData->socket);
 				_DeleteIoData(ioData);
@@ -290,8 +268,6 @@ namespace game
 				// Never tested
 				if (ioData->expectedTransferLeft > 0)
 				{
-					//std::cout << "!!!!!!!PARTIAL SEND Expected left : " << ioData->expectedTransferLeft << "\n";
-					//std::cout << "Partial send of " << bytesSent << " bytes with " << ioData->expectedTransferLeft << " bytes left.\n";
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
 					ioData->buffer.buf = ioData->data + ioData->bytesTransferred;
 					ioData->buffer.len = (uint32_t)(sizeof(ioData->data) - ioData->bytesTransferred);
@@ -303,6 +279,7 @@ namespace game
 				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfHeader, (uint32_t)ioData->NETWORK_CHANNEL, error);
 				_DeleteIoData(ioData);
 			}
+
 			void NetworkManager::_HandleSend(PER_IO_DATA_NETWORK* ioData, const uint32_t bytesSent)
 			{
 				_stats.AddBytesSent(bytesSent);
@@ -313,15 +290,12 @@ namespace game
 				// Never tested
 				if (ioData->expectedTransferLeft > 0)
 				{
-					//std::cout << "!!!!!!!PARTIAL SEND Expected left : " << ioData->expectedTransferLeft << "\n";
-					//std::cout << "Partial send of " << bytesSent << " bytes with " << ioData->expectedTransferLeft << " bytes left.\n";
 					ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
 					ioData->buffer.buf = ioData->data + ioData->bytesTransferred;
 					ioData->buffer.len = (uint32_t)(sizeof(ioData->data) - ioData->bytesTransferred);
 					Send(ioData->socket, NULL, 0, ioData->NETWORK_CHANNEL, ioData);
 					return;
 				}
-
 				// All data was sent
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
@@ -333,7 +307,6 @@ namespace game
 			}
 			void NetworkManager::_HandleAccept(PER_IO_DATA_NETWORK* ioData)
 			{
-				//std::cout << "Socket Connected\n";
 				// Associate accepted socket with completion port
 				if (!CreateIoCompletionPort((HANDLE)ioData->socket, _completionPort, (ULONG_PTR)ioData->socket, 0))
 				{
@@ -615,7 +588,6 @@ namespace game
 					ioData->socket = socket;
 					ioData->NETWORK_CHANNEL = channel;
 					ioData->NETWORK_SOCKET_TYPE = (uint8_t)SOCK_STREAM;
-					// --- comment below to web serve
 					// Make length network byte order
 					uint32_t pre = (uint32_t)(length + sizeOfHeader);
 					uint32_t networkdata = htonl(pre);
@@ -625,8 +597,6 @@ namespace game
 					ioData->data[4] = (char)channel;
 					// Copy data into buffer offset by header size from header encoding
 					memcpy(ioData->data + sizeOfHeader, data, length);
-					// --- comment above to webserve
-					//memcpy(ioData->data, data, length); // to webserve
 					ioData->buffer.buf = ioData->data;
 					ioData->buffer.len = (uint32_t)length + sizeOfHeader; // remove + sizeofHeader for webserve
 					ioData->expectedTransferTotal = ioData->buffer.len;
@@ -808,7 +778,7 @@ namespace game
 
 					// Convert the IP to a string
 					inet_ntop(iterator->ai_family, address, ipstr, sizeof(ipstr));
-					std::cout << ipVersion << ": " << ipstr << std::endl;
+					//std::cout << ipVersion << ": " << ipstr << std::endl;
 				}
 
 
@@ -851,7 +821,8 @@ namespace game
 					case NETWORK_ACCEPT_COMPLETION_TYPE: _OnAccept(ioData->socket, err); break;
 					case NETWORK_CONNECT_COMPLETION_TYPE: _OnConnect(ioData->socket, err); break;
 
-					default: /*"GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"*/; break;
+					default: 
+						break;
 					}
 				}
 			}
@@ -873,8 +844,8 @@ namespace game
 #endif
 						err.errorString = "Remote connection disconnected";
 						if (!_stopping.load()) SendError(ioData, err);
-						_CloseConnection(ioData, __LINE__, true); 
-						return; // could just be break and ignore line above
+						//_CloseConnection(ioData, __LINE__, true); 
+						break;
 					case WSA_INVALID_HANDLE:
 					case ERROR_ABANDONED_WAIT_0: if (_stopping.load()) { return; }
 											   else game::IOCP::ErrorOutput("GetQueuedCompletionStatus", __LINE__); break;
@@ -916,7 +887,6 @@ namespace game
 				case NETWORK_RECEIVEFROM_COMPLETION_TYPE: _HandleReceiveFrom(ioData, bytesTransferred); return;
 				case NETWORK_ACCEPT_COMPLETION_TYPE: _HandleAccept(ioData); return;
 				case NETWORK_CONNECT_COMPLETION_TYPE: _HandleConnect(ioData); return;
-					// TODO: this should do something
 				default: /*"GetQueuedCompletionStatus received an invalid PER_IO_DATA type.\n"*/; break;
 				}
 
