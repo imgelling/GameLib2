@@ -52,7 +52,6 @@ namespace game
 				uint32_t ping = 0;
 				uint64_t bytesSentTo = 0;		// Bytes sent to connection
 				uint64_t bytesReceivedFrom = 0;	// Bytes received from connection
-				bool isDisconnecting = false;
 			};
 
 			class InternalConnection
@@ -64,7 +63,6 @@ namespace game
 				uint16_t remotePort;
 				uint16_t localPort;
 				uint32_t ping;
-				bool isDisconnecting;
 				const ConnectionInfo GetInfo() const noexcept
 				{
 					ConnectionInfo info;
@@ -76,7 +74,6 @@ namespace game
 					info.localIpAddress = localIpAddress;
 					info.localPort = localPort;
 					info.ping = 0;
-					info.isDisconnecting = isDisconnecting;
 					return info;
 				}
 				uint64_t BytesSentTo() const noexcept
@@ -105,7 +102,6 @@ namespace game
 					remotePort = 0;
 					localPort = 0;
 					ping = 0;
-					isDisconnecting = false;
 				}
 			private:
 				uint64_t _bytesSentTo;			// Bytes sent to connection
