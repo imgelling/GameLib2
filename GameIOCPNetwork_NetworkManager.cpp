@@ -814,16 +814,17 @@ namespace game
 				if (ioData)
 				{
 					//err.errorString = "Remote socket disconnected";
-					switch (ioData->NETWORK_COMPLETION_TYPE)
-					{
-					case NETWORK_SEND_COMPLETION_TYPE: _OnSend(ioData->socket, 0, 0, err); break;
-					case NETWORK_RECEIVE_COMPLETION_TYPE: _OnReceive(ioData->socket, nullptr, 0, 0, err); break;
-					case NETWORK_ACCEPT_COMPLETION_TYPE: _OnAccept(ioData->socket, err); break;
-					case NETWORK_CONNECT_COMPLETION_TYPE: _OnConnect(ioData->socket, err); break;
+					//switch (ioData->NETWORK_COMPLETION_TYPE)
+					//{
+					//case NETWORK_SEND_COMPLETION_TYPE: _OnSend(ioData->socket, 0, 0, err); break;
+					//case NETWORK_RECEIVE_COMPLETION_TYPE: _OnReceive(ioData->socket, nullptr, 0, 0, err); break;
+					//case NETWORK_ACCEPT_COMPLETION_TYPE: _OnAccept(ioData->socket, err); break;
+					//case NETWORK_CONNECT_COMPLETION_TYPE: _OnConnect(ioData->socket, err); break;
 
-					default: 
-						break;
-					}
+					//default: 
+					//	break;
+					//}
+					_OnDisconnect(ioData->socket, err);
 				}
 			}
 
@@ -873,7 +874,8 @@ namespace game
 					NetworkError err;
 					err.errorNumber = 1;
 					err.errorString = "Remote socket disconnected";
-					_OnReceive(ioData->socket, nullptr, 0, 0, err);
+					//_OnReceive(ioData->socket, nullptr, 0, 0, err);
+					SendError(ioData, err);
 					_CloseConnection(ioData, __LINE__);
 					return;
 				}
