@@ -86,7 +86,7 @@ namespace game
 				void _OnDisconnectDefault(NETWORK_ONDISCONNECT_SIGNATURE);
 
 				std::mutex _connectionsMutex;
-				std::unordered_map<SOCKET, Connection> _connections;
+				std::unordered_map<SOCKET, InternalConnection> _internalConnections;
 
 				void SendError(PER_IO_DATA_NETWORK* ioDataIn, const game::IOCP::Network::NetworkError& err);
 

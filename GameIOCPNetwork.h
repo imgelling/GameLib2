@@ -55,7 +55,7 @@ namespace game
 				bool isDisconnecting = false;
 			};
 
-			class Connection
+			class InternalConnection
 			{
 			public:
 				SOCKET socket;		// Getters and setters for this stuff?	
@@ -96,7 +96,7 @@ namespace game
 					_bytesSentTo += count;
 				}
 				std::vector<unsigned char> receiveData; // Full data received
-				Connection()
+				InternalConnection()
 				{
 					socket = INVALID_SOCKET;
 					_bytesSentTo = 0;

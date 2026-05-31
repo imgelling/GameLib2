@@ -65,15 +65,15 @@ namespace game
 					if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						sizeOfConnection = (uint32_t)_connections[ioData->socket].receiveData.size();
+						sizeOfConnection = (uint32_t)_internalConnections[ioData->socket].receiveData.size();
 						bytesFromConnection = sizeOfConnection >= sizeOfUInt ? sizeOfUInt : sizeOfConnection;
 						for (uint32_t byte = 0; byte < bytesFromConnection; byte++)
 						{
-							encodedHeader[byte] = _connections[ioData->socket].receiveData[byte];
+							encodedHeader[byte] = _internalConnections[ioData->socket].receiveData[byte];
 						}
 						if (sizeOfConnection >= sizeOfHeader)
 						{
-							ioData->NETWORK_CHANNEL = _connections[ioData->socket].receiveData[5];
+							ioData->NETWORK_CHANNEL = _internalConnections[ioData->socket].receiveData[5];
 							bytesFromConnection++;
 						}
 					}
@@ -97,8 +97,8 @@ namespace game
 							if (bytesFromConnection)
 							{
 								std::lock_guard<std::mutex> lock(_connectionsMutex);
-								_connections[ioData->socket].receiveData.erase(_connections[ioData->socket].receiveData.begin(),
-									_connections[ioData->socket].receiveData.begin() + bytesFromConnection);
+								_internalConnections[ioData->socket].receiveData.erase(_internalConnections[ioData->socket].receiveData.begin(),
+									_internalConnections[ioData->socket].receiveData.begin() + bytesFromConnection);
 							}
 						}
 						else
@@ -107,8 +107,8 @@ namespace game
 							if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 							{
 								std::lock_guard<std::mutex> lock(_connectionsMutex);
-								_connections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
-								_connections[ioData->socket].receiveData.insert(_connections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
+								_internalConnections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
+								_internalConnections[ioData->socket].receiveData.insert(_internalConnections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
 							}
 							ZeroMemory(&ioData->overlapped, sizeof(OVERLAPPED));
 							ioData->buffer.buf = ioData->data;
@@ -148,7 +148,7 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].receiveData.clear();
+					_internalConnections[ioData->socket].receiveData.clear();
 				}
 				GAME_ASSERT((int32_t)bytesReceived - (int32_t)bytesToRemove >= 0);
 				return bytesReceived - bytesToRemove;
@@ -159,8 +159,8 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
-					_connections[ioData->socket].receiveData.insert(_connections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
+					_internalConnections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
+					_internalConnections[ioData->socket].receiveData.insert(_internalConnections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
 				}
 				ioData->buffer.buf = ioData->data;
 				ioData->buffer.len = (uint32_t)(NETWORK_BUFFER_SIZE);
@@ -176,11 +176,11 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesReceivedFrom(ioData->expectedTransferLeft);
-					if (_connections[ioData->socket].receiveData.size())
+					_internalConnections[ioData->socket].AddBytesReceivedFrom(ioData->expectedTransferLeft);
+					if (_internalConnections[ioData->socket].receiveData.size())
 					{
-						temp.assign(_connections[ioData->socket].receiveData.begin(), _connections[ioData->socket].receiveData.end());
-						_connections[ioData->socket].receiveData.clear();
+						temp.assign(_internalConnections[ioData->socket].receiveData.begin(), _internalConnections[ioData->socket].receiveData.end());
+						_internalConnections[ioData->socket].receiveData.clear();
 					}
 				}
 				if (temp.size())
@@ -299,7 +299,7 @@ namespace game
 				// All data was sent
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections[ioData->socket].AddBytesSentTo(bytesSent);
+					_internalConnections[ioData->socket].AddBytesSentTo(bytesSent);
 				}
 				NetworkError error;
 				_OnSend(ioData->socket, (uint64_t)bytesSent - sizeOfHeader, (uint32_t)ioData->NETWORK_CHANNEL, error);
@@ -342,11 +342,11 @@ namespace game
 
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						_connections[ioData->socket].socket = ioData->socket;
-						_connections[ioData->socket].remoteIpAddress = remoteAddrStr;
-						_connections[ioData->socket].remotePort = remotePort;
-						_connections[ioData->socket].localIpAddress = localAddrStr;
-						_connections[ioData->socket].localPort = localPort;
+						_internalConnections[ioData->socket].socket = ioData->socket;
+						_internalConnections[ioData->socket].remoteIpAddress = remoteAddrStr;
+						_internalConnections[ioData->socket].remotePort = remotePort;
+						_internalConnections[ioData->socket].localIpAddress = localAddrStr;
+						_internalConnections[ioData->socket].localPort = localPort;
 					}
 
 					NetworkError error;
@@ -422,10 +422,10 @@ namespace game
 
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						_connections[ioData->socket].remoteIpAddress = remoteAddrStr;
-						_connections[ioData->socket].remotePort = remotePort;
-						_connections[ioData->socket].localIpAddress = localAddrStr;
-						_connections[ioData->socket].localPort = localPort;
+						_internalConnections[ioData->socket].remoteIpAddress = remoteAddrStr;
+						_internalConnections[ioData->socket].remotePort = remotePort;
+						_internalConnections[ioData->socket].localIpAddress = localAddrStr;
+						_internalConnections[ioData->socket].localPort = localPort;
 					}
 				}
 				NetworkError err;
@@ -511,7 +511,7 @@ namespace game
 					ioData->expectedTransferTotal = ioData->expectedTransferLeft;
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						_connections[ioData->socket].receiveData.clear();
+						_internalConnections[ioData->socket].receiveData.clear();
 					}
 				}
 				else
@@ -800,7 +800,7 @@ namespace game
 			void NetworkManager::BroadCast(const unsigned char* data, const uint64_t length, const uint8_t channel, const SOCKET except)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				for (auto& a : _connections)
+				for (auto& a : _internalConnections)
 				{
 					if (a.first != except)
 					{
@@ -898,10 +898,10 @@ namespace game
 
 			void NetworkManager::_AddConnection(const PER_IO_DATA_NETWORK* ioData)
 			{
-				Connection newConnection;
+				InternalConnection newConnection;
 				newConnection.socket = ioData->socket;
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				auto t = _connections.try_emplace(newConnection.socket, newConnection);
+				auto t = _internalConnections.try_emplace(newConnection.socket, newConnection);
 				if (!t.second)
 					std::cout << "Connection is already connected!\n";
 			}
@@ -912,7 +912,7 @@ namespace game
 					uint64_t connectionConnected = 0;
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						connectionConnected = _connections.erase(ioData->socket);
+						connectionConnected = _internalConnections.erase(ioData->socket);
 					}
 					if (ioData->socket != INVALID_SOCKET)
 					{
@@ -928,11 +928,11 @@ namespace game
 							}
 						}
 						// Dont want to report open accept sockets to _OnDisconnect
-						if (connectionConnected)
-						{
-							NetworkError error;
-							_OnDisconnect(ioData->socket, error);
-						}
+						//if (connectionConnected)
+						//{
+						//	NetworkError error;
+						//	_OnDisconnect(ioData->socket, error);
+						//}
 						ioData->socket = INVALID_SOCKET;
 					}
 					_DeleteIoData(ioData);
@@ -941,18 +941,18 @@ namespace game
 			void NetworkManager::GetConnections(std::vector<SOCKET>& connections)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				for (const auto& pair : _connections) {
+				for (const auto& pair : _internalConnections) {
 					connections.push_back(pair.first);
 				}
 			}
 			void NetworkManager::GetConnectionStats(const SOCKET socket, uint64_t& receivedFrom, uint64_t& sentTo)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				auto a = _connections.find(socket);
-				if (a != _connections.end())
+				auto a = _internalConnections.find(socket);
+				if (a != _internalConnections.end())
 				{
-					receivedFrom = _connections[socket].BytesReceivedFrom();
-					sentTo = _connections[socket].BytesSentTo();
+					receivedFrom = _internalConnections[socket].BytesReceivedFrom();
+					sentTo = _internalConnections[socket].BytesSentTo();
 				}
 				else
 				{
@@ -963,8 +963,8 @@ namespace game
 			const ConnectionInfo NetworkManager::GetConnectionInfo(const SOCKET socket)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				auto a = _connections.find(socket);
-				if (a != _connections.end())
+				auto a = _internalConnections.find(socket);
+				if (a != _internalConnections.end())
 				{
 					return a->second.GetInfo();
 				}
@@ -1109,7 +1109,7 @@ namespace game
 				// Close any open connections gracefully
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex); // Is this a problem? maybe move inside?
-					for (auto& i : _connections)
+					for (auto& i : _internalConnections)
 					{
 						if (shutdown(i.second.socket, SD_BOTH) == SOCKET_ERROR)
 						{
@@ -1129,7 +1129,7 @@ namespace game
 				// Clear out the connections
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					_connections.clear();
+					_internalConnections.clear();
 				}
 				// Clean up winsock
 				std::cout << "Cleaning up winsock.\n";
