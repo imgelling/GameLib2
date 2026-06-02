@@ -873,7 +873,7 @@ namespace game
 #endif
 					NetworkError err;
 					err.errorNumber = 1;
-					err.errorString = "Remote socket disconnected";
+					err.errorString = "Remote connection disconnected";
 					//_OnReceive(ioData->socket, nullptr, 0, 0, err);
 					SendError(ioData, err);
 					_CloseConnection(ioData, __LINE__);
@@ -908,23 +908,24 @@ namespace game
 
 			void NetworkManager::DisconnectAConnection(SOCKET socket, const int32_t line, const bool alreadyClosed)
 			{
-				uint64_t connectionConnected = 0;
-				{
-					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					connectionConnected = _internalConnections.erase(socket);
-				}
+				//uint64_t connectionConnected = 0;
+				//{
+				//	std::lock_guard<std::mutex> lock(_connectionsMutex);
+				//	connectionConnected = _internalConnections.erase(socket);
+				//}
 				if (socket != INVALID_SOCKET)
 				{
 					if (!alreadyClosed)
 					{
-						if (shutdown(socket, SD_BOTH) == SOCKET_ERROR)
+						//if (shutdown(socket, SD_BOTH) == SOCKET_ERROR)
+						if (shutdown(socket, SD_SEND) == SOCKET_ERROR)
 						{
 							game::IOCP::ErrorOutput("shutdown", line);
 						}
-						if (closesocket(socket) == SOCKET_ERROR)
-						{
-							game::IOCP::ErrorOutput("closesocket", line);
-						}
+						//if (closesocket(socket) == SOCKET_ERROR)
+						//{
+						//	game::IOCP::ErrorOutput("closesocket", line);
+						//}
 					}
 					// Dont want to report open accept sockets to _OnDisconnect
 					//if (connectionConnected)
