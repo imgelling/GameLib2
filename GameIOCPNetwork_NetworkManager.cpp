@@ -908,32 +908,15 @@ namespace game
 
 			void NetworkManager::DisconnectAConnection(SOCKET socket, const int32_t line, const bool alreadyClosed)
 			{
-				//uint64_t connectionConnected = 0;
-				//{
-				//	std::lock_guard<std::mutex> lock(_connectionsMutex);
-				//	connectionConnected = _internalConnections.erase(socket);
-				//}
 				if (socket != INVALID_SOCKET)
 				{
 					if (!alreadyClosed)
 					{
-						//if (shutdown(socket, SD_BOTH) == SOCKET_ERROR)
 						if (shutdown(socket, SD_SEND) == SOCKET_ERROR)
 						{
 							game::IOCP::ErrorOutput("shutdown", line);
 						}
-						//if (closesocket(socket) == SOCKET_ERROR)
-						//{
-						//	game::IOCP::ErrorOutput("closesocket", line);
-						//}
 					}
-					// Dont want to report open accept sockets to _OnDisconnect
-					//if (connectionConnected)
-					//{
-					//	NetworkError error;
-					//	_OnDisconnect(ioData->socket, error);
-					//}
-					socket = INVALID_SOCKET;
 				}
 			}
 
