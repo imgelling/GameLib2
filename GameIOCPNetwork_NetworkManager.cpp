@@ -523,7 +523,7 @@ namespace game
 				WSARecv(socket, &ioData->buffer, 1, NULL, &flags, &ioData->overlapped, NULL);
 				if (game::IOCP::ErrorOutput("WSARecv", __LINE__))
 				{
-					_CloseConnection(ioData, __LINE__);
+					_CloseConnection(ioData, __LINE__, true);
 				}
 			}
 			// UDP ONLY
@@ -905,6 +905,37 @@ namespace game
 				if (!t.second)
 					std::cout << "Connection is already connected!\n";
 			}
+
+			void NetworkManager::DisconnectAConnection(SOCKET socket, const int32_t line, const bool alreadyClosed)
+			{
+				uint64_t connectionConnected = 0;
+				{
+					std::lock_guard<std::mutex> lock(_connectionsMutex);
+					connectionConnected = _internalConnections.erase(socket);
+				}
+				if (socket != INVALID_SOCKET)
+				{
+					if (!alreadyClosed)
+					{
+						if (shutdown(socket, SD_BOTH) == SOCKET_ERROR)
+						{
+							game::IOCP::ErrorOutput("shutdown", line);
+						}
+						if (closesocket(socket) == SOCKET_ERROR)
+						{
+							game::IOCP::ErrorOutput("closesocket", line);
+						}
+					}
+					// Dont want to report open accept sockets to _OnDisconnect
+					//if (connectionConnected)
+					//{
+					//	NetworkError error;
+					//	_OnDisconnect(ioData->socket, error);
+					//}
+					socket = INVALID_SOCKET;
+				}
+			}
+
 			void NetworkManager::_CloseConnection(PER_IO_DATA_NETWORK* ioData, const int32_t line, const bool alreadyClosed)
 			{
 				if (ioData)

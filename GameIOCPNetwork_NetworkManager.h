@@ -124,6 +124,7 @@ namespace game
 				void SetOnSend(std::function<void(NETWORK_ONSEND_SIGNATURE)> func);
 				void SetOnDisconnect(std::function<void(NETWORK_ONDISCONNECT_SIGNATURE)> func);
 
+				void DisconnectAConnection(SOCKET socket, const int32_t line, const bool alreadyClosed = false);
 				void PrintStats();
 				uint64_t GetStat(StatName name) const;
 
