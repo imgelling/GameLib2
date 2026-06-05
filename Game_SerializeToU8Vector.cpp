@@ -5,7 +5,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
-#include "../../GameLib2/Game_Assert.h"
+#include "Game_Assert.h"
 //#include "GameIOCPNetwork.h"
 #include "Game_SerializeToU8Vector.h"
 
@@ -85,6 +85,7 @@ namespace game
 
 		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
 		Get(size);
+		if (!size) return;
 		GAME_ASSERT(_GetPeekSizeCheck(size));
 
 		str = std::string(size, '\0');
