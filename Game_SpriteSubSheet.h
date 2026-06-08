@@ -88,7 +88,7 @@ namespace game
 
 					subTextureRegistry[filenameInput] = rect;
 
-					std::cout << filenameInput << "," << rect.left << "," << rect.top << "," << rect.right << "," << rect.bottom << std::endl;
+					//std::cout << filenameInput << "," << rect.left << "," << rect.top << "," << rect.right << "," << rect.bottom << std::endl;
 				}
 
 				// Close the file
