@@ -162,7 +162,7 @@ namespace game
 		virtual void LoadContent() = 0;
 		virtual void Shutdown() = 0;
 
-		virtual void HandleWindowSizeChange() {}
+		virtual void HandleWindowSizeChange(const game::Pointi& oldSize, const game::Pointi& newSize) { oldSize; newSize; }
 
 		// Tools
 		void geLogLastError();
@@ -676,6 +676,12 @@ namespace game
 
 	inline void Engine::HandleWindowResize(const uint32_t width, const uint32_t height)
 	{
+		game::Pointi oldSize;
+		game::Pointi newSize;
+		oldSize.width = _attributes.WindowWidth;
+		oldSize.height = _attributes.WindowHeight;
+		newSize.width = width;
+		newSize.height = height;
 		_attributes.WindowWidth = width;
 		_attributes.WindowHeight = height;
 #if defined(GAME_OPENGL)
@@ -713,7 +719,8 @@ namespace game
 			}
 		}
 #endif
-		HandleWindowSizeChange();
+		//game::Pointi
+		HandleWindowSizeChange(oldSize, newSize);
 	}
 
 	inline void Engine::geLogLastError()
