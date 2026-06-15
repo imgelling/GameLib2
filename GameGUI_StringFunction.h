@@ -41,7 +41,7 @@ namespace game
 			}
 
 			// shouldn't need widthInPixels.
-			int32_t NumberTextCharsInAWidth(const game::SpriteFont &font, const std::string & in, const int32_t maxPixels) const
+			int32_t NumberTextCharsInAWidth(const game::SpriteFont &font, const std::string & in, const int32_t maxPixels, const float_t xScale) const
 			{
 				int32_t count = 0;
 				int32_t width = 0;
@@ -51,6 +51,7 @@ namespace game
 				{
 					//test += c;
 					width = currentX + font.characterSet->letters[c].xOffset + font.characterSet->letters[c].width;
+					width = (int32_t)(width * xScale);
 					if (width > maxPixels)
 						return count;// 
 					count++;
