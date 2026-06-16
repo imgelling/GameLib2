@@ -27,63 +27,63 @@ namespace game
 
 		// std::string	-- Done
 		void Add(const std::string&);
-		void Get(std::string&);
-		void Peek(std::string&);
+		bool Get(std::string &);
+		bool Peek(std::string&);
 
 		// uint8_t -- Done
 		void Add(const uint8_t);
-		void Get(uint8_t&);
-		void Peek(uint8_t&);
+		bool Get(uint8_t&);
+		bool Peek(uint8_t&);
 
 		// int8_t  -- Done
 		void Add(const int8_t);
-		void Get(int8_t&);
-		void Peek(int8_t&);
+		bool Get(int8_t&);
+		bool Peek(int8_t&);
 
 		// uint16_t  -- Done
 		void Add(const uint16_t);
-		void Get(uint16_t&);
-		void Peek(uint16_t&);
+		bool Get(uint16_t&);
+		bool Peek(uint16_t&);
 
 		// int16_t  -- Done
 		void Add(const int16_t);
-		void Get(int16_t&);
-		void Peek(int16_t&);
+		bool Get(int16_t&);
+		bool Peek(int16_t&);
 
 		// uint32_t  -- Done
 		void Add(const uint32_t);
-		void Peek(uint32_t&);
-		void Get(uint32_t&);
+		bool Peek(uint32_t&);
+		bool Get(uint32_t&);
 
 		// int32_t  -- Done
 		void Add(const int32_t);
-		void Peek(int32_t&);
-		void Get(int32_t&);
+		bool Peek(int32_t&);
+		bool Get(int32_t&);
 
 		// uint64_t  -- Done
 		void Add(const uint64_t);
-		void Peek(uint64_t&);
-		void Get(uint64_t&);
+		bool Peek(uint64_t&);
+		bool Get(uint64_t&);
 
 		// int64_t  -- Done
 		void Add(const int64_t);
-		void Peek(int64_t&);
-		void Get(int64_t&);
+		bool Peek(int64_t&);
+		bool Get(int64_t&);
 
 		// float_t  -- Done
 		void Add(const float_t);
-		void Peek(float_t&);
-		void Get(float_t&);
+		bool Peek(float_t&);
+		bool Get(float_t&);
 
 		// double_t  -- Done
 		void Add(const double_t);
-		void Peek(double_t&);
-		void Get(double_t&);
+		bool Peek(double_t&);
+		bool Get(double_t&);
 
 		// bool  -- Done
 		void Add(const bool);
-		void Peek(bool&);
-		void Get(bool&);
+		bool Peek(bool&);
+		bool Get(bool&);
 
 		void ClearData();
 
@@ -97,7 +97,7 @@ namespace game
 		int64_t _dataWritePosition;
 		int64_t _dataReadPosition;
 		uint64_t _dataLength;
-
+		bool CheckValidSize(size_t size) const;
 		bool _GetPeekSizeCheck(const size_t size) const;
 		void _IncreaseReadPos(const uint64_t amount);
 		void _IncreaseWritePos(const uint64_t amount);
