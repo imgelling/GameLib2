@@ -58,7 +58,7 @@ namespace game
 		return _dataLength;
 	}
 
-	bool SerializeToU8Vector::CheckValidSize(size_t size) const
+	inline bool SerializeToU8Vector::CheckValidSize(size_t size) const
 	{
 		bool check = _GetPeekSizeCheck(size);
 		GAME_ASSERT(check);
@@ -76,27 +76,15 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(std::string& str)
 	{
-		//str.clear();
-		//uint64_t size = 0;
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
-		//Peek(size);
-
-		//for (uint16_t i = sizeof(uint64_t); i < size + sizeof(uint64_t); i++)
-		//{
-		//	str += _data[_dataReadPosition + i];
-		//}
 		uint64_t size = 0;
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
 		if (CheckValidSize(sizeof(uint64_t)))
 		{
 			Peek(size);
 			if (!size) return true; // a empty string was serialized
-			//GAME_ASSERT(_GetPeekSizeCheck(size));
 			if (CheckValidSize(size))
 			{
 				str = std::string(size, '\0');
 				memcpy((uint8_t*)(&str[0]), &_data[_dataReadPosition+sizeof(uint64_t)], size);
-				//_IncreaseReadPos(size);
 				return true;
 			}
 		}
@@ -106,12 +94,10 @@ namespace game
 	{
 		uint64_t size = 0;
 
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
 		if (CheckValidSize(sizeof(uint64_t)))
 		{
 			Get(size);
 			if (!size) return true; // a empty string was serialized
-			//GAME_ASSERT(_GetPeekSizeCheck(size));
 			if (CheckValidSize(size))
 			{
 				str = std::string(size, '\0');
@@ -130,16 +116,22 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(uint8_t& c) // ccd
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint8_t)));
-		c = _data[_dataReadPosition];
-		return true;
+		if (CheckValidSize(sizeof(uint8_t)))
+		{
+			c = _data[_dataReadPosition];
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(uint8_t& c) // ccd
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint8_t)));
-		c = _data[_dataReadPosition];
-		_IncreaseReadPos(sizeof(uint8_t));
-		return true;
+		if (CheckValidSize(sizeof(uint8_t)))
+		{
+			c = _data[_dataReadPosition];
+			_IncreaseReadPos(sizeof(uint8_t));
+			return true;
+		}
+		return false;
 	}
 	// int8_t
 	void SerializeToU8Vector::Add(const int8_t c) // ccd
@@ -149,16 +141,22 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(int8_t& c) // ccd
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int8_t)));
-		c = (int8_t)_data[_dataReadPosition];
-		return true;
+		if (CheckValidSize(sizeof(int8_t)))
+		{
+			c = (int8_t)_data[_dataReadPosition];
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(int8_t& c) // ccd
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int8_t)));
-		c = (int8_t)_data[_dataReadPosition];
-		_IncreaseReadPos(sizeof(int8_t));
-		return true;
+		if (CheckValidSize(sizeof(int8_t)))
+		{
+			c = (int8_t)_data[_dataReadPosition];
+			_IncreaseReadPos(sizeof(int8_t));
+			return true;
+		}
+		return false;
 	}
 	// uint16_t
 	void SerializeToU8Vector::Add(const uint16_t c) // ccd
@@ -171,25 +169,28 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(uint16_t& c) // ccd
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint16_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint16_t));
-		c = _ntohs(c);
-		return true;
+		if (CheckValidSize(sizeof(uint16_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint16_t));
+			c = _ntohs(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(uint16_t& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint16_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint16_t));
-		c = _ntohs(c);
-		_IncreaseReadPos(sizeof(uint16_t));
-		return true;
+		if (CheckValidSize(sizeof(uint16_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint16_t));
+			c = _ntohs(c);
+			_IncreaseReadPos(sizeof(uint16_t));
+			return true;
+		}
+		return false;
 	}
 	// int16_t
 	void SerializeToU8Vector::Add(const int16_t c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(c)));
-		//*(int16_t*)(_dataWritePosition) = _htons(c);
-		//_IncreaseWritePos(sizeof(int16_t));
 		int16_t t = _htons(c);
 		uint8_t temp[sizeof(int16_t)] = {};
 		memcpy(temp, &t, sizeof(int16_t));
@@ -199,31 +200,29 @@ namespace game
 	bool SerializeToU8Vector::Peek(int16_t& c)
 	{
 		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int16_t)));
-		//c = *(int16_t*)(_dataReadPosition);
-		//c = _ntohs(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int16_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int16_t));
-		c = _ntohs(c);
-		return true;
+		if (CheckValidSize(sizeof(int16_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int16_t));
+			c = _ntohs(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(int16_t& c)
 	{
 		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int16_t)));
-		//c = *(int16_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(int16_t));
-		//c = _ntohs(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int16_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int16_t));
-		c = _ntohs(c);
-		_IncreaseReadPos(sizeof(int16_t));
-		return true;
+		if (CheckValidSize(sizeof(int16_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int16_t));
+			c = _ntohs(c);
+			_IncreaseReadPos(sizeof(int16_t));
+			return true;
+		}
+		return false;
 	}
 	// uint32_t
 	void SerializeToU8Vector::Add(const uint32_t c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(c)));
-		//*(uint32_t*)(_dataWritePosition) = _htonl(c);
-		//_IncreaseWritePos(sizeof(uint32_t));
 		uint32_t t = _htonl(c);
 		uint8_t temp[sizeof(uint32_t)] = {};
 		memcpy(temp, &t, sizeof(uint32_t));
@@ -232,31 +231,28 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(uint32_t& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint32_t)));
-		//c = *(uint32_t*)(_dataReadPosition);
-		//c = _ntohl(c);
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint32_t));
-		c = _ntohl(c);
-		return true;
+		if (CheckValidSize(sizeof(uint32_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint32_t));
+			c = _ntohl(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(uint32_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint32_t)));
-		//c = *(uint32_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(uint32_t));
-		//c = _ntohl(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint32_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint32_t));
-		c = _ntohl(c);
-		_IncreaseReadPos(sizeof(uint32_t));
-		return true;
+		if (CheckValidSize(sizeof(uint32_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint32_t));
+			c = _ntohl(c);
+			_IncreaseReadPos(sizeof(uint32_t));
+			return true;
+		}
+		return false;
 	}
 	// int32_t
 	void SerializeToU8Vector::Add(const int32_t c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(c)));
-		//*(int32_t*)(_dataWritePosition) = _htonl(c);
-		//_IncreaseWritePos(sizeof(int32_t));
 		int32_t t = _htonl(c);
 		uint8_t temp[sizeof(int32_t)] = {};
 		memcpy(temp, &t, sizeof(int32_t));
@@ -265,209 +261,186 @@ namespace game
 	}
 	bool SerializeToU8Vector::Peek(int32_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int32_t)));
-		//c = *(int32_t*)(_dataReadPosition);
-		//c = _ntohl(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int32_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int32_t));
-		c = _ntohl(c);
-		return true;
+		if (CheckValidSize(sizeof(int32_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int32_t));
+			c = _ntohl(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(int32_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int32_t)));
-		//c = *(int32_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(int32_t));
-		//c = _ntohl(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int32_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int32_t));
-		c = _ntohl(c);
-		_IncreaseReadPos(sizeof(int32_t));
-		return true;
+		if (CheckValidSize(sizeof(int32_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int32_t));
+			c = _ntohl(c);
+			_IncreaseReadPos(sizeof(int32_t));
+			return true;
+		}
+		return false;
 	}
 	// uint64_t
 	void SerializeToU8Vector::Add(const uint64_t c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(c)));
-		//*(uint64_t*)(_dataWritePosition) = _hton64(c);
 		uint64_t t = _hton64(c);
-		uint8_t temp[sizeof(uint64_t)] = {};// = (uint8_t*)t;// _hton64(c);
+		uint8_t temp[sizeof(uint64_t)] = {};
 		memcpy(temp, &t, sizeof(uint64_t));
 		_data.insert(_data.end(), temp, temp + sizeof(uint64_t));
 		_IncreaseWritePos(sizeof(uint64_t));
 	}
 	bool SerializeToU8Vector::Peek(uint64_t& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
-		//uint64_t t = 0;
-		//uint8_t bytes[sizeof(uint64_t)] = {};
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint64_t));
-		//c = *(uint64_t*)(_dataReadPosition);
-		c = _ntoh64(c);
-		return true;
+		if (CheckValidSize(sizeof(uint64_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint64_t));
+			c = _ntoh64(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(uint64_t& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint64_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint64_t));
-		//c = *(uint64_t*)(_dataReadPosition);
-		c = _ntoh64(c);
-		_IncreaseReadPos(sizeof(uint64_t));
-		return true;
+		if (CheckValidSize(sizeof(uint64_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(uint64_t));
+			c = _ntoh64(c);
+			_IncreaseReadPos(sizeof(uint64_t));
+			return true;
+		}
+		return false;
 	}
 	// int64_t 
 	void SerializeToU8Vector::Add(const int64_t c)
 	{
-		////GAME_ASSERT(_AddSizeCheck(sizeof(c)));
-		//*(int64_t*)(_dataWritePosition) = _hton64(c);
-		//_IncreaseWritePos(sizeof(int64_t));
 		int64_t t = _hton64(c);
-		uint8_t temp[sizeof(int64_t)] = {};// = (uint8_t*)t;// _hton64(c);
+		uint8_t temp[sizeof(int64_t)] = {};
 		memcpy(temp, &t, sizeof(uint64_t));
 		_data.insert(_data.end(), temp, temp + sizeof(int64_t));
 		_IncreaseWritePos(sizeof(int64_t));
 	}
 	bool SerializeToU8Vector::Peek(int64_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int64_t)));
-		//c = *(int64_t*)(_dataReadPosition);
-		//c = _ntoh64(c);
 		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int64_t)));
-		//uint64_t t = 0;
-		//uint8_t bytes[sizeof(uint64_t)] = {};
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int64_t));
-		//c = *(uint64_t*)(_dataReadPosition);
-		c = _ntoh64(c);
-		return true;
+		if (CheckValidSize(sizeof(int64_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int64_t));
+			c = _ntoh64(c);
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(int64_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(int64_t)));
-		//c = *(int64_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(int64_t));
-		//c = _ntoh64(c);
 		GAME_ASSERT(_GetPeekSizeCheck(sizeof(int64_t)));
-		memcpy(&c, _data.data() + _dataReadPosition, sizeof(int64_t));
-		//c = *(uint64_t*)(_dataReadPosition);
-		c = _ntoh64(c);
-		_IncreaseReadPos(sizeof(int64_t));
-		return true;
+		if (CheckValidSize(sizeof(int64_t)))
+		{
+			memcpy(&c, _data.data() + _dataReadPosition, sizeof(int64_t));
+			c = _ntoh64(c);
+			_IncreaseReadPos(sizeof(int64_t));
+			return true;
+		}
+		return false;
 	}
 	// float_t
 	void SerializeToU8Vector::Add(const float_t c)
 	{
-		////GAME_ASSERT(_AddSizeCheck(sizeof(float_t)));
-		//uint32_t temp = 0;
-		//memcpy(&temp, &c, sizeof(float_t));
-		//*(uint32_t*)(_dataWritePosition) = _htonl(temp);
-		//_IncreaseWritePos(sizeof(float_t));
 		uint32_t t = 0;
 		memcpy(&t, &c, sizeof(float_t));
 		t = _htonl(t);
-		uint8_t temp[sizeof(float_t)] = {};// = (uint8_t*)t;// _hton64(c);
+		uint8_t temp[sizeof(float_t)] = {};
 		memcpy(temp, &t, sizeof(float_t));
 		_data.insert(_data.end(), temp, temp + sizeof(float_t));
 		_IncreaseWritePos(sizeof(float_t));
 	}
 	bool SerializeToU8Vector::Peek(float_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(float_t)));
-		//uint32_t temp = *(uint32_t*)(_dataReadPosition);
-		//temp = _ntohl(temp);
-		//memcpy(&c, &temp, sizeof(float_t));
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(float_t)));
-		uint32_t temp = 0;
-		memcpy(&temp, _data.data() + _dataReadPosition, sizeof(float_t));
-		temp = _ntohl(temp);
-		memcpy(&c, &temp, sizeof(float_t));
-		//c = _ntohl(c);
-		return true;
+		if (CheckValidSize(sizeof(float_t)))
+		{
+			uint32_t temp = 0;
+			memcpy(&temp, _data.data() + _dataReadPosition, sizeof(float_t));
+			temp = _ntohl(temp);
+			memcpy(&c, &temp, sizeof(float_t));
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(float_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(float_t)));
-		//uint32_t temp = *(uint32_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(float_t));
-		//temp = _ntohl(temp);
-		//memcpy(&c, &temp, sizeof(float_t));
-		////GAME_ASSERT(_GetPeekSizeCheck(sizeof(float_t)));
-		////memcpy(&c, _data.data() + _dataReadPosition, sizeof(float_t));
-		//////c = *(uint64_t*)(_dataReadPosition);
-		////c = _ntohl(c);
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(float_t)));
-		uint32_t temp = 0;
-		memcpy(&temp, _data.data() + _dataReadPosition, sizeof(float_t));
-		temp = _ntohl(temp);
-		memcpy(&c, &temp, sizeof(float_t));
-		_IncreaseReadPos(sizeof(float_t));
-		return true;
+		if (CheckValidSize(sizeof(float_t)))
+		{
+			uint32_t temp = 0;
+			memcpy(&temp, _data.data() + _dataReadPosition, sizeof(float_t));
+			temp = _ntohl(temp);
+			memcpy(&c, &temp, sizeof(float_t));
+			_IncreaseReadPos(sizeof(float_t));
+			return true;
+		}
+		return false;
 	}
 	// double_t
 	void SerializeToU8Vector::Add(const double_t c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(double_t)));
-		//uint64_t temp = 0;
-		//memcpy(&temp, &c, sizeof(double_t));
-		//*(uint64_t*)(_dataWritePosition) = _hton64(temp);
-		//_IncreaseWritePos(sizeof(double_t));
 		uint64_t t = 0;
 		memcpy(&t, &c, sizeof(double_t));
 		t = _hton64(t);
-		uint8_t temp[sizeof(double_t)] = {};// = (uint8_t*)t;// _hton64(c);
+		uint8_t temp[sizeof(double_t)] = {};
 		memcpy(temp, &t, sizeof(double_t));
 		_data.insert(_data.end(), temp, temp + sizeof(double_t));
 		_IncreaseWritePos(sizeof(double_t));
 	}
 	bool SerializeToU8Vector::Peek(double_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(double_t)));
-		//uint64_t temp = *(uint64_t*)(_dataReadPosition);
-		//temp = _ntoh64(temp);
-		//memcpy(&c, &temp, sizeof(double_t));
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(double_t)));
-		uint64_t temp = 0;
-		memcpy(&temp, _data.data() + _dataReadPosition, sizeof(double_t));
-		temp = _ntoh64(temp);
-		memcpy(&c, &temp, sizeof(double_t));
-		return true;
+		if (CheckValidSize(sizeof(double_t)))
+		{
+			uint64_t temp = 0;
+			memcpy(&temp, _data.data() + _dataReadPosition, sizeof(double_t));
+			temp = _ntoh64(temp);
+			memcpy(&c, &temp, sizeof(double_t));
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(double_t& c)
 	{
-		//GAME_ASSERT(_GetPeekSizeCheck(sizeof(double_t)));
-		//uint64_t temp = *(uint64_t*)(_dataReadPosition);
-		//_IncreaseReadPos(sizeof(double_t));
-		//temp = _ntoh64(temp);
-		//memcpy(&c, &temp, sizeof(double_t));
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(double_t)));
-		uint64_t temp = 0;
-		memcpy(&temp, _data.data() + _dataReadPosition, sizeof(double_t));
-		temp = _ntoh64(temp);
-		memcpy(&c, &temp, sizeof(double_t));
-		_IncreaseReadPos(sizeof(double_t));
-		return true;
+		if (CheckValidSize(sizeof(double_t)))
+		{
+			uint64_t temp = 0;
+			memcpy(&temp, _data.data() + _dataReadPosition, sizeof(double_t));
+			temp = _ntoh64(temp);
+			memcpy(&c, &temp, sizeof(double_t));
+			_IncreaseReadPos(sizeof(double_t));
+			return true;
+		}
+		return false;
 	}
 	// bool
 	void SerializeToU8Vector::Add(const bool c)
 	{
-		//GAME_ASSERT(_AddSizeCheck(sizeof(uint8_t)));
 		uint8_t a = c ? 1 : 0;
 		Add(a);
 	}
 	bool SerializeToU8Vector::Peek(bool& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint8_t)));
-		uint8_t a = 0;
-		Peek(a);
-		c = a ? true : false;
-		return true;
+		if (CheckValidSize(sizeof(uint8_t)))
+		{
+			uint8_t a = 0;
+			Peek(a);
+			c = a ? true : false;
+			return true;
+		}
+		return false;
 	}
 	bool SerializeToU8Vector::Get(bool& c)
 	{
-		GAME_ASSERT(_GetPeekSizeCheck(sizeof(uint8_t)));
-		uint8_t a = 0;
-		Get(a);
-		c = a ? true : false;
-		return true;
+		if (CheckValidSize(sizeof(uint8_t)))
+		{
+			uint8_t a = 0;
+			Get(a);
+			c = a ? true : false;
+			return true;
+		}
+		return false;
 	}
 
 	void SerializeToU8Vector::ClearData()
@@ -498,7 +471,7 @@ namespace game
 		std::cout << std::endl;
 	}
 
-	bool SerializeToU8Vector::_GetPeekSizeCheck(const size_t size) const
+	inline bool SerializeToU8Vector::_GetPeekSizeCheck(const size_t size) const
 	{
 		return size <= _dataLength ? true : false;
 	}
