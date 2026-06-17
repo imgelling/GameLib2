@@ -1,4 +1,4 @@
-#if !defined(GAMETHREADPOOL_H)
+﻿#if !defined(GAMETHREADPOOL_H)
 #define GAMETHREADPOOL_H
 
 #include <thread>
@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <concurrent_queue.h>
+#include "Game_Assert.h"
 
 namespace game
 {
@@ -42,14 +43,15 @@ namespace game
         std::condition_variable _terminateCondition;    // Allows threads to wait on new work or termination 
         std::vector<std::thread> _threadPool;           // Threads for work
         concurrency::concurrent_queue<std::function<void()>> _work;  // List of work to do, lockless
-        bool _hasStarted = false;                       // Have we started the thread pool?
+        std::atomic_bool _hasStarted = false;                       // Have we started the thread pool?
         std::atomic_bool _shouldTerminate = false;      // Tells threads to stop looking for jobs
     };
 
 
     inline void ThreadPool::Start(const uint32_t threadsWanted = 0)
     {
-        if (_hasStarted) return;
+        //if (_hasStarted) return;
+        GAME_ASSERT(!_hasStarted);
         uint32_t numThreads = 0;
         if (threadsWanted < 1)
         {
@@ -69,32 +71,37 @@ namespace game
 
 	inline void ThreadPool::_ThreadLoop() 
     {
+		std::function<void()> work;
 		while (true) 
         {
-			std::function<void()> work;
 			{
 				std::unique_lock<std::mutex> lock(_terminateMutex);
 				_terminateCondition.wait(lock, [this] {
 					return !_work.empty() || _shouldTerminate;
 					});
 			}
-			if (_shouldTerminate) 
+			if (!_shouldTerminate && _work.try_pop(work)) 
             {
-				return;
+                //if (_work.try_pop(work))
+                //{
+                    work();
+                //}
 			}
-			if (_work.try_pop(work))
-			{
-				work();
-			}
+            else
+            {
+                return;
+            }
+
 		}
 	}
 
     inline void ThreadPool::Queue(const std::function<void()>& work) 
     {
-        if (!_hasStarted)
-        {
-            return;
-        }
+        GAME_ASSERT(_hasStarted);
+        //if (!_hasStarted)
+        //{
+        //    return;
+        //}
         _work.push(work);
         _terminateCondition.notify_one();
     }
@@ -106,7 +113,8 @@ namespace game
 
     inline void ThreadPool::Stop() 
     {
-        if (!_hasStarted) return;
+        GAME_ASSERT(!_hasStarted);
+        //if (!_hasStarted) return;
         _shouldTerminate = true;
         _terminateCondition.notify_all();
         

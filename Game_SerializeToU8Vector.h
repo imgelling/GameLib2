@@ -17,12 +17,18 @@ namespace game
 		void GetVector(std::vector<uint8_t>&);
 		size_t Size() const;
 
+		void Assign(const uint8_t* data, const int64_t size)
+		{
+			_data.assign(data, data+size);
+			_IncreaseWritePos(size);
+		}
+
 		// uint8_t*
-		void Add(const uint8_t* data, int64_t size)
+		void Add(const uint8_t* data, const int64_t size)
 		{
 			_data.insert(_data.begin() + _dataWritePosition, data, data + size);
 			//memcpy(_dataWritePosition, data, size);
-			_IncreaseWritePos((uint32_t)size);
+			_IncreaseWritePos(size);
 		}
 
 		// std::string	-- Done
