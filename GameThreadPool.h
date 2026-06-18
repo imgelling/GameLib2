@@ -113,8 +113,7 @@ namespace game
 
     inline void ThreadPool::Stop() 
     {
-        GAME_ASSERT(!_hasStarted);
-        //if (!_hasStarted) return;
+        if (!_hasStarted) return;
         _shouldTerminate = true;
         _terminateCondition.notify_all();
         
