@@ -3,8 +3,9 @@
 #include <iostream>
 #include <vector>
 #include <mutex>
-#include <sstream>
-#include <iomanip>
+#include <atomic>
+#include <cstdint>
+#include <string>
 //#include "GameIOCPNetwork.h"
 
 namespace game
@@ -54,6 +55,119 @@ namespace game
         PoolGrowthType _growthType;
         std::atomic<uint64_t> _allocations;
         std::atomic<uint64_t> _deallocations;
+    };
+
+    template <typename T>
+    class GenericMemoryPool
+    {
+    public:
+
+        GenericMemoryPool(const uint64_t poolSize, const uint64_t reserveSize = 0, const PoolGrowthType growthType = PoolGrowthType::Linear)
+        {
+            _poolSize = poolSize;
+            _initialPoolSize = poolSize;
+            _grownPoolSize = poolSize;
+            _growthType = _growthType;
+            _allocations = 0;
+            _deallocations = 0;
+            std::lock_guard<std::mutex> lock(_mutex);
+            _AllocatePool();
+        }
+        GenericMemoryPool()
+        {
+            _poolSize = 0;
+            _grownPoolSize = 0;
+            _initialPoolSize = 0;
+            _growthType = PoolGrowthType::Linear;
+            _allocations = 0;
+            _deallocations = 0;
+        }
+        ~GenericMemoryPool()
+        {}
+
+        uint64_t GetSize() const
+        {
+            return _poolSize;
+        }
+
+        void Initialize(const uint64_t poolSize, const PoolGrowthType growthType = PoolGrowthType::Linear)
+        {
+            _poolSize = poolSize;
+            _initialPoolSize = _poolSize;
+            _grownPoolSize = poolSize;
+            _growthType = growthType;
+            _allocations = 0;
+            _deallocations = 0;
+            std::lock_guard<std::mutex> lock(_mutex);
+            _AllocatePool();
+        }
+
+        T Allocate()
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+            // If pool is empty, grow it according to GrowthType
+            if (_freeBlocks.empty())
+            {
+                _AllocatePool();
+            }
+            _allocations.fetch_add(1);
+            T block = _freeBlocks.back();
+            _freeBlocks.pop_back();
+            return block;
+        }
+
+        void Deallocate(T block)
+        {
+            _deallocations.fetch_add(1);
+            std::lock_guard<std::mutex> lock(_mutex);
+            //block.clear();
+            _freeBlocks.push_back(block);
+        }
+
+        void PrintStats(std::string name)
+        {
+            std::cout << name << "\n";
+            //uint64_t capacity = 0;
+            //{
+            //    std::lock_guard<std::mutex> lock(_mutex);
+            //    for (auto& i : _freeVectors)
+            //    {
+            //        capacity += i.capacity();
+            //    }
+            //}
+            //std::cout << name << " count         : " << _poolSize << "\n";
+            //std::cout << name << " capacity      : " << formatDataSize(capacity) << "\n";
+            //std::cout << name << " allocations   : " << _allocations.load() << "\n";
+            //std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+        }
+
+    private:
+        void _AllocatePool()
+        {
+            _poolSize = _grownPoolSize;
+            for (uint64_t i = 0; i < _poolSize; ++i)
+            {
+                T temp = {};
+                _freeBlocks.push_back(temp);
+            }
+
+            switch (_growthType)
+            {
+            case PoolGrowthType::Constant: _grownPoolSize += _initialPoolSize; break;
+            case PoolGrowthType::Exponential: _grownPoolSize *= _grownPoolSize; break;
+            case PoolGrowthType::Linear:
+            default: _grownPoolSize += _grownPoolSize;
+            }
+        }
+        uint64_t _poolSize;
+        uint64_t _grownPoolSize;
+        uint64_t _initialPoolSize;
+        std::vector<T> _freeBlocks;
+        std::mutex _mutex;
+        PoolGrowthType _growthType;
+        std::atomic<uint64_t> _allocations;
+        std::atomic<uint64_t> _deallocations;
+
     };
 
     template <typename T>
