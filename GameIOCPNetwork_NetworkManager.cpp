@@ -11,6 +11,8 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <MSWSock.h>
+#include <Windows.h>
 #include "Game_Assert.h"
 #include "GameIOCP.h"
 #include "GameIOCPNetwork.h"
@@ -19,8 +21,7 @@
 #include "GameIOCP_IOCPManager.h"
 #include "Game_SerializeToU8Vector.h"
 #include "Game_SerializeToU8.h"
-#include <MSWSock.h>
-#include <Windows.h>
+#include "GameHelpers.h"
 
 #define NETWORK_COMPLETION_TYPE pad[0]
 #define NETWORK_CHANNEL pad[1]

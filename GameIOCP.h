@@ -20,19 +20,3 @@
 #include "GameIOCPFile_FileManager.h"
 
 
-// TODO: Needs to go somewhere else game helpers?
-static const std::string FormatDataSize(const uint64_t bytes)
-{
-    const char* units[] = { "B", "KB", "MB", "GB", "TB" };
-    uint32_t unitIndex = 0;
-    double_t bytesLeft = (double_t)bytes;
-    while (bytesLeft >= 1024 && unitIndex < 4)
-    {
-        bytesLeft /= 1024.0;
-        ++unitIndex;
-    }
-
-    std::ostringstream formattedSize;
-    formattedSize << std::fixed << std::setprecision(2) << bytesLeft << " " << units[unitIndex] << std::defaultfloat;
-    return formattedSize.str();
-}
