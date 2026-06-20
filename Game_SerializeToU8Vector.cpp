@@ -443,7 +443,7 @@ namespace game
 		return false;
 	}
 
-	void SerializeToU8Vector::ClearData()
+	inline void SerializeToU8Vector::ClearData()
 	{
 		_data.clear();
 		_dataLength = 0;

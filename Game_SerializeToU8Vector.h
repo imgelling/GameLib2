@@ -19,6 +19,7 @@ namespace game
 
 		void Assign(const uint8_t* data, const int64_t size)
 		{
+			ClearData();
 			_data.assign(data, data+size);
 			_IncreaseWritePos(size);
 		}
@@ -91,7 +92,7 @@ namespace game
 		bool Peek(bool&);
 		bool Get(bool&);
 
-		void ClearData();
+		inline void ClearData();
 
 		// Prints out data as uint32_t
 		void PrintAsU32();
