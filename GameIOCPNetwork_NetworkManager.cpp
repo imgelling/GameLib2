@@ -439,6 +439,7 @@ namespace game
 
 			void NetworkManager::_OnReceiveDefault(NETWORK_ONRECEIVE_SIGNATURE)
 			{
+				error;
 				std::cout << "Default OnReceive function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const unsigned char* data, const uint64_t bytesReceived, const uint32_t channel, const NetworkError& error)\n";
 				std::cout << bytesReceived << " bytes received : \n";
@@ -448,12 +449,15 @@ namespace game
 			}
 			void NetworkManager::_OnSendDefault(NETWORK_ONSEND_SIGNATURE)
 			{
+				error;
+				channel;
 				std::cout << "Default OnSend function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const uint64_t bytesSent, const uint32_t channel, const NetworkError& error)\n";
 				std::cout << "Sent " << bytesSent << " bytes to socket : " << socket << "\n";
 			}
 			void NetworkManager::_OnConnectDefault(NETWORK_ONCONNECT_SIGNATURE)
 			{
+				error;
 				std::cout << "Default OnConnect function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
 				std::cout << "Connected to Remote!\n";
@@ -461,6 +465,7 @@ namespace game
 			}
 			void NetworkManager::_OnAcceptDefault(NETWORK_ONACCEPT_SIGNATURE)
 			{
+				error;
 				std::cout << "Default OnAccept function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
 				std::cout << "Incoming Connection Connected!\n";
@@ -468,6 +473,7 @@ namespace game
 			}
 			void NetworkManager::_OnDisconnectDefault(NETWORK_ONDISCONNECT_SIGNATURE)
 			{
+				error;
 				std::cout << "Default OnDisconnect function! Create your own with the signature of\n";
 				std::cout << "void(const SOCKET socket, const game::Network::NetworkError& error)\n";
 				std::cout << "Socket disconnected.\n";
@@ -837,6 +843,7 @@ namespace game
 
 			void NetworkManager::_DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, game::IOCP::PER_IO_DATA* ioDataIn)
 			{
+				completionKey;
 				PER_IO_DATA_NETWORK* ioData = (PER_IO_DATA_NETWORK*)ioDataIn;
 				if (!result) // GetQueuedCompletionStatus failed
 				{

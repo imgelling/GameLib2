@@ -1,6 +1,6 @@
 #pragma once
-#include <ws2def.h>
-#include <Windows.h>
+//#include <ws2def.h>
+//#include <Windows.h>
 #include <atomic>
 #include <cstdint>
 #include <functional>

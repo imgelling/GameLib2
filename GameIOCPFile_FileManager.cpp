@@ -1,8 +1,8 @@
 ﻿//#pragma warning(disable : 4100)
 #include "GameIOCP.h"
 #include <string.h>
-#include <Windows.h>
-#include <WinSock2.h>
+//#include <Windows.h>
+#include <winsock2.h>
 #include <codecvt>
 #include <concrt.h>
 #include <cstdint>
@@ -311,6 +311,7 @@ namespace game
 			}
 			void FileManager::_DoWork(const int32_t result, const DWORD bytesTransferred, const ULONG_PTR completionKey, const game::IOCP::PER_IO_DATA* ioDataIn)
 			{
+				completionKey;
 				PER_IO_DATA_FILE* ioData = (PER_IO_DATA_FILE*)ioDataIn;
 				// Handle errors
 				if (!result)

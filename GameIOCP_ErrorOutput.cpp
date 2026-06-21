@@ -1,5 +1,9 @@
-#include "GameIOCP.h"
-
+#include <string>
+//#include <Windows.h>
+#include <WinSock2.h>
+//#include <Windows.h>
+#include <cstdint>
+#include <iostream>
 namespace game
 {
 	namespace IOCP
