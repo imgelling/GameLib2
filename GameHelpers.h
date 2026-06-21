@@ -43,15 +43,7 @@ namespace game
 		return cyclesStart;
 #endif
 	}
-//
-//	// Macro to state a literal string is a wide string
-//#if defined(UNICODE) || defined(_UNICODE)
-//#define Wide(s) L##s
-//#else
-//#define Wide(s) s
-//#endif
 
-	// TODO: Needs to go somewhere else game helpers?
 	static const std::string FormatDataSize(const uint64_t bytes)
 	{
 		const char* units[] = { "B", "KB", "MB", "GB", "TB" };

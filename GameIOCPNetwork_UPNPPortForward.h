@@ -1,5 +1,11 @@
 #pragma once
-#include "GameIOCPNetwork_NetworkManager.h"
+#include <natupnp.h>
+#include <codecvt>
+#include <cstdint>
+#include <locale>
+#include <string>
+#include <vector>
+//#include "GameIOCPNetwork_NetworkManager.h"
 
 namespace game
 {

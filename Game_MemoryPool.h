@@ -75,9 +75,9 @@ namespace game
         }
         GenericMemoryPool()
         {
-            _poolSize = 0;
-            _grownPoolSize = 0;
-            _initialPoolSize = 0;
+            _poolSize = 1;
+            _grownPoolSize = 1;
+            _initialPoolSize = 1;
             _growthType = PoolGrowthType::Linear;
             _allocations = 0;
             _deallocations = 0;
@@ -116,7 +116,7 @@ namespace game
             return block;
         }
 
-        void Deallocate(T block)
+        void Deallocate(T &block)
         {
             _deallocations.fetch_add(1);
             std::lock_guard<std::mutex> lock(_mutex);
@@ -233,11 +233,11 @@ namespace game
             return block;
         }
 
-        void Deallocate(std::vector<T> block)
+        void Deallocate(std::vector<T> &block)
         {
             _deallocations.fetch_add(1);
-            std::lock_guard<std::mutex> lock(_mutex);
             block.clear();
+            std::lock_guard<std::mutex> lock(_mutex);
             _freeVectors.push_back(block);
         }
 
