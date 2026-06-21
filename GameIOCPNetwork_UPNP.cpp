@@ -1,4 +1,7 @@
 #include "GameIOCP.h"
+#include "GameIOCPNetwork_UPNPPortForward.h"
+
+#include <iostream>
 
 namespace game
 {

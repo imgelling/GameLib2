@@ -1,5 +1,7 @@
 #include "GameIOCP_IOCPManager.h"
 
+#include "GameIOCP_ErrorOutput.h"
+
 namespace game
 {
 	namespace IOCP

@@ -1,7 +1,6 @@
 #pragma once
 #include "GameThreadPool.h"
-#include "GameIOCP_ErrorOutput.h"
-#include <ws2tcpip.h>
+#include <WinSock2.h>
 
 namespace game
 {
