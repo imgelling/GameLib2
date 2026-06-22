@@ -6,8 +6,6 @@
 #include "GameIOCPNetwork.h"
 #include "Game_MemoryPool.h"
 #include "GameHelpers.h"
-// TODO : remove after adding helpers.h or whatever
-//#include "GameIOCP.h" // formatDataSize
 
 namespace game
 {

@@ -6,7 +6,6 @@
 #include <atomic>
 #include <cstdint>
 #include <string>
-//#include "GameIOCPNetwork.h"
 
 namespace game
 {
@@ -158,6 +157,7 @@ namespace game
             case PoolGrowthType::Linear:
             default: _grownPoolSize += _grownPoolSize;
             }
+            std::cout << "GenericMemoryPool grows to " << _poolSize << "\n";
         }
         uint64_t _poolSize;
         uint64_t _grownPoolSize;
