@@ -21,10 +21,34 @@ namespace game
 		Recti GetRectFromId(const int32_t id) const noexcept;
 		uint32_t tileWidth;
 		uint32_t tileHeight;
+		//uint32_t GetTilesPerRow() const;
+		//Pointi GetTextureOffset() const;
+		//void SetTilesPerRow(const uint32_t tiles);
+		//void SetTextureOffset(const Pointi offset);
 	private:
 		uint32_t _tilesPerRow;
 		Pointi _textureOffset;
 	};
+
+	//void SpriteSheet::SetTilesPerRow(const uint32_t tiles)
+	//{
+	//	_tilesPerRow = tiles;
+	//}
+
+	//void SpriteSheet::SetTextureOffset(const Pointi offset)
+	//{
+	//	_textureOffset = offset;
+	//}
+
+	//uint32_t SpriteSheet::GetTilesPerRow() const
+	//{
+	//	return _tilesPerRow;
+	//}
+
+	//Pointi SpriteSheet::GetTextureOffset() const
+	//{
+	//	return _textureOffset;
+	//}
 
 	inline SpriteSheet::SpriteSheet()
 	{
