@@ -1262,6 +1262,8 @@ namespace game
 				{
 					_connectAllocateCount++;
 				}
+#else
+				type;
 #endif
 			}
 			void NetworkInternalStats::MemoryDeallocate(const uint32_t type)
@@ -1283,6 +1285,8 @@ namespace game
 				{
 					_connectDeallocateCount++;
 				}
+#else
+				type;
 #endif
 			}
 
