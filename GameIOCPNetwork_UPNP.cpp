@@ -1,5 +1,6 @@
-#include "GameIOCP.h"
+﻿#include "GameIOCP.h"
 #include "GameIOCPNetwork_UPNPPortForward.h"
+#include "GameHelpers.h"
 
 #include <iostream>
 
@@ -12,7 +13,7 @@ namespace game
 
 			bool UPNPPortForward::Close(const uint16_t externalPort, const std::string& protocol)
 			{
-				BSTR wideProtocol = SysAllocString(_converter.from_bytes(protocol).c_str());
+				BSTR wideProtocol = SysAllocString(ConvertToWide(protocol).c_str());
 				long tempExternalPort = 0;
 				BSTR tempProtocol = NULL;
 				HRESULT hr = 0;
@@ -100,9 +101,9 @@ namespace game
 					return false;
 				}
 
-				BSTR internalClient = SysAllocString(_converter.from_bytes(internalIp).c_str());
-				BSTR description = SysAllocString(_converter.from_bytes(indescription).c_str());
-				BSTR wideProtocol = SysAllocString(_converter.from_bytes(protocol).c_str());
+				BSTR internalClient = SysAllocString(ConvertToWide(internalIp).c_str());
+				BSTR description = SysAllocString(ConvertToWide(indescription).c_str());
+				BSTR wideProtocol = SysAllocString(ConvertToWide(protocol).c_str());
 				IStaticPortMapping* pMapping = nullptr;
 				hr = _mappingCollection->Add(externalPort, wideProtocol, internalPort, internalClient, VARIANT_TRUE, description, &pMapping);
 				if (SUCCEEDED(hr))
@@ -176,7 +177,7 @@ namespace game
 					i->get_Protocol(&protocol);
 					if (port && (protocol != nullptr))
 					{
-						byteProtocol = _converter.to_bytes(protocol);
+						byteProtocol = ConvertFromWide(protocol);
 						Close((uint16_t)port, byteProtocol);
 						SysFreeString(protocol);
 					}

@@ -6,7 +6,6 @@
 
 namespace game
 {
-	// --- Helpers Start
 	enum class RenderAPI
 	{
 		OpenGL = 0,		// OpenGL
@@ -15,7 +14,35 @@ namespace game
 		DirectX12
 	};
 
-	inline std::wstring ConvertToWide(const std::string &s)
+#pragma warning(push)
+#pragma warning(disable : 4505) 
+	
+
+
+	static inline std::string ConvertFromWide(const std::wstring& wstr) 
+	{
+		if (wstr.empty()) return std::string();
+
+		int sizeNeeded = WideCharToMultiByte(CP_UTF8,0,	wstr.c_str(),static_cast<int>(wstr.size()),	nullptr,0,nullptr, nullptr);
+
+		std::string result(sizeNeeded, '\0');
+
+		int bytesWritten = WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			wstr.c_str(),
+			static_cast<int>(wstr.size()),
+			&result[0],
+			sizeNeeded,
+			nullptr, nullptr
+		);
+		if (bytesWritten <= 0) {
+			throw std::runtime_error("WideCharToMultiByte failed during conversion.");
+		}
+		return result;
+	}
+
+	static inline std::wstring ConvertToWide(const std::string &s)
 	{
 #if defined(_WIN32)
 		uint32_t count = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, NULL, 0);
@@ -31,7 +58,7 @@ namespace game
 #endif
 	}
 
-	inline uint64_t GetCPUCycles() noexcept
+	static inline uint64_t GetCPUCycles() noexcept
 	{
 #if defined(_WIN32)
 		return __rdtsc();
@@ -60,3 +87,4 @@ namespace game
 		return formattedSize.str();
 	}
 }
+#pragma warning(pop)

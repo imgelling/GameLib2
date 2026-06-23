@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <natupnp.h>
 #include <codecvt>
 #include <cstdint>
@@ -26,7 +26,7 @@ namespace game
 				IUPnPNAT* _nat;
 				IStaticPortMappingCollection* _mappingCollection;
 				std::vector<IStaticPortMapping*> _openPorts;
-				std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> _converter;
+				//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> _converter;
 			};
 		}
 	}

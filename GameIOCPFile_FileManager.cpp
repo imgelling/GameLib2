@@ -14,6 +14,7 @@
 #include "GameIOCPFile_FileManager.h"
 #include "GameIOCP_ErrorOutput.h"
 #include "GameIOCP_IOCPManager.h"
+#include "GameHelpers.h"
 #define FILE_IO_TYPE pad[0]
 
 namespace game
@@ -225,9 +226,9 @@ namespace game
 
 			HANDLE FileManager::_OpenFile(const std::string& filename, DWORD access, DWORD share, DWORD creation)
 			{
-				std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> _stringConverter;
+				//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> _stringConverter;
 				HANDLE handle = CreateFile(
-					_stringConverter.from_bytes(filename).c_str(),
+					ConvertToWide(filename).c_str(),
 					access, //GENERIC_READ | GENERIC_WRITE,
 					share,  //FILE_SHARE_READ | FILE_SHARE_WRITE,
 					nullptr,
