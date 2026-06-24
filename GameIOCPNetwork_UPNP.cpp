@@ -10,7 +10,6 @@ namespace game
 	{
 		namespace Network
 		{
-
 			bool UPNPPortForward::Close(const uint16_t externalPort, const std::string& protocol)
 			{
 				BSTR wideProtocol = SysAllocString(ConvertToWide(protocol).c_str());
