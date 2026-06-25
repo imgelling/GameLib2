@@ -16,8 +16,6 @@ namespace game
 
 #pragma warning(push)
 #pragma warning(disable : 4505) 
-	
-
 
 	static inline std::string ConvertFromWide(const std::wstring& wstr) 
 	{
