@@ -218,6 +218,7 @@ namespace game
 					}
 					else
 					{
+						// Should do an error (bad packet)
 						return;
 					}
 					_DoOnReceive(ioData);
