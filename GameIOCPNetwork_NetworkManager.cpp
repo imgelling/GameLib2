@@ -811,6 +811,11 @@ namespace game
 					}
 				}
 			}
+
+			void NetworkManager::BroadCast(game::SerializeToU8Vector& packet, const uint8_t channel, const SOCKET except)
+			{
+				BroadCast(packet.GetData(), packet.Size(), channel, except);
+			}
 			void NetworkManager::BroadCast(const unsigned char* data, const uint64_t length, const uint8_t channel, const SOCKET except)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);

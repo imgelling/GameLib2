@@ -112,6 +112,7 @@ namespace game
 				void Send(const SOCKET socket, game::SerializeToU8& packet, const uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void Send(const SOCKET socket, const unsigned char* data, const uint64_t length, const uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
 				void SendTo(const SOCKET socket, const sockaddr_in& addr, const unsigned char* data, const uint64_t length, uint8_t channel = 0, PER_IO_DATA_NETWORK* ioData_in = nullptr);
+				void BroadCast(game::SerializeToU8Vector& packet, const uint8_t channel, const SOCKET except = INVALID_SOCKET);
 				void BroadCast(const unsigned char* data, const uint64_t length, const uint8_t channel, const SOCKET except = INVALID_SOCKET);
 				void Accept();
 				void Connect(const std::string& ipAddress, const uint32_t port);
