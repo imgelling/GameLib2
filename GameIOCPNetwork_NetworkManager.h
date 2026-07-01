@@ -45,7 +45,7 @@ namespace game
 				NetworkInternalStats _stats;
 				NetworkAttributes _attributes;
 				std::atomic<uint32_t> _stopping;
-
+				std::mutex _listenSocketMutex;
 
 				/// <summary>
 				/// Handles full and partial receives.
@@ -128,6 +128,7 @@ namespace game
 				void SetOnDisconnect(std::function<void(NETWORK_ONDISCONNECT_SIGNATURE)> func);
 
 				void DisconnectAConnection(SOCKET socket, const int32_t line, const bool alreadyClosed = false);
+				void CancelAcceptors() const;
 				void PrintStats();
 				uint64_t GetStat(StatName name) const;
 

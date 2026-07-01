@@ -664,6 +664,18 @@ namespace game
 					_CloseConnection(ioData, __LINE__);
 				}
 			}
+
+			void NetworkManager::CancelAcceptors() const
+			{
+				if (!CancelIoEx(reinterpret_cast<HANDLE>(_listenSocket), NULL)) {
+					DWORD err = GetLastError();
+					if (err != ERROR_NOT_FOUND) 
+					{ // ERROR_NOT_FOUND means no pending I/O
+						std::cerr << "CancelIoEx failed: " << err << "\n";
+						return;
+					}
+				}
+			}
 			void NetworkManager::Accept()
 			{
 				// Allocate I/O data structure
@@ -859,6 +871,27 @@ namespace game
 					switch (error)
 					{
 					case WSA_OPERATION_ABORTED:
+						if (ioData->NETWORK_COMPLETION_TYPE == NETWORK_ACCEPT_COMPLETION_TYPE)
+						{
+							std::lock_guard<std::mutex> lock(_listenSocketMutex);
+							std::cout << "Acceptor stopped.\n";
+							if (_listenSocket != INVALID_SOCKET)
+							{
+								// don't need to shutdown because it is a listening socket
+								//if (shutdown(_listenSocket, SD_BOTH) == SOCKET_ERROR)
+								//{
+								//	game::IOCP::ErrorOutput("shutdown", __LINE__);
+								//}
+								if (closesocket(_listenSocket) == SOCKET_ERROR)
+								{
+									game::IOCP::ErrorOutput("closesocket", __LINE__);
+								}
+								_listenSocket = INVALID_SOCKET;
+							}
+						}
+
+						_CloseConnection(ioData, __LINE__, true);
+						return;
 					case ERROR_CONNECTION_ABORTED:
 #if defined(DEBUG) | defined(_DEBUG)
 						//std::cout << "Remote connection disconnected\n";
