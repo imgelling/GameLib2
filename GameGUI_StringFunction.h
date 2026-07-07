@@ -25,6 +25,56 @@ namespace game
 		class StringFunction
 		{
 		public:
+			std::vector<game::GUI::ColorTextSegment> tokens;
+			void Tokenize(const game::GUI::ColorTextSegment& in)
+			{
+				std::istringstream iss(in.text);
+				std::string word;
+				while (iss >> word)
+				{
+					tokens.push_back({ word, in.color });
+				}
+			}
+			void TokenizePreserveSpaces(const game::GUI::ColorTextSegment& textIn)
+			{
+				_current.clear();
+				tokens.clear();
+				const int32_t size = (int32_t)textIn.text.size();
+				for (int32_t i = 0; i < size; ++i)
+				{
+					const char c = textIn.text[i];
+
+					if (c == ' ') // || c == '\t' || c == '\n') 
+					{
+						// If we were building a word, push it
+						if (!_current.empty() && _current[0] != ' ') //current.find_first_of(" \t\n") == std::string::npos)
+						{
+							tokens.push_back({ _current, textIn.color });
+							_current.clear();
+						}
+						// Accumulate space
+						_current += c;// .push_back(c);
+					}
+					else
+					{
+						// If we were building spaces, push them
+						if (!_current.empty() && _current[0] == ' ')//current.find_first_not_of(" \t\n") == std::string::npos)
+						{
+							tokens.push_back({ _current,textIn.color });
+							_current.clear();
+						}
+						// Accumulate word characters
+						_current += c;// .push_back(c);
+					}
+				}
+
+				// Push last token if any
+				if (!_current.empty())
+				{
+					tokens.push_back({ _current, textIn.color });
+				}
+			}
+
 			std::vector<game::GUI::ColorTextSegment> segments;
 
 			bool Valid32Hex(const std::string& hex) const
@@ -238,7 +288,7 @@ namespace game
 			}
 
 		private:
-
+			std::string _current;
 		};
 	}
 }
