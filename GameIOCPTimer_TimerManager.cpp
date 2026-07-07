@@ -1,6 +1,15 @@
 #pragma warning(disable : 4100)
-#include "GameIOCP.h" //Timer_TimerManager.h"
+#define WIN32_LEAN_AND_MEAN 
+#include <Windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#include <chrono>
+#include <cstdint>
+#include <functional>
+#include <iostream>
+#include <mutex>
+#include <thread>
 #include "GameIOCPTimer_TimerManager.h"
+#include "GameIOCP_IOCPManager.h"
 
 namespace game
 {
@@ -55,13 +64,13 @@ namespace game
 						std::lock_guard<std::mutex> lock(_mtx);
 						while (!_queue.empty())
 						{
-							PER_IO_DATA_TIMER* t = _queue.top();
+							//PER_IO_DATA_TIMER* t = _queue.top();
 							_queue.pop();
-							if (t->cancelled)
-							{
-								_timers.erase(t->id);
-								_memoryPool.Deallocate(t);
-							}
+							//if (t->cancelled)
+							//{
+							//	_timers.erase(t->id);
+							//	_memoryPool.Deallocate(t);
+							//}
 						}
 						for (auto& a : _timers)
 						{
@@ -111,7 +120,9 @@ namespace game
 				if (it != _timers.end())
 				{
 					it->second->cancelled = true;
+					PER_IO_DATA_TIMER* task = it->second;
 					_timers.erase(it);
+					PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
 				}
 			}
 
@@ -142,6 +153,8 @@ namespace game
 						_timers.erase(timer->id);
 					}
 					_memoryPool.Deallocate(timer);
+					timer = nullptr;
+					//std::cout << "Timer deallocated\n";
 				}
 			}
 
@@ -164,8 +177,10 @@ namespace game
 						continue;
 					}
 					_queue.pop();
-
-					PostQueuedCompletionStatus(_iocp, 0, task->id, (OVERLAPPED*)task);
+					if (!task->cancelled)
+					{
+						PostQueuedCompletionStatus(_iocp, 0, task->id, (OVERLAPPED*)task);
+					}
 				}
 			}
 
