@@ -973,46 +973,53 @@ namespace game
 
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const std::string& subSheetName, const int32_t x, const int32_t y, const Color color)
 	{
-		auto subSheetIterator = subSheet.subTextureRegistry.find(subSheetName);
+		const auto subSheetIterator = subSheet.subTextureRegistry.find(subSheetName);
 		GAME_ASSERT((subSheetIterator != subSheet.subTextureRegistry.end()));
 
-		game::Recti src;
-		game::Recti dest;
+		//game::Recti src;
+		//game::Recti dest;
 
-		src.bottom = subSheetIterator->second.bottom;
-		src.right = subSheetIterator->second.right;
+		const game::Recti src(0, 0, subSheetIterator->second.right, subSheetIterator->second.bottom);
+		const game::Recti dest(x, y, x + subSheetIterator->second.right, y + subSheetIterator->second.bottom);
 
-		dest.top = y;
-		dest.left = x;
-		dest.bottom = y + subSheetIterator->second.bottom;
-		dest.right = x + subSheetIterator->second.right;
+		//src.bottom = subSheetIterator->second.bottom;
+		//src.right = subSheetIterator->second.right;
+
+		//dest.top = y;
+		//dest.left = x;
+		//dest.bottom = y + subSheetIterator->second.bottom;
+		//dest.right = x + subSheetIterator->second.right;
 
 		Draw(subSheet, subSheetName, dest, src, color);
 	}
 
 	inline void SpriteBatch::Draw(const Texture2D& texture, const int32_t x, const int32_t y, const Color color)
 	{
-		game::Recti src;
-		game::Recti dest;
+		const game::Recti src(0,0,texture.width, texture.height);
+		const game::Recti dest(x,y,x+src.right,y+src.bottom);
 
-		src.bottom = texture.height;
-		src.right = texture.width;
+		//src.bottom = texture.height;
+		//src.right = texture.width;
 
-		dest.top = y;
-		dest.left = x;
-		dest.bottom = y + src.bottom;
-		dest.right = x + src.right;
+		//dest.top = y;
+		//dest.left = x;
+		//dest.bottom = y + src.bottom;
+		//dest.right = x + src.right;
 
 		Draw(texture, dest, src, color);
 	}
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const Recti& subSheetSrc, const Recti& destination, const Recti& portion, const Color& color)
 	{
-		game::Recti rect(portion);
+		const game::Recti rect(portion.left + subSheetSrc.left, 
+			portion.top + subSheetSrc.top,
+			portion.right + subSheetSrc.left, 
+			portion.bottom + subSheetSrc.top);
+		//game::Recti rect(portion);
 
-		rect.top += subSheetSrc.top;
-		rect.left += subSheetSrc.left;
-		rect.bottom += subSheetSrc.top;
-		rect.right += subSheetSrc.left;
+		//rect.top += subSheetSrc.top;
+		//rect.left += subSheetSrc.left;
+		//rect.bottom += subSheetSrc.top;
+		//rect.right += subSheetSrc.left;
 
 		Draw(subSheet.texture, destination, rect, color);
 	}

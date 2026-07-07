@@ -464,30 +464,32 @@ namespace game
 	class Rect
 	{
 	public:
-		Rect(const T left, const T top, const T right, const T bottom)
-		{
-			this->left = left;
-			this->top = top;
-			this->right = right;
-			this->bottom = bottom;
-		}
 		T top;
 		T left;
 		T bottom;
 		T right;
-		Rect()
+		Rect(const T inLeft, const T inTop, const T inRight, const T inBottom)
+			: left(inLeft), top(inTop), right(inRight), bottom(inBottom)
 		{
-			top = 0;
-			left = 0;
-			bottom = 0;
-			right = 0;
+			//left = inLeft;
+			//top = inTop;
+			//right = inRight;
+			//bottom = inBottom;
 		}
-		void Set(const T left, const T top, const T right, const T bottom)
+		Rect()
+			: left(0), top(0), right(0), bottom(0)
 		{
-			this->left = left;
-			this->top = top;
-			this->right = right;
-			this->bottom = bottom;
+		//	top = 0;
+		//	left = 0;
+		//	bottom = 0;
+		//	right = 0;
+		}
+		void Set(const T inLeft, const T inTop, const T inRight, const T inBottom)
+		{
+			left = inLeft;
+			top = inTop;
+			right = inRight;
+			bottom = inBottom;
 		}
 	private:
 	};
@@ -501,7 +503,7 @@ namespace game
 #pragma endregion
 
 	// Seperate place, might be elsewhere in engine
-	inline bool PointRectIntersect(const game::Recti rect, const game::Pointi point) noexcept
+	inline bool PointRectIntersect(const game::Recti &rect, const game::Pointi &point) noexcept
 	{
 		if (point.x < rect.left) return false;
 		if (point.x > rect.right) return false;
