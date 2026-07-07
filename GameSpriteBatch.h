@@ -70,6 +70,7 @@ namespace game
 		
 		// Will draw a specified rectangle portion of a texture to an integer rectangle destination
 		// Can clip
+		void Draw(const game::SpriteSubSheet& subSheet, const Recti& subSheetSrc, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color = game::Colors::White);
 		void Draw(const Texture2D& texture, const Recti& destination, const Recti& source, const Color& color = game::Colors::White);
 				
@@ -1004,7 +1005,17 @@ namespace game
 
 		Draw(texture, dest, src, color);
 	}
+	inline void SpriteBatch::Draw(const game::SpriteSubSheet& subSheet, const Recti& subSheetSrc, const Recti& destination, const Recti& portion, const Color& color)
+	{
+		game::Recti rect(portion);
 
+		rect.top += subSheetSrc.top;
+		rect.left += subSheetSrc.left;
+		rect.bottom += subSheetSrc.top;
+		rect.right += subSheetSrc.left;
+
+		Draw(subSheet.texture, destination, rect, color);
+	}
 	inline void SpriteBatch::Draw(const game::SpriteSubSheet &subSheet, const std::string& subSheetName, const Recti& destination, const Recti& portion, const Color& color)
 	{
 		auto subSheetIterator = subSheet.subTextureRegistry.find(subSheetName);
