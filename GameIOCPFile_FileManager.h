@@ -7,8 +7,8 @@
 #include <string>
 #include "GameIOCP_IOCPManager.h"
 
-#define FILE_ONWRITE_SIGNATURE const int32_t result, uint64_t id, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
-#define FILE_ONWRITE_PARAMETERS result, id, bytesTransferred, bytesToTransfer, data
+#define FILE_ONWRITE_SIGNATURE const int32_t result, const uint64_t id, const std::string &key, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
+#define FILE_ONWRITE_PARAMETERS result, id, key, bytesTransferred, bytesToTransfer, data
 #define FILE_ONREAD_SIGNATURE const int32_t result, uint64_t id, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
 #define FILE_ONREAD_PARAMETERS result, id, bytesTransferred, bytesToTransfer, data
 
@@ -27,6 +27,7 @@ namespace game
 				uint64_t id = 0;
 				HANDLE hFile = INVALID_HANDLE_VALUE;
 				std::string filename;  // string hash?
+				std::string key;
 				//FILE_IO_TYPE = pad[0] = type of completion
 			};
 
@@ -55,7 +56,7 @@ namespace game
 
 				void SetOnWrite(std::function<void(FILE_ONWRITE_SIGNATURE)>);
 				// Will create the file, if it does not exsist.  Will truncate a file if it does exsist. Copies the data,
-				bool Write(const std::string& filename, const char* data, const uint64_t size, uint64_t* id = nullptr, PER_IO_DATA_FILE* ioDataIn = nullptr, const bool append = false);
+				bool Write(const std::string& filename, const std::string &key, const char* data, const uint64_t size, uint64_t* id = nullptr, PER_IO_DATA_FILE* ioDataIn = nullptr, const bool append = false);
 				//void SetOnWrite
 			private:
 				HANDLE _OpenFile(const std::string& filename, DWORD access, DWORD share, DWORD creation);

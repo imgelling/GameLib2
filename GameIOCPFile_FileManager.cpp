@@ -144,9 +144,9 @@ namespace game
 			}
 			bool FileManager::Append(const std::string& filename, const char* data, const uint64_t size, uint64_t *id)
 			{
-				return Write(filename, data, size, id, nullptr, true);
+				return Write(filename, "", data, size, id, nullptr, true);
 			}
-			bool FileManager::Write(const std::string& filename, const char* data, const uint64_t size, uint64_t* id, PER_IO_DATA_FILE* ioDataIn, const bool append)
+			bool FileManager::Write(const std::string& filename, const std::string& key, const char* data, const uint64_t size, uint64_t* id, PER_IO_DATA_FILE* ioDataIn, const bool append)
 			{
 				PER_IO_DATA_FILE* ioData = ioDataIn;
 
@@ -160,6 +160,7 @@ namespace game
 					ioData->FILE_IO_TYPE = FILE_WRITE_COMPLETION_TYPE;
 
 					ioData->bytesToTransfer = size;
+					ioData->key = key;
 					//std::cout << "Bytes to write = " << ioData->bytesToTransfer << "\n"; // not needed	
 
 					try
@@ -262,7 +263,7 @@ namespace game
 			{
 				ioData->bytesTransferred += bytesTransferred;
 
-				_onWrite(0, ioData->id, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
+				_onWrite(0, ioData->id, ioData->key, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
 
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
 				{
@@ -275,7 +276,7 @@ namespace game
 					ioData->buffer.len = (ioData->bytesToTransfer - ioData->bytesTransferred) > MAX_IO_SIZE ? MAX_IO_SIZE : (uint32_t)(ioData->bytesToTransfer - ioData->bytesTransferred);
 
 					//uint64_t id = 0;
-					Write("", nullptr, 0, nullptr, ioData);
+					Write("", "", nullptr, 0, nullptr, ioData);
 					return;
 				}
 				//std::cout << "Write done!\n";
