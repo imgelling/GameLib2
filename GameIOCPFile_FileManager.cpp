@@ -65,7 +65,7 @@ namespace game
 
 			}
 
-			bool FileManager::Read(const std::string& filename, uint64_t* id, PER_IO_DATA_FILE* ioDataIn)
+			bool FileManager::Read(const std::string& filename, const std::string &key, uint64_t* id, PER_IO_DATA_FILE* ioDataIn)
 			{
 				PER_IO_DATA_FILE* ioData = ioDataIn;
 
@@ -77,7 +77,7 @@ namespace game
 					ioData->ioDataType = game::IOCP::IOCP_TYPE_FILE;
 					ioData->hFile = INVALID_HANDLE_VALUE;
 					ioData->FILE_IO_TYPE = FILE_READ_COMPLETION_TYPE;
-
+					ioData->key = key;
 
 					// ioData has not been passed in so the file needs to be opened
 					ioData->hFile = _OpenFile(filename, GENERIC_READ, 0, OPEN_ALWAYS);
@@ -286,7 +286,7 @@ namespace game
 			{
 				ioData->bytesTransferred += bytesTransferred;
 
-				_onRead(0, ioData->id, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
+				_onRead(0, ioData->id, ioData->key, (DWORD)ioData->bytesTransferred, (DWORD)ioData->bytesToTransfer, (uint8_t*)ioData->data);
 
 				// Check if all the bytes requested were read
 				if (ioData->bytesToTransfer > ioData->bytesTransferred)
@@ -304,7 +304,7 @@ namespace game
 
 					// Read more
 					//uint64_t id = 0;
-					Read("", nullptr, ioData);
+					Read("", "", nullptr, ioData);
 					return;
 				}
 				// Read done, delete and close file

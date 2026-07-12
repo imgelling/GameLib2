@@ -9,8 +9,8 @@
 
 #define FILE_ONWRITE_SIGNATURE const int32_t result, const uint64_t id, const std::string &key, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
 #define FILE_ONWRITE_PARAMETERS result, id, key, bytesTransferred, bytesToTransfer, data
-#define FILE_ONREAD_SIGNATURE const int32_t result, uint64_t id, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
-#define FILE_ONREAD_PARAMETERS result, id, bytesTransferred, bytesToTransfer, data
+#define FILE_ONREAD_SIGNATURE const int32_t result, const uint64_t id, const std::string &key, const DWORD bytesTransferred, const DWORD bytesToTransfer, const uint8_t* data
+#define FILE_ONREAD_PARAMETERS result, id, key, bytesTransferred, bytesToTransfer, data
 
 namespace game
 {
@@ -42,7 +42,7 @@ namespace game
 				// TODO: add defaults to explaing signatures and prevent crashes
 				
 				// Will open a file, creating if it doesn't exist, and read the whole file in
-				bool Read(const std::string& filename, uint64_t * id = nullptr ,PER_IO_DATA_FILE* ioDataIn = nullptr);
+				bool Read(const std::string& filename, const std::string& key, uint64_t * id = nullptr ,PER_IO_DATA_FILE* ioDataIn = nullptr);
 
 				void SetOnRead(std::function<void(FILE_ONREAD_SIGNATURE)>);
 
