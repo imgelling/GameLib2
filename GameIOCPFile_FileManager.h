@@ -47,7 +47,7 @@ namespace game
 				void SetOnRead(std::function<void(FILE_ONREAD_SIGNATURE)>);
 
 				// read write exists methods
-				bool Append(const std::string& filename, const char* data, const uint64_t size, uint64_t* id = nullptr);
+				bool Append(const std::string& filename, const std::string& key, const char* data, const uint64_t size, uint64_t* id = nullptr);
 
 				uint64_t GetNextID()
 				{

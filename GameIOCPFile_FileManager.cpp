@@ -142,9 +142,9 @@ namespace game
 				//readID++;
 				return true;
 			}
-			bool FileManager::Append(const std::string& filename, const char* data, const uint64_t size, uint64_t *id)
+			bool FileManager::Append(const std::string& filename, const std::string& key, const char* data, const uint64_t size, uint64_t *id)
 			{
-				return Write(filename, "", data, size, id, nullptr, true);
+				return Write(filename, key, data, size, id, nullptr, true);
 			}
 			bool FileManager::Write(const std::string& filename, const std::string& key, const char* data, const uint64_t size, uint64_t* id, PER_IO_DATA_FILE* ioDataIn, const bool append)
 			{
