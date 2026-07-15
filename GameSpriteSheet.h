@@ -21,6 +21,7 @@ namespace game
 		Recti GetRectFromId(const int32_t id) const noexcept;
 		uint32_t tileWidth;
 		uint32_t tileHeight;
+		int32_t maxTiles;
 	private:
 		uint32_t _tileWidthWithMargin;
 		uint32_t _tileHeightWithMargin;
@@ -33,6 +34,7 @@ namespace game
 	{
 		tileWidth = 0;
 		tileHeight = 0;
+		maxTiles = 0;
 		_tilesPerRow = 0;
 		_tileWidthWithMargin = 0;
 		_tileHeightWithMargin = 0;
@@ -49,6 +51,8 @@ namespace game
 		_tileWidthWithMargin = tileWidth + marginX;
 		_tileHeightWithMargin = tileHeight + marginY;
 		_tilesPerRow = texture.width / (_tileWidthWithMargin);
+		const uint32_t tilesPerCol = texture.height / (_tileHeightWithMargin);
+		maxTiles = _tilesPerRow * tilesPerCol;
 		//_margins.x = marginX;
 		//_margins.y = marginY;
 	}
@@ -69,8 +73,8 @@ namespace game
 		_tileHeightWithMargin = tileHeight + marginY;
 		//int32_t textureWidth = subSheet.subTextureRegistry[subName].right;
 		_tilesPerRow = subSheet.subTextureRegistry[subName].right / (_tileWidthWithMargin);
-		//_margins.x = marginX;
-		//_margins.y = marginY;
+		const uint32_t tilesPerCol = subSheet.subTextureRegistry[subName].bottom / (_tileHeightWithMargin);
+		maxTiles = _tilesPerRow * tilesPerCol;
 	}
 
 	inline void SpriteSheet::Initialize(const Texture2D &texture, const uint32_t width, const uint32_t height, const uint32_t marginX, const uint32_t marginY) noexcept
@@ -82,8 +86,8 @@ namespace game
 		_tileWidthWithMargin = tileWidth + marginX;
 		_tileHeightWithMargin = tileHeight + marginY;
 		_tilesPerRow = texture.width / (_tileWidthWithMargin);
-		//_margins.x = marginX;
-		//_margins.y = marginY;
+		uint32_t tilesPerCol = texture.height / (_tileHeightWithMargin);
+		maxTiles = _tilesPerRow * tilesPerCol;
 	}
 
 	inline void SpriteSheet::Initialize(const Texture2D &texture, const Pointi &size, const game::Pointi &margin) noexcept
