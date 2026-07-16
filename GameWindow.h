@@ -19,7 +19,7 @@ namespace game
 		void ToggleFullScreen();
 		void DoMessagePump();
 #if defined(_WIN32)
-		const HWND GetHandle();
+		const HWND GetHandle() const;
 #elif defined(__linux__)
 
 #endif
@@ -231,7 +231,7 @@ namespace game
 	}
 
 #if defined(_WIN32)
-	inline const HWND Window::GetHandle()
+	inline const HWND Window::GetHandle() const
 	{
 		return _windowHandle;
 	}

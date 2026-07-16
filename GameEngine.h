@@ -65,10 +65,11 @@ namespace game
 		Keyboard geKeyboard;			// Provides key state info and text input
 		Mouse geMouse;					// Provides mouse state info
 		Logger* geLogger;				// Provides a logging interface
-		bool geIsRunning;				// Is the engine running?
-		bool geIsMinimized;				// Is the game window minimized?
-		bool geIsMaximized;				// Is the game window maximized?
-		bool geIsFullScreen;			// Is the game window full screen (no border)?
+		std::atomic_bool geIsRunning;				// Is the engine running?
+		std::atomic_bool geIsMinimized;				// Is the game window minimized?
+		std::atomic_bool geIsMaximized;				// Is the game window maximized?
+		std::atomic_bool geIsFullScreen;			// Is the game window full screen (no border)?
+		std::atomic_bool geUserClosedWindow;
 #if defined(GAME_DIRECTX11)
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d11DeviceContext;
 		Microsoft::WRL::ComPtr<ID3D11RenderTargetView> d3d11RenderTarget;
@@ -153,6 +154,11 @@ namespace game
 		{
 			return _window.GetHandle();
 		}
+		virtual void WindowClosed()
+		{
+			geUserClosedWindow = true;
+			game::enginePointer->geStopEngine();
+		}
 		
 		// Created by end user		
 
@@ -212,6 +218,7 @@ namespace game
 		geIsMinimized = false;
 		geIsMaximized = false;
 		geIsFullScreen = false;
+		geUserClosedWindow = false;
 #if defined(GAME_DIRECTX11)
 #endif
 	}
@@ -848,7 +855,7 @@ namespace game
 		case WM_KEYUP: enginePointer->geKeyboard.SetKeyState((uint8_t)wParam, false); return 0;
 			//case WM_SYSKEYDOWN: ptrPGE->olc_UpdateKeyState(mapKeys[wParam], true);						return 0;
 			//case WM_SYSKEYUP:	ptrPGE->olc_UpdateKeyState(mapKeys[wParam], false);
-		case WM_CLOSE:		if (enginePointer) enginePointer->geIsRunning = false; return 0;
+		case WM_CLOSE:		if (enginePointer) enginePointer->WindowClosed();/*->geIsRunning = false;*/ return 0;
 		case WM_DESTROY:	PostQuitMessage(0); DestroyWindow(hWnd); return 0;
 		// Stops F10 from bringing up the window menu
 		case WM_SYSCOMMAND: if ((wParam & 0xFFF0) == SC_KEYMENU) return 0;
