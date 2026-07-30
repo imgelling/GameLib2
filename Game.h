@@ -1,4 +1,4 @@
-#if !defined(GAME_H)
+﻿#if !defined(GAME_H)
 #define GAME_H
 
 /*
@@ -184,7 +184,8 @@ Change Log:
 #if defined(GAME_ENABLE_NETWORKING)
 #include "GameNetwork.h"
 #endif
-#include "GamePerformanceTimer.h"
+//#include "GamePerformanceTimer.h"
+#include "Game_PerfTimer.h"
 #include "GamePixelMode.h"
 #include "GameRandom.h"
 #include "GameRendererBase.h"

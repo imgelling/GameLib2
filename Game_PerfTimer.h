@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <mutex>
 
+#include <Game_Assert.h>
+
 namespace game
 {
 
