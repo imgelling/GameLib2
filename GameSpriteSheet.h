@@ -22,6 +22,7 @@ namespace game
 		uint32_t GetTileWidth() const noexcept { return _tileWidth; };
 		uint32_t GetTileHeight() const noexcept { return _tileHeight; };
 		uint32_t GetMaxTiles() const noexcept { return _maxTiles; };
+		bool isInitialized;
 	private:
 		uint32_t _tileWidth;
 		uint32_t _tileHeight;
@@ -40,6 +41,7 @@ namespace game
 		_tilesPerRow = 0;
 		_tileWidthWithMargin = 0;
 		_tileHeightWithMargin = 0;
+		isInitialized = false;
 	}
 	
 	SpriteSheet::SpriteSheet(const Texture2D& texture, const uint32_t width, const uint32_t height, const uint32_t marginX, const uint32_t marginY) noexcept
@@ -53,6 +55,7 @@ namespace game
 		_tilesPerRow = texture.width / (_tileWidthWithMargin);
 		const uint32_t tilesPerCol = texture.height / (_tileHeightWithMargin);
 		_maxTiles = _tilesPerRow * tilesPerCol;
+		isInitialized = true;
 	}
 
 	inline void SpriteSheet::Initialize(const SpriteSubSheet& subSheet, const std::string& subName, const Pointi& size, const game::Pointi &margin) noexcept
@@ -72,6 +75,7 @@ namespace game
 		_tilesPerRow = subSheet.subTextureRegistry.at(subName).right / (_tileWidthWithMargin);
 		const uint32_t tilesPerCol = subSheet.subTextureRegistry.at(subName).bottom / (_tileHeightWithMargin);
 		_maxTiles = _tilesPerRow * tilesPerCol;
+		isInitialized = true;
 	}
 
 	inline void SpriteSheet::Initialize(const Texture2D &texture, const uint32_t width, const uint32_t height, const uint32_t marginX, const uint32_t marginY) noexcept
@@ -85,6 +89,7 @@ namespace game
 		_tilesPerRow = texture.width / (_tileWidthWithMargin);
 		const uint32_t tilesPerCol = texture.height / (_tileHeightWithMargin);
 		_maxTiles = _tilesPerRow * tilesPerCol;
+		isInitialized = true;
 	}
 
 	inline void SpriteSheet::Initialize(const Texture2D &texture, const Pointi &size, const game::Pointi &margin) noexcept
