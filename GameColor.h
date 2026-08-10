@@ -35,20 +35,24 @@ namespace game
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
 
-		void SerializeToStringStreamRGBAf(std::stringstream &ss) const
+		// uint8 versions of above
+
+		void SerializeRGBAf(std::stringstream &ss) const
 		{
 			ss << rf << "," << gf << "," << bf << "," << af;
 		}
 
-		void SerializeToStringStreamRGBAui(std::stringstream& ss) const
+		void SerializeRGBAui(std::stringstream& ss) const
 		{
 			ss << r << "," << g << "," << b << "," << a;
 		}
 
-		void SerializeToStringStreamh(std::stringstream& ss) const
+		void Serializeh(std::stringstream& ss) const
 		{
 			ss << hexidecimal;
 		}
+
+		// string versions
 
 
 
