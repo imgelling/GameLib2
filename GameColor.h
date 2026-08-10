@@ -3,6 +3,7 @@
 #include <string>
 #include <cmath>
 #include <cstdint>
+#include <sstream>
 #include "Game.h"
 
 
@@ -34,6 +35,23 @@ namespace game
 		void Set(const float_t r, const float_t g, const float_t b, const float_t a) noexcept;
 		void Set(const double_t r, const double_t g, const double_t b, const double_t a) noexcept;
 		void Set(const uint32_t r, const uint32_t g, const uint32_t b, const uint32_t a) noexcept;
+
+		void SerializeToStringStreamRGBAf(std::stringstream &ss) const
+		{
+			ss << rf << "," << gf << "," << bf << "," << af;
+		}
+
+		void SerializeToStringStreamRGBAui(std::stringstream& ss) const
+		{
+			ss << r << "," << g << "," << b << "," << a;
+		}
+
+		void SerializeToStringStreamh(std::stringstream& ss) const
+		{
+			ss << hexidecimal;
+		}
+
+
 
 		// Sets by hex
 		void Set(const std::string& hex);
