@@ -37,19 +37,19 @@ namespace game
 
 		// uint8 versions of above
 
-		void SerializeRGBAf(std::stringstream &ss) const
+		void SerializeRGBAf(std::string &str) const
 		{
-			ss << rf << "," << gf << "," << bf << "," << af;
+			str = std::to_string(rf) + "," + std::to_string(gf) + "," + std::to_string(bf) + "," + std::to_string(af);
 		}
 
-		void SerializeRGBAui(std::stringstream& ss) const
+		void SerializeRGBAui(std::string& str) const
 		{
-			ss << r << "," << g << "," << b << "," << a;
+			str = std::to_string(r) + "," + std::to_string(g) + "," + std::to_string(b) + "," + std::to_string(a);
 		}
 
-		void Serializeh(std::stringstream& ss) const
+		void SerializeHex(std::string& str) const
 		{
-			ss << hexidecimal;
+			str = hexidecimal;
 		}
 
 		// string versions
