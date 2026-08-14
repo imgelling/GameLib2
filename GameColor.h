@@ -37,22 +37,20 @@ namespace game
 
 		// uint8 versions of above
 
-		void SerializeRGBAf(std::string &str) const
+		void ToStringRGBAf(std::string &str) const
 		{
 			str = std::to_string(rf) + "," + std::to_string(gf) + "," + std::to_string(bf) + "," + std::to_string(af);
 		}
 
-		void SerializeRGBAui(std::string& str) const
+		void ToStringRGBAui(std::string& str) const
 		{
 			str = std::to_string(r) + "," + std::to_string(g) + "," + std::to_string(b) + "," + std::to_string(a);
 		}
 
-		void SerializeHex(std::string& str) const
+		void ToStringHex(std::string& str) const
 		{
 			str = hexidecimal;
 		}
-
-		// string versions
 
 
 
@@ -112,12 +110,10 @@ namespace game
 			out[0] = hexDigits[(byte >> 4) & 0x0F]; // high nibble
 			out[1] = hexDigits[byte & 0x0F];        // low nibble)
 			};
-		//hexColor[0] = '#';
 		byteToHex((uint8_t)r, &hexColor[0]);
 		byteToHex((uint8_t)g, &hexColor[2]);
 		byteToHex((uint8_t)b, &hexColor[4]);
 		byteToHex((uint8_t)a, &hexColor[6]);
-		//hexColor[9] = '\0';
 		return std::string(hexColor);
 	}
 
@@ -131,10 +127,10 @@ namespace game
 		//ss << std::hex << hex;
 		//ss >> rgba;
 		Color ret;
-		uint32_t newR = (newRGBA >> 24) & 0xFF;
-		uint32_t newG = (newRGBA >> 16) & 0xFF;
-		uint32_t newB = (newRGBA >> 8) & 0xFF;
-		uint32_t newA = (newRGBA >> 0) & 0xFF;
+		const uint32_t newR = (newRGBA >> 24) & 0xFF;
+		const uint32_t newG = (newRGBA >> 16) & 0xFF;
+		const uint32_t newB = (newRGBA >> 8) & 0xFF;
+		const uint32_t newA = (newRGBA >> 0) & 0xFF;
 		Set(newR, newG, newB, newA);
 		//return  ret;
 	}
