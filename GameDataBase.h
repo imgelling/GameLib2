@@ -303,25 +303,6 @@ namespace game
 				PrintObject(*this);
 			}
 
-			uint64_t GetValueCount(const std::string& property)
-			{
-
-			}
-
-			std::string Value(const std::string& value, const uint64_t index)
-			{
-				DataBaseProperty* prop = Property(value);
-				if (prop)
-				{
-					std::cout << "value at property |" << prop->name << "| maybe here\n";
-					return prop->name;
-				}
-				{
-					std::cout << "Value \"" << value << "\" does not exist\n";
-					return "";
-				}
-			}
-
 			// Will return a pointer to the last thing that was a proper Property
 			DataBaseProperty* Property(const std::string& property)
 			{
