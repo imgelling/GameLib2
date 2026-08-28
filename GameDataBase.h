@@ -444,7 +444,7 @@ namespace game
 						// Add the object
 						objectStack.top().first->AddObject(object);
 						// Add to the stack to "enter" the object
-						objectStack.push({ &objectStack.top().first->objects[objectIndex[object]], depth });
+						objectStack.push({ &objectStack.top().first->objects[objectStack.top().first->objectIndex[object]], depth });
 						//std::cout << "Stack top is " << objectStack.top().first->name << "\n";
 						for (auto& com : commentsRead)
 						{
