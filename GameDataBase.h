@@ -6,11 +6,34 @@
 #include <utility>
 #include <iostream>
 #include <sstream>
+#include <cstdint>
+#include <string>
 
 namespace game
 {
 	namespace DataBase
 	{
+		bool StringToUI64(const std::string& str, uint64_t& result) 
+		{
+			result = 0;
+			if (str.empty()) return false;
+
+			for (char c : str) 
+			{
+				if (c < '0' || c > '9')
+				{
+					// Not a number
+					return false; 
+				}
+				const uint64_t digit = (uint64_t)c - '0';
+
+				// Check for overflow before multiplying
+				if (result > (UINT64_MAX - digit) / 10) return false;
+
+				result = result * 10 + digit;
+			}
+			return true;
+		}
 
 		struct DataBaseValue
 		{
