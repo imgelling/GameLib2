@@ -8,31 +8,49 @@
 #include <sstream>
 #include <cstdint>
 #include <string>
+#include <charconv>
+#include <system_error>
+#include <string_view>
+#include <type_traits>
+#include "Game_Assert.h"
 
 namespace game
 {
 	namespace DataBase
 	{
-		bool StringToUI64(const std::string& str, uint64_t& result) 
+
+		// Generic value parser
+		// bool does not work
+		template <typename T>
+		bool ParseValue(const std::string_view& sv, T& out, int base = 10, std::string_view* remaining = nullptr) 
 		{
-			result = 0;
-			if (str.empty()) return false;
+			GAME_ASSERT(std::is_arithmetic_v<T>);
 
-			for (char c : str) 
+			// make a double and then cast to T when returning?
+			double temp = 0;
+			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), temp);
+
+			if (res.ec == std::errc()) 
 			{
-				if (c < '0' || c > '9')
+				out = (T)temp;
+				std::cout << "Parsed value: " << out << "\n";
+				if (remaining) 
 				{
-					// Not a number
-					return false; 
+					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
 				}
-				const uint64_t digit = (uint64_t)c - '0';
-
-				// Check for overflow before multiplying
-				if (result > (UINT64_MAX - digit) / 10) return false;
-
-				result = result * 10 + digit;
+				return true;
 			}
-			return true;
+			else if (res.ec == std::errc::invalid_argument)
+			{
+				std::cerr << "Error: No valid value found at the start of the string.\n";
+				return false;
+			}
+			else if (res.ec == std::errc::result_out_of_range)
+			{
+				std::cerr << "Error: Number out of range for value type.\n";
+				return true;
+			}
+			return false;
 		}
 
 		struct DataBaseValue
