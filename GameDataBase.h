@@ -20,25 +20,25 @@ namespace game
 	{
 
 		// Generic value parser
-		// bool does not work
+		// bool does not work and overfloat may happen
 		template <typename T>
 		bool ParseValue(const std::string_view& sv, T& out, std::string_view* remaining = nullptr) 
 		{
 			GAME_ASSERT(std::is_arithmetic_v<T>);
 
 			// make a double and then cast to T when returning?
-			double temp = 0;
-			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), temp);
+			//double temp = 0;
+			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), out);
 
 			if (res.ec == std::errc()) 
 			{
-				out = (T)temp;
+				//out = (T)temp;
 				// Check if overflow happened, except when out is a bool
-				if (((double)out != temp) && !(std::is_same<T, bool>::value))
-				{
-					out = 0;
-					goto range;
-				}
+				//if (((double)out != temp) && !(std::is_same<T, bool>::value))
+				//{
+				//	out = 0;
+				//	goto range;
+				//}
 				//out = (T)temp;
 				std::cout << "Parsed value: " << out << "\n";
 				if (remaining) 
@@ -54,7 +54,7 @@ namespace game
 			}
 			else if (res.ec == std::errc::result_out_of_range)
 			{
-				range:
+				//range:
 				std::cerr << "Error: Number out of range for value type.\n";
 				return true;
 			}
