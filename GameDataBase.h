@@ -188,8 +188,9 @@ namespace game
 
 			bool AddObject(const std::string& inName)
 			{
-				DataBaseObject newObject;
-				newObject.name = _GetLastDot(inName);
+				//DataBaseObject newObject;
+				//newObject.name = _GetLastDot(inName);
+				std::string newObjectName = _GetLastDot(inName).c_str();
 				DataBaseObject* object = operator[](inName);;
 
 				if (!object)
@@ -198,14 +199,15 @@ namespace game
 					return false;
 				}
 
-				//if (object->ObjectExists(newObject.name))
-				if (object->name == newObject.name)
+				//if (object->name == newObject.name)
+				if (object->name == newObjectName)
 				{
 					std::cout << "DataBaseObject [" << inName << "] already exists" << std::endl;
 					return false;
 				}
-				object->objectIndex.insert({ newObject.name, object->objects.size() });
-				object->objects.emplace_back(newObject);
+				//object->objectIndex.insert({ newObject.name, object->objects.size() });
+				object->objectIndex.insert({ newObjectName, object->objects.size() });
+				object->objects.emplace_back(DataBaseObject(newObjectName));
 				return true;
 			}
 
