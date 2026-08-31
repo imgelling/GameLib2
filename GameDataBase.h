@@ -22,7 +22,7 @@ namespace game
 		// Generic value parser
 		// bool does not work
 		template <typename T>
-		bool ParseValue(const std::string_view& sv, T& out, int base = 10, std::string_view* remaining = nullptr) 
+		bool ParseValue(const std::string_view& sv, T& out, std::string_view* remaining = nullptr) 
 		{
 			GAME_ASSERT(std::is_arithmetic_v<T>);
 
@@ -33,6 +33,13 @@ namespace game
 			if (res.ec == std::errc()) 
 			{
 				out = (T)temp;
+				// Check if overflow happened, except when out is a bool
+				if (((double)out != temp) && !(std::is_same<T, bool>::value))
+				{
+					out = 0;
+					goto range;
+				}
+				//out = (T)temp;
 				std::cout << "Parsed value: " << out << "\n";
 				if (remaining) 
 				{
@@ -47,6 +54,7 @@ namespace game
 			}
 			else if (res.ec == std::errc::result_out_of_range)
 			{
+				range:
 				std::cerr << "Error: Number out of range for value type.\n";
 				return true;
 			}
