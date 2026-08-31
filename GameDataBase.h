@@ -75,6 +75,8 @@ namespace game
 			// or the object before the last dot
 			inline DataBaseObject* operator[](const std::string& id)
 			{
+				static std::string nextName;
+				static std::string newName;
 				const uint64_t loc = id.find_first_of('.');
 				if (loc != std::string::npos)
 				{
@@ -82,9 +84,9 @@ namespace game
 					//std::cout << "[" << name << "]" << std::endl; // for testing
 
 					// Next object name
-					std::string nextName = id.substr(0, loc);
+					nextName = id.substr(0, loc);
 					// Possible next object name
-					std::string newName = id.substr(loc + 1, id.size());
+					newName = id.substr(loc + 1, id.size());
 					if (ObjectExists(nextName))
 					{
 						return objects[objectIndex[nextName]].operator[](newName);
@@ -384,31 +386,39 @@ namespace game
 			bool LoadFromString(const std::string& str)
 			{
 				std::stringstream ss(str);
-				auto TrimWhiteSpace = [](std::string& in)
-					{
-						in.erase(0, in.find_first_not_of(" \t\n\r\f\v"));
-						in.erase(in.find_last_not_of(" \t\n\r\f\v") + 1);
-					};
 				std::string line;
+				std::string_view lineSV;
 				std::vector<std::string> commentsRead;
 				std::stack <std::pair<DataBaseObject*, int64_t>> objectStack;
 				std::pair<DataBaseProperty*, int64_t> currentPropertyDepth;
 				int64_t depth = 0;
 				std::string property;
 				std::string object;
+				DataBaseObject* temp = nullptr;
 
 				objectStack.push({ this,0 });
 				do
 				{
 					std::getline(ss, line);
-					////std::cout << "Parsing line \n" << line << "\n";
-					TrimWhiteSpace(line);
-					if (line[0] == '{')
+					lineSV = line;
+					//lineSV = lineSV.substr(line.find_first_not_of(" \t\n\r\f\v"), line.find_last_not_of(" \t\n\r\f\v") + 1);
+					lineSV.remove_prefix(lineSV.find_first_not_of(" \t\n\r\f\v"));
+					auto dkfj = lineSV.find_last_not_of(" \t\n\r\f\v")+1;
+					lineSV.remove_suffix(lineSV.size() - dkfj);
+					//std::cout << "Parsing line \n" << lineSV << "\n";
+					//line.erase(0, line.find_first_not_of(" \t\n\r\f\v"));
+					//line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
+					//line.resize(line.find_last_not_of(" \t\n\r\f\v")+1);
+					//if (!lineSV.size())
+					//{
+					//	std::cout << "shit\n";
+					//}
+					if (lineSV[0] == '{')
 					{
 						depth++;
 						continue;
 					}
-					if (line[0] == '}')
+					if (lineSV[0] == '}')
 					{
 						depth--;
 						if (objectStack.top().second == depth)
@@ -424,31 +434,37 @@ namespace game
 						continue;
 					}
 					// Read the comments, we will assign later
-					if (line[0] == '#')
+					if (lineSV[0] == '#')
 					{
-						if (!(line.size() - 1))
+						if (!(lineSV.size() - 1))
 						{
 							std::cout << "Empty comment found\n";
-							line.clear();
+							//line.clear();
+							lineSV.remove_prefix(line.size());// = "";
+
 						}
 						else
-							line = line.substr(2, line.size());
-						std::cout << "Comment found # " << line << "\n";
-						commentsRead.emplace_back(line);
+						{
+							//lineSV = lineSV.substr(2, line.size());
+							lineSV.remove_prefix(2);
+							//lineSV.remove_suffix()
+						}
+						//std::cout << "Comment found # " << line << "\n";
+						commentsRead.emplace_back(std::string(lineSV));
 						continue;
 					}
 
 					// Should be an Object
-					if (line[0] == '[')
+					if (lineSV[0] == '[')
 					{
 						// Object found
-						std::cout << "Object " << line << " found\n";
-						if (line.back() != ']')
+						//std::cout << "Object " << line << " found\n";
+						if (lineSV.back() != ']')
 						{
 							std::cout << "Malformed data. Object has no closing ']'.\n";
 							return false;
 						}
-						object = line.substr(1, line.size() - 2);
+						object = lineSV.substr(1, lineSV.size() - 2);
 						if (!object.size())
 						{
 							std::cout << "Malformed data. Object is unnamed.\n";
@@ -467,7 +483,8 @@ namespace game
 						// Add the object
 						objectStack.top().first->AddObject(object);
 						// Add to the stack to "enter" the object
-						objectStack.push({ &objectStack.top().first->objects[objectStack.top().first->objectIndex[object]], depth });
+						temp = objectStack.top().first;
+						objectStack.push({ &temp->objects[temp->objectIndex[object]], depth });
 						//std::cout << "Stack top is " << objectStack.top().first->name << "\n";
 						for (auto& com : commentsRead)
 						{
@@ -479,23 +496,24 @@ namespace game
 					}
 
 					// Should be a property
-					if (line[0] == '|')
+					if (lineSV[0] == '|')
 					{
 						// Property found
-						std::cout << "Property " << line << " found\n";
-						if (line.back() != '|')
+						//std::cout << "Property " << line << " found\n";
+						if (lineSV.back() != '|')
 						{
 							std::cout << "Malformed data. Property has no closing '|'.\n";
 							return false;
 						}
-						property = line.substr(1, line.size() - 2);
+						property = lineSV.substr(1, lineSV.size() - 2);
 						if (!property.size())
 						{
 							std::cout << "Malformed data. Property is unnamed.\n";
 							return false;
 						}
-						objectStack.top().first->AddProperty(property);
-						currentPropertyDepth.first = objectStack.top().first->Property(property);
+						temp = objectStack.top().first;
+						temp->AddProperty(property);
+						currentPropertyDepth.first = &temp->properties[temp->propertyIndex[property]];// ()Property(property);
 						currentPropertyDepth.second = depth;
 						for (auto& com : commentsRead)
 						{
@@ -509,14 +527,14 @@ namespace game
 					{
 						if (currentPropertyDepth.first)
 						{
-							std::cout << "Value \"" << line << "\" found\n";
-							if (!line.size())
+							//std::cout << "Value \"" << line << "\" found\n";
+							if (!lineSV.size())
 							{
 								std::cout << "Malformed data. Value has no data. Just a blank line\n";
 								return false;
 							}
 							// it is a value
-							currentPropertyDepth.first->values.emplace_back(line);
+							currentPropertyDepth.first->values.emplace_back(std::string(lineSV));
 							for (auto& com : commentsRead)
 							{
 								DataBaseProperty* p = currentPropertyDepth.first;
