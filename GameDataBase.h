@@ -108,6 +108,20 @@ namespace game
 				}
 			}
 
+			std::vector<DataBaseValue>* Values(const std::string& propName)
+			{
+				DataBaseProperty* prop = Property(propName);
+				if (!prop)
+				{
+					std::cout << "Property |" << propName << "| does not exist.\n";
+					return nullptr;
+				}
+				else
+				{
+					return &prop->values;
+				}
+			}
+
 
 			// Will return the actual object if it exists,
 			// nullptr if a .object.etc does not exist
