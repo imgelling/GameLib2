@@ -26,20 +26,10 @@ namespace game
 		{
 			GAME_ASSERT(std::is_arithmetic_v<T>);
 
-			// make a double and then cast to T when returning?
-			//double temp = 0;
 			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), out);
 
 			if (res.ec == std::errc()) 
 			{
-				//out = (T)temp;
-				// Check if overflow happened, except when out is a bool
-				//if (((double)out != temp) && !(std::is_same<T, bool>::value))
-				//{
-				//	out = 0;
-				//	goto range;
-				//}
-				//out = (T)temp;
 				std::cout << "Parsed value: " << out << "\n";
 				if (remaining) 
 				{
@@ -72,6 +62,15 @@ namespace game
 			std::string name;
 			std::vector<std::string> comments;
 			std::vector<DataBaseValue> values;
+			std::string Value(uint64_t index)
+			{
+				if (index >= values.size())
+				{
+					std::cout << "Value index out of range, there are " << values.size() << " values\n";
+					return "";
+				}
+				return values[0].value;
+			}
 		};
 
 		class DataBaseObject
@@ -94,6 +93,20 @@ namespace game
 				return (objectIndex.count(inName) > 0);
 			}
 
+
+			std::string Value(const std::string& propName, uint64_t index = 0)
+			{
+				DataBaseProperty* prop = Property(propName);
+				if (!prop)
+				{
+					std::cout << "Property |" << propName << "| does not exist.\n";
+					return "";
+				}
+				else
+				{
+					return prop->Value(index);
+				}
+			}
 
 
 			// Will return the actual object if it exists,
@@ -430,6 +443,8 @@ namespace game
 					std::getline(ss, line);
 					lineSV = line;
 					//lineSV = lineSV.substr(line.find_first_not_of(" \t\n\r\f\v"), line.find_last_not_of(" \t\n\r\f\v") + 1);
+					size_t t = lineSV.find_first_not_of(" \t\n\r\f\v");
+					if (t == std::string_view::npos) continue;
 					lineSV.remove_prefix(lineSV.find_first_not_of(" \t\n\r\f\v"));
 					auto dkfj = lineSV.find_last_not_of(" \t\n\r\f\v")+1;
 					lineSV.remove_suffix(lineSV.size() - dkfj);
