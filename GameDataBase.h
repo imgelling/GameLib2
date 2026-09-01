@@ -62,14 +62,14 @@ namespace game
 			std::string name;
 			std::vector<std::string> comments;
 			std::vector<DataBaseValue> values;
-			std::string Value(uint64_t index)
+			std::string Value(const uint64_t index = 0)
 			{
 				if (index >= values.size())
 				{
 					std::cout << "Value index out of range, there are " << values.size() << " values\n";
 					return "";
 				}
-				return values[0].value;
+				return values[index].value;
 			}
 		};
 
