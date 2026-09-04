@@ -19,6 +19,40 @@ namespace game
 	namespace DataBase
 	{
 
+		bool ParseErrorCheck(std::from_chars_result& res)
+		{
+			if (res.ec == std::errc::invalid_argument)
+			{
+				std::cerr << "Error: No valid value found at the start of the string.\n";
+				return false;
+			}
+			else if (res.ec == std::errc::result_out_of_range)
+			{
+				//range:
+				std::cerr << "Error: Number out of range for value type.\n";
+				return true;
+			}
+			return false;
+		}
+
+		bool ParseValue(const std::string_view& sv, bool out, std::string_view* remaining = nullptr)
+		{
+			int64_t temp = 0;
+			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), temp);
+
+			if (res.ec == std::errc())
+			{
+				out = temp;
+				std::cout << "Parsed value: " << out << "\n";
+				if (remaining)
+				{
+					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
+				}
+				return true;
+			}
+			return ParseErrorCheck(res);
+		}
+
 		// Generic value parser
 		// bool does not work and overfloat may happen
 		template <typename T>
@@ -37,18 +71,7 @@ namespace game
 				}
 				return true;
 			}
-			else if (res.ec == std::errc::invalid_argument)
-			{
-				std::cerr << "Error: No valid value found at the start of the string.\n";
-				return false;
-			}
-			else if (res.ec == std::errc::result_out_of_range)
-			{
-				//range:
-				std::cerr << "Error: Number out of range for value type.\n";
-				return true;
-			}
-			return false;
+			return ParseErrorCheck(res);
 		}
 
 		struct DataBaseValue
