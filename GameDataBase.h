@@ -19,7 +19,7 @@ namespace game
 	namespace DataBase
 	{
 
-		bool ParseErrorCheck(std::from_chars_result& res)
+		static bool ParseErrorCheck(const std::from_chars_result& res)
 		{
 			if (res.ec == std::errc::invalid_argument)
 			{
@@ -28,14 +28,13 @@ namespace game
 			}
 			else if (res.ec == std::errc::result_out_of_range)
 			{
-				//range:
-				std::cerr << "Error: Number out of range for value type.\n";
+				std::cerr << "Warning: Number out of range for value type.\n";
 				return true;
 			}
 			return false;
 		}
 
-		bool ParseValue(const std::string_view& sv, bool out, std::string_view* remaining = nullptr)
+		static bool ParseValue(const std::string_view& sv, bool out, std::string_view* remaining = nullptr)
 		{
 			int64_t temp = 0;
 			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), temp);
@@ -54,7 +53,7 @@ namespace game
 		}
 
 		// Generic value parser
-		// bool does not work and overfloat may happen
+		// Overflow may happen
 		template <typename T>
 		bool ParseValue(const std::string_view& sv, T& out, std::string_view* remaining = nullptr) 
 		{
