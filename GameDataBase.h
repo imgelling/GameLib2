@@ -34,7 +34,7 @@ namespace game
 			return false;
 		}
 
-		static bool ParseValue(const std::string_view& sv, bool out, std::string_view* remaining = nullptr)
+		static bool ParseValue(const std::string_view& sv, bool &out, std::string_view* remaining = nullptr)
 		{
 			int64_t temp = 0;
 			auto res = std::from_chars(sv.data(), sv.data() + sv.size(), temp);
@@ -42,7 +42,7 @@ namespace game
 			if (res.ec == std::errc())
 			{
 				out = temp;
-				std::cout << "Parsed value: " << out << "\n";
+				//std::cout << "Parsed value: " << out << "\n";
 				if (remaining)
 				{
 					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
@@ -63,7 +63,7 @@ namespace game
 
 			if (res.ec == std::errc()) 
 			{
-				std::cout << "Parsed value: " << out << "\n";
+				//std::cout << "Parsed value: " << out << "\n";
 				if (remaining) 
 				{
 					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
