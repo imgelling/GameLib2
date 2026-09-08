@@ -15,6 +15,7 @@ namespace game
 		uint32_t GetSeed() const noexcept;
 		uint32_t Randui() noexcept;
 		float_t Randf() noexcept;
+		double Rand() noexcept;
 		uint32_t RndRange(const uint32_t min, const uint32_t max) noexcept;
 		~Random();
 	private:
@@ -70,6 +71,12 @@ namespace game
 	inline float_t Random::Randf() noexcept
 	{
 		return RndRange(0,INT_MAX) / (float_t)INT_MAX;
+	}
+
+	// Returns a double between 0.0f and 1.0f
+	inline double Random::Rand() noexcept
+	{
+		return RndRange(0, INT_MAX) / (double)INT_MAX;
 	}
 
 	inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max) noexcept
