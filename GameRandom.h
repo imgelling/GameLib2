@@ -3,6 +3,8 @@
 
 #include <random>
 #include <chrono>
+#include <cmath>
+#include <cstdint>
 
 namespace game
 {
@@ -14,13 +16,15 @@ namespace game
 		void NewSeed();
 		uint32_t GetSeed() const noexcept;
 		uint32_t Randui() noexcept;
+		uint64_t Randui64() noexcept;
 		float_t Randf() noexcept;
 		double Rand() noexcept;
 		uint32_t RndRange(const uint32_t min, const uint32_t max) noexcept;
+		uint64_t RndRange(const uint64_t min, const uint64_t max) noexcept;
 		~Random();
 	private:
 		uint32_t _seed;
-		std::mt19937 _mt19937Generator;
+		std::mt19937_64 _mt19937Generator;
 
 	};
 
@@ -64,27 +68,38 @@ namespace game
 	// Returns a random unsigned int
 	inline uint32_t Random::Randui() noexcept
 	{
+		return (uint32_t)_mt19937Generator();
+	}
+
+	// Returns a random 64 bit unsigned int
+	inline uint64_t Random::Randui64() noexcept
+	{
 		return _mt19937Generator();
 	}
 
 	// Returns a float between 0.0f and 1.0f
 	inline float_t Random::Randf() noexcept
 	{
-		return RndRange(0,INT_MAX) / (float_t)INT_MAX;
+		return RndRange((uint32_t)0,UINT32_MAX) / (float_t)UINT32_MAX;
 	}
 
 	// Returns a double between 0.0f and 1.0f
 	inline double Random::Rand() noexcept
 	{
-		return RndRange(0, INT_MAX) / (double)INT_MAX;
+		return RndRange((uint64_t)0, UINT64_MAX) / (double)UINT64_MAX;
 	}
 
 	inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max) noexcept
 	{
-		std::uniform_int_distribution<unsigned> distrib(min, max);
+		std::uniform_int_distribution<uint32_t> distrib(min, max);
 		return distrib(_mt19937Generator);
 	}
 
+	inline uint64_t Random::RndRange(const uint64_t min, const uint64_t max) noexcept
+	{
+		std::uniform_int_distribution<uint64_t> distrib(min, max);
+		return distrib(_mt19937Generator);
+	}
 	Random::~Random()
 	{
 	}
