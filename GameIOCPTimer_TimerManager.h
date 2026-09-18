@@ -3,7 +3,6 @@
 #include "Game_MemoryPool.h"
 #include <queue>
 #include <unordered_map>
-#include <Windows.h>
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -12,6 +11,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <Windows.h>
 
 #define TIMER_TICK_SIGNATURE const game::IOCP::Timer::PER_IO_DATA_TIMER& task
 
@@ -41,9 +41,10 @@ namespace game
 				uint32_t currentExecution = 0;
 				std::atomic<bool> cancelled = false;
 				std::function<void(const PER_IO_DATA_TIMER& task)> callback = nullptr;
-				bool operator()(const PER_IO_DATA_TIMER* t1, const PER_IO_DATA_TIMER* t2) {
+				const bool operator()(const PER_IO_DATA_TIMER* t1, const PER_IO_DATA_TIMER* t2) {
 					return t1->dueTime > t2->dueTime;
 				}
+				uint64_t key = (uint64_t)-1;
 			};
 
 			class TimerManager
@@ -55,7 +56,7 @@ namespace game
 				bool Initialize(game::IOCP::IOCPManager& iocpManager);
 				void Shutdown();
 
-				uint64_t AddTimer(const std::chrono::milliseconds interval, const uint32_t executions = 1, const std::function<void(const PER_IO_DATA_TIMER& task)> callback = nullptr, const TimerMode mode = TimerMode::FixedRate);
+				uint64_t AddTimer(const std::chrono::milliseconds interval, const uint32_t executions = 1, const std::function<void(const PER_IO_DATA_TIMER& task)> callback = nullptr, const uint64_t key = (uint64_t)-1, const TimerMode mode = TimerMode::FixedRate);
 				void CancelTimer(const uint64_t id);
 
 				uint64_t GetSize();

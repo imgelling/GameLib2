@@ -86,7 +86,7 @@ namespace game
 				}
 			}
 
-			uint64_t TimerManager::AddTimer(const std::chrono::milliseconds interval, const uint32_t executions, const std::function<void(const PER_IO_DATA_TIMER& task)> callback, const TimerMode mode)
+			uint64_t TimerManager::AddTimer(const std::chrono::milliseconds interval, const uint32_t executions, const std::function<void(const PER_IO_DATA_TIMER& task)> callback, const uint64_t key, const TimerMode mode)
 			{
 				const uint64_t id = _nextId++;
 
@@ -102,6 +102,7 @@ namespace game
 				task->mode = mode;
 				task->cancelled = false;
 				task->ioDataType = game::IOCP::IOCP_TYPE_TIMER;
+				task->key = key;
 
 				{
 					std::lock_guard<std::mutex> lock(_mtx);
