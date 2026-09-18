@@ -3,6 +3,15 @@
 #include "Game_MemoryPool.h"
 #include <queue>
 #include <unordered_map>
+#include <Windows.h>
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <cstdint>
+#include <functional>
+#include <mutex>
+#include <thread>
+#include <vector>
 
 #define TIMER_TICK_SIGNATURE const game::IOCP::Timer::PER_IO_DATA_TIMER& task
 
