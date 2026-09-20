@@ -2,7 +2,7 @@
 #include "GameIOCP_ErrorOutput.h"
 #include "Game_Assert.h"
 #include <Windows.h>
-#include <WinSock2.h>
+//#include <WinSock2.h>
 #include <concrt.h>
 #include <cstdint>
 #include <functional>
