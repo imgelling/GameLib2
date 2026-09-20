@@ -1,6 +1,12 @@
 #include "GameIOCP_IOCPManager.h"
-
 #include "GameIOCP_ErrorOutput.h"
+#include "Game_Assert.h"
+#include <Windows.h>
+#include <WinSock2.h>
+#include <concrt.h>
+#include <cstdint>
+#include <functional>
+#include <iostream>
 
 namespace game
 {
@@ -47,11 +53,13 @@ namespace game
 
 		bool IOCPManager::Initialize(const uint32_t numberCompletionThreads, const uint32_t numberWorkerThreads)
 		{
+			GAME_ASSERT(numberCompletionThreads >= 1);
+			GAME_ASSERT(numberWorkerThreads >= 1);
 			_numberCompletionThreads = numberCompletionThreads;
-			_numberCompletionThreads = max(_numberCompletionThreads, 1);
+			//_numberCompletionThreads = max(_numberCompletionThreads, 1);
 
 			_numberWorkerThreads = numberWorkerThreads;
-			_numberWorkerThreads = max(_numberWorkerThreads, 1);
+			//_numberWorkerThreads = max(_numberWorkerThreads, 1);
 
 			_completionPort = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, numberCompletionThreads);
 			if (game::IOCP::ErrorOutput("CreateIoCompletionPort", __LINE__))

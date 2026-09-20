@@ -39,7 +39,7 @@ namespace game
 			~IOCPManager();
 
 			void Shutdown();
-			bool Initialize(const uint32_t numberCompletionThreads, const uint32_t numberWorkerThreads);
+			bool Initialize(const uint32_t numberCompletionThreads = 1, const uint32_t numberWorkerThreads = 1);
 
 			HANDLE GetCompeltionPort() const;
 
