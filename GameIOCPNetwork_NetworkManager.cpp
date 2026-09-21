@@ -903,7 +903,7 @@ namespace game
 					case WSA_INVALID_HANDLE:
 					case ERROR_ABANDONED_WAIT_0: if (_stopping.load()) { return; }
 											   else game::IOCP::ErrorOutput("GetQueuedCompletionStatus", __LINE__); break;
-					case ERROR_NETNAME_DELETED: /*std::cout << "---- Socket disconnected!\n";*/ break;
+					case ERROR_NETNAME_DELETED: SendError(ioData, err); break;
 					case ERROR_CONNECTION_REFUSED: 
 						ioData->socket = INVALID_SOCKET;
 #if defined(DEBUG) | defined(_DEBUG)
