@@ -104,7 +104,7 @@ namespace game
 	inline std::string Color::ToHex() const
 	{
 		char hexColor[9] = { 0 }; // "RRGGBBAA"
-		auto byteToHex = [](const uint8_t byte, char* out) 
+		const auto byteToHex = [](const uint8_t byte, char* out) 
 			{
 			const char hexDigits[] = "0123456789ABCDEF";
 			out[0] = hexDigits[(byte >> 4) & 0x0F]; // high nibble
@@ -126,7 +126,7 @@ namespace game
 		//std::stringstream ss;
 		//ss << std::hex << hex;
 		//ss >> rgba;
-		Color ret;
+		//Color ret;
 		const uint32_t newR = (newRGBA >> 24) & 0xFF;
 		const uint32_t newG = (newRGBA >> 16) & 0xFF;
 		const uint32_t newB = (newRGBA >> 8) & 0xFF;
@@ -172,10 +172,10 @@ namespace game
 		bf = blue;
 		af = alpha;
 
-		uint32_t packedR = r << 0;
-		uint32_t packedG = g << 8;
-		uint32_t packedB = b << 16;
-		uint32_t packedA = a << 24;
+		const uint32_t packedR = r << 0;
+		const uint32_t packedG = g << 8;
+		const uint32_t packedB = b << 16;
+		const uint32_t packedA = a << 24;
 
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 
@@ -207,10 +207,10 @@ namespace game
 		bf = (float_t)blue;
 		af = (float_t)alpha;
 
-		uint32_t packedR = r << 0;
-		uint32_t packedG = g << 8;
-		uint32_t packedB = b << 16;
-		uint32_t packedA = a << 24;
+		const uint32_t packedR = r << 0;
+		const uint32_t packedG = g << 8;
+		const uint32_t packedB = b << 16;
+		const uint32_t packedA = a << 24;
 
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 
@@ -242,10 +242,10 @@ namespace game
 		bf = blue * (1.0f / 255.0f);
 		af = alpha * (1.0f / 255.0f);
 
-		uint32_t packedR = red << 0;
-		uint32_t packedG = green << 8;
-		uint32_t packedB = blue << 16;
-		uint32_t packedA = alpha << 24;
+		const uint32_t packedR = red << 0;
+		const uint32_t packedG = green << 8;
+		const uint32_t packedB = blue << 16;
+		const uint32_t packedA = alpha << 24;
 
 		packedABGR = ((packedA) | (packedR) | (packedG) | (packedB));
 
@@ -291,10 +291,15 @@ namespace game
 		const Color CornFlowerBlue((uint32_t)100, 149, 237, 255);
 
 		const Color Yellow(1.0f, 1.0f, 0.0f, 1.0f);
+		const Color Yellow75(1.0f, 1.0f, 0.0f, 0.75f);
+		const Color Yellow50(1.0f, 1.0f, 0.0f, 0.5f);
+		const Color Yellow25(1.0f, 1.0f, 0.0f, 0.25f);
+		const Color Yellow10(1.0f, 1.0f, 0.0f, 0.1f);
 
 		const Color Magenta(1.0f, 0, 1.0f, 1.0f);
 
 		const Color Gray(0.5f, 0.5f, 0.5f, 1.0f);
+
 		const Color LightGray(0.75f, 0.75f, 0.75f, 1.0f);
 		const Color LightGray75(0.75f, 0.75f, 0.75f, 0.75f);
 		const Color LightGray50(0.75f, 0.75f, 0.75f, 0.55f);
@@ -316,13 +321,13 @@ namespace game
 		//uint32_t outG = static_cast<uint32_t>(color1.g * alpha + color2.g * (1 - alpha));
 		//uint32_t outB = static_cast<uint32_t>(color1.b * alpha + color2.b * (1 - alpha));
 
-		uint32_t outR = static_cast<uint32_t>((color1.r + color2.r) >> 1);
-		uint32_t outG = static_cast<uint32_t>((color1.g + color2.g) >> 1);
-		uint32_t outB = static_cast<uint32_t>((color1.b + color2.b) >> 1);
+		const uint32_t outR = static_cast<uint32_t>((color1.r + color2.r) >> 1);
+		const uint32_t outG = static_cast<uint32_t>((color1.g + color2.g) >> 1);
+		const uint32_t outB = static_cast<uint32_t>((color1.b + color2.b) >> 1);
 
 
 		// For alpha channel, we can choose to keep srcA or blend
-		uint32_t outA = static_cast<uint32_t>((color1.a + color2.a) >> 1);
+		const uint32_t outA = static_cast<uint32_t>((color1.a + color2.a) >> 1);
 
 		Color ret(outR, outG, outB, outA);
 		return ret;
