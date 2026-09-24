@@ -117,10 +117,9 @@ namespace game
 		return std::string(hexColor);
 	}
 
-	// Helper: Convert hex string to integer
-	void Color::Set (const std::string& hex)
+	void Color::Set(const std::string& hex)
 	{
-		if (hex.size() != 8) return;// defaultColor; // default white
+		if (hex.size() != 8) return;
 		uint32_t newRGBA = 0;
 		newRGBA = std::stoul(hex, nullptr, 16);
 		//std::stringstream ss;
