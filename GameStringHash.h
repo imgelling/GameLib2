@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <cstdint>
+#include <ostream>
 
 //// 32-bit hash
 //#define FNV_OFFSET_BASIS_32 2166136261u
@@ -80,6 +81,11 @@ struct std::hash<game::StringHash>
 		return k.hash;
 	}
 };
+std::ostream& operator<<(std::ostream& os, game::StringHash stringHash)
+{
+	os << stringHash.string;
+	return os;
+}
 namespace game
 {
 	const game::StringHash emptyStringHash = "";
