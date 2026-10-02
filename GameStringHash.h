@@ -71,5 +71,16 @@ namespace game
 			return computingHash;
 		}
 	};
+}
+template <>
+struct std::hash<game::StringHash>
+{
+	std::size_t operator()(const game::StringHash& k) const
+	{
+		return k.hash;
+	}
+};
+namespace game
+{
 	const game::StringHash emptyStringHash = "";
 }
