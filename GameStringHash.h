@@ -81,7 +81,7 @@ struct std::hash<game::StringHash>
 		return k.hash;
 	}
 };
-std::ostream& operator<<(std::ostream& os, game::StringHash stringHash)
+static std::ostream& operator<<(std::ostream& os, const game::StringHash &stringHash)
 {
 	os << stringHash.string;
 	return os;
