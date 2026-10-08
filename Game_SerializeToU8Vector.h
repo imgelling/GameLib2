@@ -17,7 +17,7 @@ namespace game
 		void GetVector(std::vector<uint8_t>&);
 		size_t Size() const;
 
-		void Assign(const uint8_t* data, const int64_t size)
+		void Assign(const uint8_t* data, const uint64_t size)
 		{
 			ClearData();
 			_data.assign(data, data+size);
@@ -25,7 +25,7 @@ namespace game
 		}
 
 		// uint8_t*
-		void Add(const uint8_t* data, const int64_t size)
+		void Add(const uint8_t* data, const uint64_t size)
 		{
 			_data.insert(_data.begin() + _dataWritePosition, data, data + size);
 			//memcpy(_dataWritePosition, data, size);
@@ -98,7 +98,7 @@ namespace game
 		void PrintAsU32();
 		// Prints out data as uint8_t
 		void PrintAsU8();
-		const uint8_t* const GetData();
+		uint8_t* GetData();
 	private:
 		std::vector<uint8_t> _data;
 		int64_t _dataWritePosition;

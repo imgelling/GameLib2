@@ -59,8 +59,8 @@ namespace game
 		void SetCursorPosition(const uint32_t pos)
 		{
 			_cursorPosition = pos;
-			if (_cursorPosition < 0) _cursorPosition = 0;
-			if (_cursorPosition > _textInput.length()) _cursorPosition = (int32_t)_textInput.length();
+			//if (_cursorPosition < 0) _cursorPosition = 0; // Will always be false (uint32_t)
+			if (_cursorPosition > _textInput.length()) _cursorPosition = (uint32_t)_textInput.length();
 		}
 
 		// add a variable to control cursor position too

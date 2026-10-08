@@ -41,7 +41,7 @@ namespace game
 				uint32_t currentExecution = 0;
 				std::atomic<bool> cancelled = false;
 				std::function<void(const PER_IO_DATA_TIMER& task)> callback = nullptr;
-				const bool operator()(const PER_IO_DATA_TIMER* t1, const PER_IO_DATA_TIMER* t2) {
+				bool operator()(const PER_IO_DATA_TIMER* t1, const PER_IO_DATA_TIMER* t2) {
 					return t1->dueTime > t2->dueTime;
 				}
 				uint64_t key = (uint64_t)-1;

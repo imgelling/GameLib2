@@ -48,7 +48,7 @@ namespace game
 		ret.assign(_data.begin(), _data.end());
 	}
 
-	const uint8_t* const SerializeToU8Vector::GetData()
+	uint8_t* SerializeToU8Vector::GetData()
 	{
 		return _data.data();
 	}
