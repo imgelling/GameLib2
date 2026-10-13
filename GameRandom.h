@@ -10,96 +10,159 @@ namespace game
 	class Random
 	{
 	public:
-		Random();
-		void SetSeed(const uint32_t seed);
-		void NewSeed();
-		uint32_t GetSeed() const noexcept;
-		uint32_t Randui() noexcept;
-		uint64_t Randui64() noexcept;
-		float_t Randf() noexcept;
-		double Rand() noexcept;
-		uint32_t RndRange(const uint32_t min, const uint32_t max) noexcept;
-		uint64_t RndRange(const uint64_t min, const uint64_t max) noexcept;
-		~Random();
+		Random()
+		{
+			std::random_device rd;
+			_seed = rd() ^
+				(
+					(std::mt19937::result_type)
+					std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
+					(std::mt19937::result_type)
+					std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
+					);
+			_mt19937Generator.seed(_seed);
+		}
+
+		inline void NewSeed()
+		{
+			std::random_device rd;
+			_seed = rd() ^
+				(
+					(std::mt19937::result_type)
+					std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
+					(std::mt19937::result_type)
+					std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
+					);
+			_mt19937Generator.seed(_seed);
+		}
+
+		inline void SetSeed(const uint32_t seed)
+		{
+			this->_seed = seed;
+			_mt19937Generator.seed(seed);
+		}
+
+		inline uint32_t GetSeed() const noexcept
+		{
+			return _seed;
+		}
+
+		// Returns a random unsigned int
+		inline uint32_t Randui() noexcept
+		{
+			return (uint32_t)_mt19937Generator();
+		}
+
+		// Returns a random 64 bit unsigned int
+		inline uint64_t Randui64() noexcept
+		{
+			return _mt19937Generator();
+		}
+
+		// Returns a float between 0.0f and 1.0f
+		inline float_t Randf() noexcept
+		{
+			return RndRange((uint32_t)0, UINT32_MAX) / (float_t)UINT32_MAX;
+		}
+
+		// Returns a double between 0.0f and 1.0f
+		inline double Rand() noexcept
+		{
+			return RndRange((uint64_t)0, UINT64_MAX) / (double)UINT64_MAX;
+		}
+
+		inline uint32_t RndRange(const uint32_t min, const uint32_t max) noexcept
+		{
+			std::uniform_int_distribution<uint32_t> distrib(min, max);
+			return distrib(_mt19937Generator);
+		}
+
+		inline uint64_t RndRange(const uint64_t min, const uint64_t max) noexcept
+		{
+			std::uniform_int_distribution<uint64_t> distrib(min, max);
+			return distrib(_mt19937Generator);
+		}
+		~Random()
+		{}
 	private:
 		uint32_t _seed;
 		std::mt19937_64 _mt19937Generator;
 
 	};
 
-	Random::Random()
-	{
-		std::random_device rd;
-		_seed = rd() ^
-			(
-				(std::mt19937::result_type)
-				std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
-				(std::mt19937::result_type)
-				std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
-				);
-		_mt19937Generator.seed(_seed);
-	}
+	//Random::Random()
+	//{
+	//	std::random_device rd;
+	//	_seed = rd() ^
+	//		(
+	//			(std::mt19937::result_type)
+	//			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
+	//			(std::mt19937::result_type)
+	//			std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
+	//			);
+	//	_mt19937Generator.seed(_seed);
+	//}
 
-	inline void Random::NewSeed()
-	{
-		std::random_device rd;
-		_seed = rd() ^
-			(
-				(std::mt19937::result_type)
-				std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
-				(std::mt19937::result_type)
-				std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
-				);
-		_mt19937Generator.seed(_seed);
-	}
+	//inline void Random::NewSeed()
+	//{
+	//	std::random_device rd;
+	//	_seed = rd() ^
+	//		(
+	//			(std::mt19937::result_type)
+	//			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count() +
+	//			(std::mt19937::result_type)
+	//			std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count()
+	//			);
+	//	_mt19937Generator.seed(_seed);
+	//}
 
-	inline void Random::SetSeed(const uint32_t seed)
-	{
-		this->_seed = seed;
-		_mt19937Generator.seed(seed);
-	}
+	//inline void Random::SetSeed(const uint32_t seed)
+	//{
+	//	this->_seed = seed;
+	//	_mt19937Generator.seed(seed);
+	//}
 
-	inline uint32_t Random::GetSeed() const noexcept
-	{
-		return _seed;
-	}
+	//inline uint32_t Random::GetSeed() const noexcept
+	//{
+	//	return _seed;
+	//}
 
-	// Returns a random unsigned int
-	inline uint32_t Random::Randui() noexcept
-	{
-		return (uint32_t)_mt19937Generator();
-	}
+	//// Returns a random unsigned int
+	//inline uint32_t Random::Randui() noexcept
+	//{
+	//	return (uint32_t)_mt19937Generator();
+	//}
 
-	// Returns a random 64 bit unsigned int
-	inline uint64_t Random::Randui64() noexcept
-	{
-		return _mt19937Generator();
-	}
+	//// Returns a random 64 bit unsigned int
+	//inline uint64_t Random::Randui64() noexcept
+	//{
+	//	return _mt19937Generator();
+	//}
 
-	// Returns a float between 0.0f and 1.0f
-	inline float_t Random::Randf() noexcept
-	{
-		return RndRange((uint32_t)0,UINT32_MAX) / (float_t)UINT32_MAX;
-	}
+	//// Returns a float between 0.0f and 1.0f
+	//inline float_t Random::Randf() noexcept
+	//{
+	//	return RndRange((uint32_t)0,UINT32_MAX) / (float_t)UINT32_MAX;
+	//}
 
-	// Returns a double between 0.0f and 1.0f
-	inline double Random::Rand() noexcept
-	{
-		return RndRange((uint64_t)0, UINT64_MAX) / (double)UINT64_MAX;
-	}
+	//// Returns a double between 0.0f and 1.0f
+	//inline double Random::Rand() noexcept
+	//{
+	//	return RndRange((uint64_t)0, UINT64_MAX) / (double)UINT64_MAX;
+	//}
 
-	inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max) noexcept
-	{
-		std::uniform_int_distribution<uint32_t> distrib(min, max);
-		return distrib(_mt19937Generator);
-	}
+	//inline uint32_t Random::RndRange(const uint32_t min, const uint32_t max) noexcept
+	//{
+	//	std::uniform_int_distribution<uint32_t> distrib(min, max);
+	//	return distrib(_mt19937Generator);
+	//}
 
-	inline uint64_t Random::RndRange(const uint64_t min, const uint64_t max) noexcept
-	{
-		std::uniform_int_distribution<uint64_t> distrib(min, max);
-		return distrib(_mt19937Generator);
-	}
-	Random::~Random()
-	{
-	}
+	//inline uint64_t Random::RndRange(const uint64_t min, const uint64_t max) noexcept
+	//{
+	//	std::uniform_int_distribution<uint64_t> distrib(min, max);
+	//	return distrib(_mt19937Generator);
+	//}
+	//Random::~Random()
+	//{
+	//}
 }
