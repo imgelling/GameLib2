@@ -14,6 +14,17 @@
 #include <type_traits>
 #include "Game_Assert.h"
 
+#if defined(_DEBUG)
+#define DEBUG_OUT(s)												\
+    do																\
+	{                                                               \
+		s;                                                         \
+    } while (false)
+#else
+#define DEBUG_OUT(s)
+#endif
+
+
 namespace game
 {
 	namespace DataBase
@@ -23,17 +34,20 @@ namespace game
 		{
 			if (res.ec == std::errc::invalid_argument)
 			{
-				std::cerr << "Error: No valid value found at the start of the string.\n";
+				DEBUG_OUT(std::cout << "Error: No valid value found at the start of the string.\n");
 				return false;
 			}
 			else if (res.ec == std::errc::result_out_of_range)
 			{
-				std::cerr << "Warning: Number out of range for value type.\n";
+				DEBUG_OUT(std::cout << "Warning: Number out of range for value type.\n");
 				return true;
 			}
 			return false;
 		}
 
+		// Returns true if value was parsed.
+		// Returns true if value was parsed and overflowed.
+		// Return false if value could not be parsed.
 		static bool ParseValue(const std::string_view& sv, bool &out, std::string_view* remaining = nullptr)
 		{
 			int64_t temp = 0;
@@ -42,7 +56,6 @@ namespace game
 			if (res.ec == std::errc())
 			{
 				out = temp;
-				//std::cout << "Parsed value: " << out << "\n";
 				if (remaining)
 				{
 					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
@@ -52,8 +65,9 @@ namespace game
 			return ParseErrorCheck(res);
 		}
 
-		// Generic value parser
-		// Overflow may happen
+		// Returns true if value was parsed.
+		// Returns true if value was parsed and overflowed.
+		// Return false if value could not be parsed.
 		template <typename T>
 		bool ParseValue(const std::string_view& sv, T& out, std::string_view* remaining = nullptr) 
 		{
@@ -63,7 +77,6 @@ namespace game
 
 			if (res.ec == std::errc()) 
 			{
-				//std::cout << "Parsed value: " << out << "\n";
 				if (remaining) 
 				{
 					*remaining = std::string_view(res.ptr, sv.data() + sv.size() - res.ptr);
@@ -88,7 +101,7 @@ namespace game
 			{
 				if (index >= values.size())
 				{
-					std::cout << "Value index out of range, there are " << values.size() << " values\n";
+					DEBUG_OUT(std::cout << "Value index out of range, there are " << values.size() << " values\n");
 					return "";
 				}
 				return values[index].value;
@@ -121,7 +134,7 @@ namespace game
 				DataBaseProperty* prop = Property(propName);
 				if (!prop)
 				{
-					std::cout << "Property |" << propName << "| does not exist.\n";
+					DEBUG_OUT(std::cout << "Property |" << propName << "| does not exist.\n");
 					return "";
 				}
 				else
@@ -135,7 +148,7 @@ namespace game
 				DataBaseProperty* prop = Property(propName);
 				if (!prop)
 				{
-					std::cout << "Property |" << propName << "| does not exist.\n";
+					DEBUG_OUT(std::cout << "Property |" << propName << "| does not exist.\n");
 					return nullptr;
 				}
 				else
@@ -156,7 +169,6 @@ namespace game
 				if (loc != std::string::npos)
 				{
 					// found a dot
-					//std::cout << "[" << name << "]" << std::endl; // for testing
 
 					// Next object name
 					nextName = id.substr(0, loc);
@@ -173,7 +185,6 @@ namespace game
 				}
 				else
 				{
-					//std::cout << "[" << name << "]" << std::endl; // for testing
 					if (ObjectExists(id))
 					{
 						return &objects[objectIndex[id]];
@@ -197,35 +208,32 @@ namespace game
 				}
 				if (!object)
 				{
-					std::cout << "[" << location << "] was not an object" << std::endl;
+					DEBUG_OUT(std::cout << "[" << location << "] was not an object" << std::endl);
 					DataBaseProperty* prop = Property(location);
 					if (!prop)
 					{
-						std::cout << "Property [" << location << "] does not exist" << std::endl;
+						DEBUG_OUT(std::cout << "Property [" << location << "] does not exist" << std::endl);
 						return false;
 					}
 					else
 					{
 						if (prop->name == finalThing)
 						{
-							std::cout << "[" << location << "] was a property" << std::endl;
 							prop->comments.emplace_back(comment);
 							return true;
 						}
-						std::cout << "[" << location << "] was not a property" << std::endl;
+						DEBUG_OUT(std::cout << "[" << location << "] was not a property" << std::endl);
 						uint64_t index = 0;
 						std::stringstream ss;
 						ss << finalThing;
 						ss >> index;
-						std::cout << "Index of value is " << index << std::endl;
 						if (index >= 0 && index < prop->values.size())
 						{
-							std::cout << "[" << location << "] was a value" << std::endl;
 							prop->values[index].comments.emplace_back(comment);
 						}
 						else
 						{
-							std::cout << "[" << location << "] was an invalid value" << std::endl;
+							DEBUG_OUT(std::cout << "[" << location << "] was an invalid value" << std::endl);
 						}
 						return true;
 					}
@@ -235,23 +243,21 @@ namespace game
 				{
 					if (object->name == finalThing)
 					{
-						std::cout << "[" << location << "] was an object" << std::endl;
 						object->comments.emplace_back(comment);
 					}
 					else
 					{
-						std::cout << "[" << location << "] was not an object" << std::endl;
-						std::cout << "Testing if property...\n";
+						DEBUG_OUT(std::cout << "[" << location << "] was not an object" << std::endl);
+						// Testing if property
 						DataBaseProperty* prop = Property(location);
 						if (prop)
 						{
-							std::cout << "[" << location << "] was a property" << std::endl;
 							prop->comments.emplace_back(comment);
 							return true;
 						}
 						else
 						{
-							std::cout << "[" << location << "] was not a property" << std::endl;
+							DEBUG_OUT(std::cout << "[" << location << "] was not a property" << std::endl);
 							return false;
 						}
 					}
@@ -270,14 +276,14 @@ namespace game
 
 				if (!object)
 				{
-					std::cout << "DataBaseObject [" << inName << "] does not exist" << std::endl;
+					DEBUG_OUT(std::cout << "DataBaseObject [" << inName << "] does not exist" << std::endl);
 					return false;
 				}
 
 				//if (object->name == newObject.name)
 				if (object->name == newObjectName)
 				{
-					std::cout << "DataBaseObject [" << inName << "] already exists" << std::endl;
+					DEBUG_OUT(std::cout << "DataBaseObject [" << inName << "] already exists" << std::endl);
 					return false;
 				}
 				//object->objectIndex.insert({ newObject.name, object->objects.size() });
@@ -291,7 +297,7 @@ namespace game
 				DataBaseProperty* prop = Property(propertyName);
 				if (!prop)
 				{
-					std::cout << "Property [" << propertyName << "] does not exist" << std::endl;
+					DEBUG_OUT(std::cout << "Property [" << propertyName << "] does not exist" << std::endl);
 					return false;
 				}
 				prop->values.emplace_back(value);
@@ -306,7 +312,7 @@ namespace game
 
 				if (!object)
 				{
-					std::cout << "DataBaseObject [" << propertyName << "] does not exist" << std::endl;
+					DEBUG_OUT(std::cout << "DataBaseObject [" << propertyName << "] does not exist" << std::endl);
 					return false;
 				}
 
@@ -314,17 +320,15 @@ namespace game
 				{
 					auto res = object->propertyIndex.insert({ newProp.name, object->properties.size() });
 					object->properties.emplace_back(newProp);
-					//std::cout << "----------------------- property index " << object->propertyIndex[newProp.name] << "\n"; // testing
 					if (value.size())
 					{
 						DataBaseProperty& prop = object->properties[object->propertyIndex[newProp.name]];
-						//std::cout << "Adding value to " << prop.name << "\n"; // used for testing
 						prop.values.emplace_back(value);
 					}
 				}
 				else
 				{
-					std::cout << "Property |" << propertyName << "| already exists" << std::endl;
+					DEBUG_OUT(std::cout << "Property |" << propertyName << "| already exists" << std::endl);
 					return false;
 				}
 				return true;
@@ -415,7 +419,6 @@ namespace game
 				{
 					// found a dot
 					nextName = property.substr(0, loc);
-					//std::cout << "[" << nextName << "]" << std::endl; // used for testing
 					newName = property.substr(loc + 1, property.size());
 					if (newName.find_first_of('.') == std::string::npos)
 					{
@@ -437,10 +440,7 @@ namespace game
 						{
 							DataBaseObject& temp = objects[objectIndex[nextName]];
 							uint64_t index = temp.propertyIndex[newName];
-							//std::cout << "Property index = " << index << "\n";
-							//std::cout << "Property at that index is " << temp.properties[index].name << "\n";
 							return &temp.properties[index];
-							//return  &objects[objectIndex[nextName]].properties[objects[objectIndex[nextName]].propertyIndex[newName]];
 						}
 					}
 					return objects[objectIndex[nextName]].Property(newName);
@@ -484,14 +484,6 @@ namespace game
 					lineSV.remove_prefix(lineSV.find_first_not_of(" \t\n\r\f\v"));
 					auto dkfj = lineSV.find_last_not_of(" \t\n\r\f\v")+1;
 					lineSV.remove_suffix(lineSV.size() - dkfj);
-					//std::cout << "Parsing line \n" << lineSV << "\n";
-					//line.erase(0, line.find_first_not_of(" \t\n\r\f\v"));
-					//line.erase(line.find_last_not_of(" \t\n\r\f\v") + 1);
-					//line.resize(line.find_last_not_of(" \t\n\r\f\v")+1);
-					//if (!lineSV.size())
-					//{
-					//	std::cout << "shit\n";
-					//}
 					if (lineSV[0] == '{')
 					{
 						depth++;
@@ -503,7 +495,6 @@ namespace game
 						if (objectStack.top().second == depth)
 						{
 							if (objectStack.size() > 1) objectStack.pop();
-							//std::cout << "Found '}' , Stack top is " << objectStack.top().first->name << "\n";
 						}
 						if (currentPropertyDepth.second == depth)
 						{
@@ -517,18 +508,13 @@ namespace game
 					{
 						if (!(lineSV.size() - 1))
 						{
-							std::cout << "Empty comment found\n";
-							//line.clear();
 							lineSV.remove_prefix(line.size());// = "";
 
 						}
 						else
 						{
-							//lineSV = lineSV.substr(2, line.size());
 							lineSV.remove_prefix(2);
-							//lineSV.remove_suffix()
 						}
-						//std::cout << "Comment found # " << line << "\n";
 						commentsRead.emplace_back(std::string(lineSV));
 						continue;
 					}
@@ -537,16 +523,15 @@ namespace game
 					if (lineSV[0] == '[')
 					{
 						// Object found
-						//std::cout << "Object " << line << " found\n";
 						if (lineSV.back() != ']')
 						{
-							std::cout << "Malformed data. Object has no closing ']'.\n";
+							DEBUG_OUT(std::cout << "Malformed data. Object has no closing ']'.\n");
 							return false;
 						}
 						object = lineSV.substr(1, lineSV.size() - 2);
 						if (!object.size())
 						{
-							std::cout << "Malformed data. Object is unnamed.\n";
+							DEBUG_OUT(std::cout << "Malformed data. Object is unnamed.\n");
 							return false;
 						}
 
@@ -564,7 +549,6 @@ namespace game
 						// Add to the stack to "enter" the object
 						temp = objectStack.top().first;
 						objectStack.push({ &temp->objects[temp->objectIndex[object]], depth });
-						//std::cout << "Stack top is " << objectStack.top().first->name << "\n";
 						for (auto& com : commentsRead)
 						{
 							objectStack.top().first->comments.emplace_back(com);
@@ -578,16 +562,15 @@ namespace game
 					if (lineSV[0] == '|')
 					{
 						// Property found
-						//std::cout << "Property " << line << " found\n";
 						if (lineSV.back() != '|')
 						{
-							std::cout << "Malformed data. Property has no closing '|'.\n";
+							DEBUG_OUT(std::cout << "Malformed data. Property has no closing '|'.\n");
 							return false;
 						}
 						property = lineSV.substr(1, lineSV.size() - 2);
 						if (!property.size())
 						{
-							std::cout << "Malformed data. Property is unnamed.\n";
+							DEBUG_OUT(std::cout << "Malformed data. Property is unnamed.\n");
 							return false;
 						}
 						temp = objectStack.top().first;
@@ -606,10 +589,9 @@ namespace game
 					{
 						if (currentPropertyDepth.first)
 						{
-							//std::cout << "Value \"" << line << "\" found\n";
 							if (!lineSV.size())
 							{
-								std::cout << "Malformed data. Value has no data. Just a blank line\n";
+								DEBUG_OUT(std::cout << "Malformed data. Value has no data. Just a blank line\n");
 								return false;
 							}
 							// it is a value
@@ -624,14 +606,14 @@ namespace game
 						}
 						else
 						{
-							std::cout << "Malformed data. Value on line not in a property.\n";
+							DEBUG_OUT(std::cout << "Malformed data. Value on line not in a property.\n");
 							return false;
 						}
 					}
 				} while (ss.rdbuf()->in_avail());
 				if (depth)
 				{
-					std::cout << "Malformed data. Closing '}' do not equal Opening '{'\n";
+					DEBUG_OUT(std::cout << "Malformed data. Closing '}' do not equal Opening '{'\n");
 					return false;
 				}
 				return true;
