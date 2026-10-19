@@ -1,8 +1,6 @@
-﻿//#pragma warning(disable : 4100)
-#include <string.h>
+﻿#include <string.h>
 #include <WinSock2.h>
 #include <ws2ipdef.h>
-#include <ws2def.h>
 #include <WS2tcpip.h>
 #include <cstdint>
 #include <functional>
@@ -14,7 +12,6 @@
 #include <MSWSock.h>
 #include <Windows.h>
 #include "Game_Assert.h"
-#include "GameIOCP.h"
 #include "GameIOCPNetwork.h"
 #include "GameIOCPNetwork_NetworkManager.h"
 #include "GameIOCP_ErrorOutput.h"

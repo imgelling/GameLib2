@@ -1,20 +1,13 @@
 ﻿#pragma once
-#include <ws2tcpip.h>
-#include <mswsock.h>
-#include <unordered_map>
 #include <vector>
-#include <iostream>
 #include <string>
 #include <atomic>
-#include <codecvt>
-#include <natupnp.h>
 
 #pragma comment(lib, "ws2_32.lib") 
 
-#include "GameThreadPool.h"
-#include "Game_MemoryPool.h"
 #include "GameIOCP_IOCPManager.h"
-#include "GameIOCP_ErrorOutput.h"
+#include <WinSock2.h>
+#include <cstdint>
 
 
 namespace game

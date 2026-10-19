@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable : 4505) // external linkage
 #include <vector>
 #include <unordered_map>
 #include <streambuf>
@@ -644,3 +645,4 @@ namespace game
 		};
 	}
 }
+#pragma warning(default : 4505) // external linkage

@@ -1,7 +1,6 @@
 #pragma once
 #include "GameThreadPool.h"
-#include <Windows.h>
-#include <concrt.h>
+#include <WinSock2.h>
 #include <cstdint>
 #include <functional>
 

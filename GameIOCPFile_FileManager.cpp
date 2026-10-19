@@ -1,15 +1,11 @@
-﻿//#pragma warning(disable : 4100)
-#include "GameIOCP.h"
-#include <string.h>
-//#include <Windows.h>
+﻿#include <string.h>
 #include <winsock2.h>
-#include <codecvt>
-#include <concrt.h>
+#include <atomic>
+#include <new>
 #include <cstdint>
 #include <exception>
 #include <functional>
 #include <iostream>
-#include <locale>
 #include <string>
 #include "GameIOCPFile_FileManager.h"
 #include "GameIOCP_ErrorOutput.h"

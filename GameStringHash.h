@@ -1,3 +1,4 @@
+#pragma warning(disable : 4505) // external linkage
 #pragma once
 #include <string>
 #include <cstdint>
@@ -90,3 +91,4 @@ namespace game
 {
 	const game::StringHash emptyStringHash = "";
 }
+#pragma warning(default : 4505) // external linkage

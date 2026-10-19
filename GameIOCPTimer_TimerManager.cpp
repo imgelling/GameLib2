@@ -1,4 +1,3 @@
-#pragma warning(disable : 4100)
 #define WIN32_LEAN_AND_MEAN 
 #include <Windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -187,6 +186,7 @@ namespace game
 
 			void TimerManager::_DoWork(const int32_t result, game::IOCP::PER_IO_DATA* ioDataIn)
 			{
+				result;
 				// TODO: not checking result for errors
 				PER_IO_DATA_TIMER* task = (PER_IO_DATA_TIMER*)ioDataIn;
 				if ((task->currentExecution <= task->maxExecutions) && !task->cancelled)

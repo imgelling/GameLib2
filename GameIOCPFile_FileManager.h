@@ -1,6 +1,5 @@
 #pragma once
-#include <ws2def.h>
-//#include <Windows.h>
+#include <WinSock2.h>
 #include <atomic>
 #include <cstdint>
 #include <functional>
