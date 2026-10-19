@@ -11,6 +11,7 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
 #define TIMER_TICK_SIGNATURE const game::IOCP::Timer::PER_IO_DATA_TIMER& task

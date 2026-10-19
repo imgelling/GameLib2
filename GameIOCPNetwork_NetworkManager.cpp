@@ -1,24 +1,27 @@
-﻿#include <string.h>
-#include <WinSock2.h>
-#include <ws2ipdef.h>
-#include <WS2tcpip.h>
-#include <cstdint>
+﻿#include <cstdint>
 #include <functional>
 #include <iostream>
 #include <mutex>
 #include <ostream>
 #include <string>
+#include <string.h>
 #include <vector>
+#include <WinSock2.h>
 #include <MSWSock.h>
+#include <ws2def.h>
+#include <ws2ipdef.h>
+#include <WS2tcpip.h>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+
 #include "Game_Assert.h"
-#include "GameIOCPNetwork.h"
-#include "GameIOCPNetwork_NetworkManager.h"
+#include "Game_SerializeToU8.h"
+#include "Game_SerializeToU8Vector.h"
+#include "GameHelpers.h"
 #include "GameIOCP_ErrorOutput.h"
 #include "GameIOCP_IOCPManager.h"
-#include "Game_SerializeToU8Vector.h"
-#include "Game_SerializeToU8.h"
-#include "GameHelpers.h"
+#include "GameIOCPNetwork.h"
+#include "GameIOCPNetwork_NetworkManager.h"
 
 #define NETWORK_COMPLETION_TYPE pad[0]
 #define NETWORK_CHANNEL pad[1]

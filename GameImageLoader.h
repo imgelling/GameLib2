@@ -4,6 +4,7 @@
 
 #include <malloc.h>
 #include <ocidl.h>
+#define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <wrl/client.h>
 #include <cstdint>
