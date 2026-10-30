@@ -117,9 +117,13 @@ namespace game
 				std::lock_guard<std::mutex> lock(_mtx);
 				for (auto& timer : _timers)
 				{
-					timer.second->cancelled = true;
-					PER_IO_DATA_TIMER* task = timer.second;
-					PostQueuedCompletionStatus(_iocp, 0, timer.first, (OVERLAPPED*)task);
+					if (timer.second != nullptr)
+					{
+						timer.second->cancelled = true;
+						_memoryPool.Deallocate(timer.second);
+						timer.second = nullptr;
+						std::cout << "Timer cancelled\n";
+					}
 				}
 				_timers.clear();
 			}
@@ -130,10 +134,13 @@ namespace game
 				auto it = _timers.find(id);
 				if (it != _timers.end())
 				{
-					it->second->cancelled = true;
-					PER_IO_DATA_TIMER* task = it->second;
-					_timers.erase(it);
-					PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
+					if (it->second != nullptr)
+					{
+						it->second->cancelled = true;
+						PER_IO_DATA_TIMER* task = it->second;
+						_timers.erase(it);
+						PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
+					}
 				}
 			}
 
@@ -159,6 +166,7 @@ namespace game
 			{
 				if (timer != nullptr)
 				{
+					std::cout << _timers.size() << "\n";
 					{
 						std::unique_lock<std::mutex> lock(_mtx);
 						_timers.erase(timer->id);
@@ -182,7 +190,7 @@ namespace game
 					PER_IO_DATA_TIMER* task = _queue.top();
 
 
-					if (task->dueTime >= std::chrono::steady_clock::now())
+					if (task->dueTime > std::chrono::steady_clock::now()) //was >=
 					{
 						_cv.wait_until(lock, task->dueTime);
 						continue;
