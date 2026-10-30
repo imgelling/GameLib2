@@ -112,6 +112,18 @@ namespace game
 				return id;
 			}
 
+			void TimerManager::CancelAllTimers()
+			{
+				std::lock_guard<std::mutex> lock(_mtx);
+				for (auto& timer : _timers)
+				{
+					timer.second->cancelled = true;
+					PER_IO_DATA_TIMER* task = timer.second;
+					PostQueuedCompletionStatus(_iocp, 0, timer.first, (OVERLAPPED*)task);
+				}
+				_timers.clear();
+			}
+
 			void TimerManager::CancelTimer(const uint64_t id)
 			{
 				std::lock_guard<std::mutex> lock(_mtx);
