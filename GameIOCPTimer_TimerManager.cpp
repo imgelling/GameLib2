@@ -6,6 +6,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <vector>
 #include "GameIOCPTimer_TimerManager.h"
 #include "GameIOCP_IOCPManager.h"
 
@@ -57,18 +58,13 @@ namespace game
 				{
 					_stop = true;
 					_cv.notify_all();
-					if (_worker.joinable()) _worker.join();
+					if (_worker.joinable()) 
+						_worker.join();
 					{
 						std::lock_guard<std::mutex> lock(_mtx);
 						while (!_queue.empty())
 						{
-							//PER_IO_DATA_TIMER* t = _queue.top();
 							_queue.pop();
-							//if (t->cancelled)
-							//{
-							//	_timers.erase(t->id);
-							//	_memoryPool.Deallocate(t);
-							//}
 						}
 						for (auto& a : _timers)
 						{
@@ -114,18 +110,21 @@ namespace game
 
 			void TimerManager::CancelAllTimers()
 			{
-				std::lock_guard<std::mutex> lock(_mtx);
-				for (auto& timer : _timers)
+				std::vector<uint64_t> allTimerIds;
 				{
-					if (timer.second != nullptr)
+					std::lock_guard<std::mutex> lock(_mtx);
+					for (auto& timer : _timers)
 					{
-						timer.second->cancelled = true;
-						_memoryPool.Deallocate(timer.second);
-						timer.second = nullptr;
-						std::cout << "Timer cancelled\n";
+						if (timer.second != nullptr)
+						{
+							allTimerIds.push_back(timer.first);
+						}
 					}
 				}
-				_timers.clear();
+				for (auto id : allTimerIds)
+				{
+					CancelTimer(id);
+				}
 			}
 
 			void TimerManager::CancelTimer(const uint64_t id)
@@ -138,7 +137,7 @@ namespace game
 					{
 						it->second->cancelled = true;
 						PER_IO_DATA_TIMER* task = it->second;
-						_timers.erase(it);
+						//_timers.erase(it);
 						PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
 					}
 				}
@@ -166,7 +165,7 @@ namespace game
 			{
 				if (timer != nullptr)
 				{
-					std::cout << _timers.size() << "\n";
+					std::cout << "delete timer - " << _timers.size() << "\n";
 					{
 						std::unique_lock<std::mutex> lock(_mtx);
 						_timers.erase(timer->id);
