@@ -72,9 +72,10 @@ namespace game
 				std::priority_queue <PER_IO_DATA_TIMER*, std::vector<PER_IO_DATA_TIMER*>, PER_IO_DATA_TIMER> _queue;
 				std::mutex _mtx;
 				std::condition_variable _cv;
-				std::atomic<bool> _stop;
+				std::atomic_bool _stop;
 				std::thread _worker;
 				game::MemoryPool _memoryPool;
+				std::atomic_bool _forceTimerUpdate;
 
 				std::function<void(const PER_IO_DATA_TIMER& task)> _OnTimer;
 				void _OnTimerDefault(const PER_IO_DATA_TIMER& task);

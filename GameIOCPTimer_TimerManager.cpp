@@ -21,6 +21,7 @@ namespace game
 				_iocp = INVALID_HANDLE_VALUE;
 				_nextId = 0;
 				_stop = false;
+				_forceTimerUpdate = false;
 			}
 
 			TimerManager::~TimerManager()
@@ -136,9 +137,11 @@ namespace game
 					if (it->second != nullptr)
 					{
 						it->second->cancelled = true;
-						PER_IO_DATA_TIMER* task = it->second;
+						_forceTimerUpdate = true;
+						_cv.notify_all();
+						//PER_IO_DATA_TIMER* task = it->second;
 						//_timers.erase(it);
-						PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
+						//PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
 					}
 				}
 			}
@@ -165,40 +168,50 @@ namespace game
 			{
 				if (timer != nullptr)
 				{
-					std::cout << "delete timer - " << _timers.size() << "\n";
+					//std::cout << "before delete timer - " << _timers.size() << "\n";
 					{
 						std::unique_lock<std::mutex> lock(_mtx);
 						_timers.erase(timer->id);
 					}
 					_memoryPool.Deallocate(timer);
 					timer = nullptr;
-					//std::cout << "Timer deallocated\n";
+					//std::cout << "after delete timer - " << _timers.size() << "\n";
 				}
 			}
 
 			void TimerManager::_Loop()
 			{
-				std::unique_lock<std::mutex> lock(_mtx);
+				std::unique_lock<std::mutex> cvLock(_mtx);
 				while (!_stop)
 				{
 					if (_queue.empty())
 					{
-						_cv.wait(lock);
+						_cv.wait(cvLock);
 						continue;
 					}
 					PER_IO_DATA_TIMER* task = _queue.top();
 
-
-					if (task->dueTime > std::chrono::steady_clock::now()) //was >=
+					// If the task is cancelled there is no reason to wait
+					// so just get rid of it
+					if (task->cancelled)
 					{
-						_cv.wait_until(lock, task->dueTime);
+						_queue.pop();
+						PostQueuedCompletionStatus(_iocp, 0, task->id, (OVERLAPPED*)task);
 						continue;
 					}
-					_queue.pop();
-					if (!task->cancelled)
+
+					if (task->dueTime >= std::chrono::steady_clock::now())
 					{
-						PostQueuedCompletionStatus(_iocp, 0, task->id, (OVERLAPPED*)task);
+						// If timer is due, or we want to force a timer update (cancelling a timer),
+						// loop again to process it.
+						_cv.wait_until(cvLock, task->dueTime, [&] { return _forceTimerUpdate.load(); });
+						_forceTimerUpdate = false;
+						//std::cout << "test\n";
+						continue;
 					}
+
+					_queue.pop();
+					PostQueuedCompletionStatus(_iocp, 0, task->id, (OVERLAPPED*)task);
 				}
 			}
 
