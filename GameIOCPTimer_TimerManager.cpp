@@ -138,10 +138,7 @@ namespace game
 					{
 						it->second->cancelled = true;
 						_forceTimerUpdate = true;
-						_cv.notify_all();
-						//PER_IO_DATA_TIMER* task = it->second;
-						//_timers.erase(it);
-						//PostQueuedCompletionStatus(_iocp, 0, id, (OVERLAPPED*)task);
+						_cv.notify_one();
 					}
 				}
 			}

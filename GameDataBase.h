@@ -350,6 +350,67 @@ namespace game
 				return ss.str();
 			}
 
+			// Write to a string
+			// then can return it for printing with cout or using elsewise
+
+
+			// # text is comment
+			// [text] = object
+			// |text| = property
+			// text inside property = value;
+			// objects and properties will be printed in order created
+			// all properties will be written before objects
+			inline void ToString(std::string& string)
+			{
+				string;
+				//const auto indent = [](const int32_t count, const std::string& indentString)
+				//	{
+				//		for (int32_t i = 0; i < count; ++i)
+				//			std::cout << indentString;
+				//	};
+				//const std::string indentString = "\t";
+				//for (const auto& comment : this->comments)
+				//{
+				//	indent(indents, indentString);
+				//	std::cout << "# " << comment << std::endl;
+				//}
+				//indent(indents, indentString);
+				//std::cout << "[" + obj.name + "]" << std::endl;
+				//indent(indents, indentString);
+				//std::cout << "{" << std::endl;
+				//for (auto& prop : obj.properties)
+				//{
+				//	for (const auto& comment : prop.comments)
+				//	{
+				//		indent(indents + 1, indentString);
+				//		std::cout << "# " << comment << std::endl;
+				//	}
+				//	indent(indents + 1, indentString);
+				//	std::cout << "|" << prop.name << "|" << std::endl;
+				//	//std::cout << prop.name << " from " << obj.name << std::endl; // used for testing
+				//	indent(indents + 1, indentString);
+				//	std::cout << "{" << std::endl;
+				//	for (const auto& values : prop.values)
+				//	{
+				//		for (const auto& comment : values.comments)
+				//		{
+				//			indent(indents + 2, indentString);
+				//			std::cout << "# " << comment << std::endl;
+				//		}
+				//		indent(indents + 2, indentString);
+				//		std::cout << values.value << std::endl;
+				//	}
+				//	indent(indents + 1, indentString);
+				//	std::cout << "}" << std::endl;
+				//}
+				//for (const auto& sub : obj.objects)
+				//{
+				//	ToString(string, sub, indents + 1, indentString);
+				//}
+				//indent(indents - 1 + 1, indentString);
+				//std::cout << "}" << std::endl;
+			}
+
 			// # text is comment
 			// [text] = object
 			// |text| = property
