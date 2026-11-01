@@ -340,19 +340,15 @@ namespace game
 				return (propertyIndex.count(propertyName));
 			}
 
-			std::string ToString()
-			{
-				std::streambuf* originalCoutBuffer = std::cout.rdbuf();
-				std::stringstream ss;
-				std::cout.rdbuf(ss.rdbuf());
-				PrintObject(*this);
-				std::cout.rdbuf(originalCoutBuffer);
-				return ss.str();
-			}
-
-			// Write to a string
-			// then can return it for printing with cout or using elsewise
-
+			//std::string ToString()
+			//{
+			//	std::streambuf* originalCoutBuffer = std::cout.rdbuf();
+			//	std::stringstream ss;
+			//	std::cout.rdbuf(ss.rdbuf());
+			//	Print(*this);
+			//	std::cout.rdbuf(originalCoutBuffer);
+			//	return ss.str();
+			//}
 
 			// # text is comment
 			// [text] = object
@@ -360,116 +356,77 @@ namespace game
 			// text inside property = value;
 			// objects and properties will be printed in order created
 			// all properties will be written before objects
-			inline void ToString(std::string& string)
+			void ToStringHelper(std::string& string, const DataBaseObject* obj = nullptr, const int32_t indents = 0, const std::string& indentString = "\t")
 			{
-				string;
-				//const auto indent = [](const int32_t count, const std::string& indentString)
-				//	{
-				//		for (int32_t i = 0; i < count; ++i)
-				//			std::cout << indentString;
-				//	};
-				//const std::string indentString = "\t";
-				//for (const auto& comment : this->comments)
-				//{
-				//	indent(indents, indentString);
-				//	std::cout << "# " << comment << std::endl;
-				//}
-				//indent(indents, indentString);
-				//std::cout << "[" + obj.name + "]" << std::endl;
-				//indent(indents, indentString);
-				//std::cout << "{" << std::endl;
-				//for (auto& prop : obj.properties)
-				//{
-				//	for (const auto& comment : prop.comments)
-				//	{
-				//		indent(indents + 1, indentString);
-				//		std::cout << "# " << comment << std::endl;
-				//	}
-				//	indent(indents + 1, indentString);
-				//	std::cout << "|" << prop.name << "|" << std::endl;
-				//	//std::cout << prop.name << " from " << obj.name << std::endl; // used for testing
-				//	indent(indents + 1, indentString);
-				//	std::cout << "{" << std::endl;
-				//	for (const auto& values : prop.values)
-				//	{
-				//		for (const auto& comment : values.comments)
-				//		{
-				//			indent(indents + 2, indentString);
-				//			std::cout << "# " << comment << std::endl;
-				//		}
-				//		indent(indents + 2, indentString);
-				//		std::cout << values.value << std::endl;
-				//	}
-				//	indent(indents + 1, indentString);
-				//	std::cout << "}" << std::endl;
-				//}
-				//for (const auto& sub : obj.objects)
-				//{
-				//	ToString(string, sub, indents + 1, indentString);
-				//}
-				//indent(indents - 1 + 1, indentString);
-				//std::cout << "}" << std::endl;
-			}
-
-			// # text is comment
-			// [text] = object
-			// |text| = property
-			// text inside property = value;
-			// objects and properties will be printed in order created
-			// all properties will be written before objects
-			inline void PrintObject(const DataBaseObject& obj, const int32_t indents = 0, const std::string& indentString = "\t")
-			{
-				const auto indent = [](const int32_t count, const std::string& indentString)
+				const auto indent = [&](const int32_t count, const std::string& indentString)
 					{
 						for (int32_t i = 0; i < count; ++i)
-							std::cout << indentString;
+							string += indentString;
 					};
-				for (const auto& comment : obj.comments)
+				if (obj == nullptr)
+					obj = this;
+				//const std::string indentString = "\t";
+				for (const auto& comment : obj->comments)
 				{
 					indent(indents, indentString);
-					std::cout << "# " << comment << std::endl;
+					string += "# " + comment + "\n";// std::endl;
 				}
 				indent(indents, indentString);
-				std::cout << "[" + obj.name + "]" << std::endl;
+				string += "[" + obj->name + "]" + "\n";// << std::endl;
 				indent(indents, indentString);
-				std::cout << "{" << std::endl;
-				for (auto& prop : obj.properties)
+				string += "{\n";// << std::endl;
+				for (auto& prop : obj->properties)
 				{
 					for (const auto& comment : prop.comments)
 					{
 						indent(indents + 1, indentString);
-						std::cout << "# " << comment << std::endl;
+						string += "# " + comment + "\n";//<< std::endl;
 					}
 					indent(indents + 1, indentString);
-					std::cout << "|" << prop.name << "|" << std::endl;
-					//std::cout << prop.name << " from " << obj.name << std::endl; // used for testing
+					string += "|" + prop.name + "|" + "\n";//<< std::endl;
+					//string += prop.name << " from " << obj.name << std::endl; // used for testing
 					indent(indents + 1, indentString);
-					std::cout << "{" << std::endl;
+					string += "{\n";//<< std::endl;
 					for (const auto& values : prop.values)
 					{
 						for (const auto& comment : values.comments)
 						{
 							indent(indents + 2, indentString);
-							std::cout << "# " << comment << std::endl;
+							string += "# " + comment + "\n";//<< std::endl;
 						}
 						indent(indents + 2, indentString);
-						std::cout << values.value << std::endl;
+						string += values.value + "\n";// << std::endl;
 					}
 					indent(indents + 1, indentString);
-					std::cout << "}" << std::endl;
+					string += "}\n";// << std::endl;
 				}
-				for (const auto& sub : obj.objects)
+				for (const auto& sub : obj->objects)
 				{
-					PrintObject(sub, indents + 1, indentString);
+					ToStringHelper(string, &sub, indents + 1, indentString);
 				}
 				indent(indents - 1 + 1, indentString);
-				std::cout << "}" << std::endl;
+				string += "}\n";// << std::endl;
 			}
 
-			void PrintObjectsAndProperties()
+
+			inline std::string ToString()
 			{
-				PrintObject(*this);
+				std::string ret;
+				ToStringHelper(ret);
+				return ret;
 			}
+
+			// # text is comment
+			// [text] = object
+			// |text| = property
+			// text inside property = value;
+			// objects and properties will be printed in order created
+			// all properties will be written before objects
+			inline void Print()
+			{
+				std::cout << this->ToString();
+			}
+
 
 			// Will return a pointer to the last thing that was a proper Property
 			DataBaseProperty* Property(const std::string& property)
