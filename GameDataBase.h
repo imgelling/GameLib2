@@ -335,28 +335,19 @@ namespace game
 				return true;
 			}
 
-			inline bool PropertyExists(const std::string& propertyName) const noexcept
+			bool PropertyExists(const std::string& propertyName) const noexcept
 			{
 				return (propertyIndex.count(propertyName));
 			}
 
-			//std::string ToString()
-			//{
-			//	std::streambuf* originalCoutBuffer = std::cout.rdbuf();
-			//	std::stringstream ss;
-			//	std::cout.rdbuf(ss.rdbuf());
-			//	Print(*this);
-			//	std::cout.rdbuf(originalCoutBuffer);
-			//	return ss.str();
-			//}
-
+			private:
 			// # text is comment
 			// [text] = object
 			// |text| = property
 			// text inside property = value;
 			// objects and properties will be printed in order created
 			// all properties will be written before objects
-			void ToStringHelper(std::string& string, const DataBaseObject* obj = nullptr, const int32_t indents = 0, const std::string& indentString = "\t")
+			void _ToStringHelper(std::string& string, const DataBaseObject* obj = nullptr, const int32_t indents = 0, const std::string& indentString = "\t")
 			{
 				const auto indent = [&](const int32_t count, const std::string& indentString)
 					{
@@ -365,61 +356,60 @@ namespace game
 					};
 				if (obj == nullptr)
 					obj = this;
-				//const std::string indentString = "\t";
 				for (const auto& comment : obj->comments)
 				{
 					indent(indents, indentString);
-					string += "# " + comment + "\n";// std::endl;
+					string += "# " + comment + "\n";
 				}
 				indent(indents, indentString);
-				string += "[" + obj->name + "]" + "\n";// << std::endl;
+				string += "[" + obj->name + "]" + "\n";
 				indent(indents, indentString);
-				string += "{\n";// << std::endl;
+				string += "{\n";
 				for (auto& prop : obj->properties)
 				{
 					for (const auto& comment : prop.comments)
 					{
 						indent(indents + 1, indentString);
-						string += "# " + comment + "\n";//<< std::endl;
+						string += "# " + comment + "\n";
 					}
 					indent(indents + 1, indentString);
-					string += "|" + prop.name + "|" + "\n";//<< std::endl;
-					//string += prop.name << " from " << obj.name << std::endl; // used for testing
+					string += "|" + prop.name + "|" + "\n";
 					indent(indents + 1, indentString);
-					string += "{\n";//<< std::endl;
+					string += "{\n";
 					for (const auto& values : prop.values)
 					{
 						for (const auto& comment : values.comments)
 						{
 							indent(indents + 2, indentString);
-							string += "# " + comment + "\n";//<< std::endl;
+							string += "# " + comment + "\n";
 						}
 						indent(indents + 2, indentString);
-						string += values.value + "\n";// << std::endl;
+						string += values.value + "\n";
 					}
 					indent(indents + 1, indentString);
-					string += "}\n";// << std::endl;
+					string += "}\n";
 				}
 				for (const auto& sub : obj->objects)
 				{
-					ToStringHelper(string, &sub, indents + 1, indentString);
+					_ToStringHelper(string, &sub, indents + 1, indentString);
 				}
 				indent(indents - 1 + 1, indentString);
-				string += "}\n";// << std::endl;
+				string += "}\n";
 			}
+
+			public:
 
 
 			std::string ToString()
 			{
 				std::string ret;
-				ToStringHelper(ret);
+				_ToStringHelper(ret);
 				return ret;
 			}
 
 			void StripString(std::string& string)
 			{
-				uint64_t p = 0;
-				p = string.find_first_of("\t");
+				uint64_t p = string.find_first_of("\t");
 				while (p != std::string::npos)
 				{
 					string.erase(p, 1);
@@ -427,12 +417,6 @@ namespace game
 				} 
 			}
 
-			// # text is comment
-			// [text] = object
-			// |text| = property
-			// text inside property = value;
-			// objects and properties will be printed in order created
-			// all properties will be written before objects
 			inline void Print()
 			{
 				std::cout << this->ToString();
