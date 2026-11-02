@@ -409,11 +409,22 @@ namespace game
 			}
 
 
-			inline std::string ToString()
+			std::string ToString()
 			{
 				std::string ret;
 				ToStringHelper(ret);
 				return ret;
+			}
+
+			void StripString(std::string& string)
+			{
+				uint64_t p = 0;
+				p = string.find_first_of("\t");
+				while (p != std::string::npos)
+				{
+					string.erase(p, 1);
+					p = string.find_first_of("\t");
+				} 
 			}
 
 			// # text is comment
