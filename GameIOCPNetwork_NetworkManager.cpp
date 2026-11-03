@@ -620,7 +620,7 @@ namespace game
 				WSASend(socket, &ioData->buffer, 1, NULL, 0, &ioData->overlapped, NULL);
 				if (game::IOCP::ErrorOutput("WSASend", __LINE__))
 				{
-					_CloseConnection(ioData, __LINE__);
+					_CloseConnection(ioData, __LINE__, true);
 				}
 			}
 			// UDP ONLY
