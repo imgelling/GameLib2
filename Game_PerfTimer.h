@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <mutex>
 
-#include <Game_Assert.h>
+#include "../GameLib2/Game_Assert.h"
 
 namespace game
 {
@@ -107,6 +107,17 @@ namespace game
             const std::lock_guard<std::mutex> lock(mutex);
             ret = timedfuncs[name].cumulative / timedfuncs[name].ticks;
             return ret;
+        }
+
+        // Returns the average milliseconds the function ran over all the calls, debug breaks if not found
+        double AverageMilli(const std::string& name)
+        {
+            GAME_ASSERT(timedfuncs.find(name) != timedfuncs.end());
+            double ret = 0.0;
+
+            const std::lock_guard<std::mutex> lock(mutex);
+            ret = timedfuncs[name].cumulative / timedfuncs[name].ticks;
+            return ret / 1000.0 / 1000.0;
         }
 
         // Returns an unmodifiable container of timed functions
