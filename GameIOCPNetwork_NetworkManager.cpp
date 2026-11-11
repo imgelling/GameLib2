@@ -1081,11 +1081,12 @@ namespace game
 
 				// Start WinSock 2.2
 				WSADATA WSAData;
-				if (!WSAStartup(MAKEWORD(2, 2), &WSAData))
+				if (WSAStartup(MAKEWORD(2, 2), &WSAData) != 0)
 				{
 					game::IOCP::ErrorOutput("WSAStartup", __LINE__);
+					return false;
 				}
-				std::cout << "WinSock started.\n";
+				//std::cout << "WinSock started.\n";
 
 				// Create the main completion port
 				if (ioHandler.GetCompeltionPort() == INVALID_HANDLE_VALUE)
