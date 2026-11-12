@@ -101,6 +101,7 @@ namespace game
 			}
 #endif
 		}
+
 		~Terminal()
 		{
 #if _WIN32
@@ -117,6 +118,23 @@ namespace game
 		bool IsFocused() const
 		{
 			return _isFocused;
+		}
+
+		void GetConsoleSize(uint64_t& rows, uint64_t& cols)
+		{
+			CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+			if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
+			{
+				// dwSize is buffer size, not viewable window size
+				cols = (uint64_t)csbi.srWindow.Right - csbi.srWindow.Left + 1;
+				//std::cout << "Terminal width: " << columns << " columns\n";
+				rows = (uint64_t)csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+				//std::cout << "Terminal height: " << rows << " rows\n";
+			}
+			else {
+				//Output(OutErr,"Error retrieving console information.\n");
+			}
 		}
 
 		void CheckInputEvents(game::Keyboard &keyboard)
@@ -240,7 +258,7 @@ namespace game
 #pragma region Cursor	
 		const std::string MoveToHome = "\033[H";
 		const std::string SetPosition(const uint16_t, const uint16_t);
-		void GetPosition(uint16_t&, uint16_t&);
+		void GetPosition(uint16_t&, uint16_t&) const;
 		const std::string MoveUp(const uint16_t);
 		const std::string MoveDown(const uint16_t);
 		const std::string MoveRight(const uint16_t);
@@ -333,7 +351,7 @@ namespace game
 #endif
 	}
 
-	inline void Terminal::GetPosition(uint16_t& column, uint16_t& row)
+	inline void Terminal::GetPosition(uint16_t& column, uint16_t& row) const
 	{
 #ifdef _WIN32
 		CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
