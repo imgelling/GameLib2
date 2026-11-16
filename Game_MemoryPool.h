@@ -6,6 +6,7 @@
 #include <atomic>
 #include <cstdint>
 #include <string>
+#include <memory>
 
 namespace game
 {
@@ -163,6 +164,123 @@ namespace game
         uint64_t _grownPoolSize;
         uint64_t _initialPoolSize;
         std::vector<T> _freeBlocks;
+        std::mutex _mutex;
+        PoolGrowthType _growthType;
+        std::atomic<uint64_t> _allocations;
+        std::atomic<uint64_t> _deallocations;
+
+    };
+
+    template <typename T>
+    class GenericHeapMemoryPool
+    {
+    public:
+
+        GenericHeapMemoryPool(const uint64_t poolSize, const uint64_t reserveSize = 0, const PoolGrowthType growthType = PoolGrowthType::Linear)
+        {
+            _poolSize = poolSize;
+            _initialPoolSize = poolSize;
+            _grownPoolSize = poolSize;
+            _growthType = _growthType;
+            _allocations = 0;
+            _deallocations = 0;
+            std::lock_guard<std::mutex> lock(_mutex);
+            _AllocatePool();
+        }
+        GenericHeapMemoryPool()
+        {
+            _poolSize = 1;
+            _grownPoolSize = 1;
+            _initialPoolSize = 1;
+            _growthType = PoolGrowthType::Linear;
+            _allocations = 0;
+            _deallocations = 0;
+        }
+        ~GenericHeapMemoryPool()
+        {
+            if (_freeBlocks.size() != _poolSize)
+                std::cout << "GenericHeapMemoryPool - Not all Allocations were DeAllocated\n";
+        }
+
+        uint64_t GetSize() const
+        {
+            return _poolSize;
+        }
+
+        void Initialize(const uint64_t poolSize, const PoolGrowthType growthType = PoolGrowthType::Linear)
+        {
+            _poolSize = poolSize;
+            _initialPoolSize = _poolSize;
+            _grownPoolSize = poolSize;
+            _growthType = growthType;
+            _allocations = 0;
+            _deallocations = 0;
+            std::lock_guard<std::mutex> lock(_mutex);
+            _AllocatePool();
+        }
+
+        std::shared_ptr<T> Allocate()
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+            // If pool is empty, grow it according to GrowthType
+            if (_freeBlocks.empty())
+            {
+                _AllocatePool();
+            }
+            _allocations.fetch_add(1);
+            std::shared_ptr<T> block = _freeBlocks.back();
+            _freeBlocks.pop_back();
+            return block;
+        }
+
+        void Deallocate(std::shared_ptr<T> block)
+        {
+            _deallocations.fetch_add(1);
+            std::lock_guard<std::mutex> lock(_mutex);
+            //block.clear();
+            _freeBlocks.push_back(block);
+        }
+
+        void PrintStats(std::string name)
+        {
+            std::cout << name << "\n";
+            //uint64_t capacity = 0;
+            //{
+            //    std::lock_guard<std::mutex> lock(_mutex);
+            //    for (auto& i : _freeVectors)
+            //    {
+            //        capacity += i.capacity();
+            //    }
+            //}
+            //std::cout << name << " count         : " << _poolSize << "\n";
+            //std::cout << name << " capacity      : " << formatDataSize(capacity) << "\n";
+            //std::cout << name << " allocations   : " << _allocations.load() << "\n";
+            //std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+        }
+
+    private:
+        void _AllocatePool()
+        {
+            _poolSize = _grownPoolSize;
+            for (uint64_t i = 0; i < _poolSize; ++i)
+            {
+                std::shared_ptr<T> temp = std::make_shared<T>();
+                _freeBlocks.push_back(temp);
+            }
+
+            switch (_growthType)
+            {
+            case PoolGrowthType::Constant: _grownPoolSize += _initialPoolSize; break;
+            case PoolGrowthType::Exponential: _grownPoolSize *= _grownPoolSize; break;
+            case PoolGrowthType::Linear:
+            default: _grownPoolSize += _grownPoolSize;
+            }
+            //std::cout << "GenericMemoryPool grows to " << _poolSize << "\n";
+        }
+        uint64_t _poolSize;
+        uint64_t _grownPoolSize;
+        uint64_t _initialPoolSize;
+        std::vector<std::shared_ptr<T>> _freeBlocks;
         std::mutex _mutex;
         PoolGrowthType _growthType;
         std::atomic<uint64_t> _allocations;
