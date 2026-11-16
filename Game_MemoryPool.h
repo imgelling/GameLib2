@@ -57,7 +57,7 @@ namespace game
     };
 
     template <typename T>
-    class GenericMemoryPool //GenericHeapMemoryPool
+    class GenericMemoryPool
     {
     public:
 
