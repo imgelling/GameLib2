@@ -83,7 +83,10 @@ namespace game
             _deallocations = 0;
         }
         ~GenericMemoryPool()
-        {}
+        {
+            if (_freeBlocks.size() != _poolSize)
+                std::cout << "GenericMemoryPool - Not all Allocations were DeAllocated\n";
+        }
 
         uint64_t GetSize() const
         {
