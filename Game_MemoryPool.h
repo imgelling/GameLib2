@@ -81,6 +81,7 @@ namespace game
             _growthType = PoolGrowthType::Linear;
             _allocations = 0;
             _deallocations = 0;
+            _AllocatePool();
         }
         ~GenericMemoryPool()
         {
