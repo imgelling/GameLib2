@@ -51,6 +51,11 @@ namespace game
 				_oldKeyState[i] = _newKeyState[i];
 			}
 		}
+		void ResetTextInput()
+		{
+			SetTextInputText("");
+			SetCursorPosition(0);
+		}
 
 
 		void TextInputMode(const bool textInputMode, const uint32_t restrictions = GAME_TEXT_INPUT_ALL);

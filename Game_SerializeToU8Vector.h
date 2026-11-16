@@ -23,6 +23,13 @@ namespace game
 			_IncreaseWritePos(size);
 		}
 
+		void Assign(SerializeToU8Vector in)
+		{
+			ClearData();
+			_data.assign(in._data.begin(), in._data.end());
+			_IncreaseWritePos(in._data.size());
+		}
+
 		// uint8_t*
 		void Add(const uint8_t* data, const uint64_t size)
 		{
