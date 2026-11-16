@@ -57,7 +57,7 @@ namespace game
     };
 
     template <typename T>
-    class GenericMemoryPool
+    class GenericMemoryPool //GenericHeapMemoryPool
     {
     public:
 
@@ -157,7 +157,7 @@ namespace game
             case PoolGrowthType::Linear:
             default: _grownPoolSize += _grownPoolSize;
             }
-            std::cout << "GenericMemoryPool grows to " << _poolSize << "\n";
+            //std::cout << "GenericMemoryPool grows to " << _poolSize << "\n";
         }
         uint64_t _poolSize;
         uint64_t _grownPoolSize;

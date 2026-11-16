@@ -228,7 +228,8 @@ namespace game
 						std::stringstream ss;
 						ss << finalThing;
 						ss >> index;
-						if (index >= 0 && index < prop->values.size())
+						// >= is always true
+						if (/*index >= 0 && */index < prop->values.size())
 						{
 							prop->values[index].comments.emplace_back(comment);
 						}
@@ -337,7 +338,7 @@ namespace game
 
 			bool PropertyExists(const std::string& propertyName) const noexcept
 			{
-				return (propertyIndex.count(propertyName));
+				return ((bool)propertyIndex.count(propertyName));
 			}
 
 			private:
