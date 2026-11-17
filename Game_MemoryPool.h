@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <string>
 #include <memory>
+#include "GameHelpers.h"
 
 namespace game
 {
@@ -85,7 +86,7 @@ namespace game
         }
         ~GenericMemoryPool()
         {
-            if (_freeBlocks.size() != _poolSize)
+            if (_allocations != _deallocations)
                 std::cout << "GenericMemoryPool - Not all Allocations were DeAllocated\n";
         }
 
@@ -132,17 +133,12 @@ namespace game
         {
             std::cout << name << "\n";
             //uint64_t capacity = 0;
-            //{
-            //    std::lock_guard<std::mutex> lock(_mutex);
-            //    for (auto& i : _freeVectors)
-            //    {
-            //        capacity += i.capacity();
-            //    }
-            //}
-            //std::cout << name << " count         : " << _poolSize << "\n";
-            //std::cout << name << " capacity      : " << formatDataSize(capacity) << "\n";
-            //std::cout << name << " allocations   : " << _allocations.load() << "\n";
-            //std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                std::cout << name << " count         : " << _poolSize << "\n";
+				std::cout << name << " allocations   : " << _allocations.load() << "\n";
+				std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+            }
         }
 
     private:
@@ -249,17 +245,12 @@ namespace game
         {
             std::cout << name << "\n";
             //uint64_t capacity = 0;
-            //{
-            //    std::lock_guard<std::mutex> lock(_mutex);
-            //    for (auto& i : _freeVectors)
-            //    {
-            //        capacity += i.capacity();
-            //    }
-            //}
-            //std::cout << name << " count         : " << _poolSize << "\n";
-            //std::cout << name << " capacity      : " << formatDataSize(capacity) << "\n";
-            //std::cout << name << " allocations   : " << _allocations.load() << "\n";
-            //std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                std::cout << name << " count         : " << _poolSize << "\n";
+                std::cout << name << " allocations   : " << _allocations.load() << "\n";
+                std::cout << name << " deallocations : " << _deallocations.load() << "\n";
+            }
         }
 
     private:
