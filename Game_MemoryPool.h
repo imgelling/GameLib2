@@ -198,7 +198,7 @@ namespace game
         }
         ~GenericHeapMemoryPool()
         {
-            if (_freeBlocks.size() != _poolSize)
+            if (_allocations != _deallocations)
                 std::cout << "GenericHeapMemoryPool - Not all Allocations were DeAllocated\n";
         }
 
@@ -244,7 +244,6 @@ namespace game
         void PrintStats(std::string name)
         {
             std::cout << name << "\n";
-            //uint64_t capacity = 0;
             {
                 std::lock_guard<std::mutex> lock(_mutex);
                 std::cout << name << " count         : " << _poolSize << "\n";
