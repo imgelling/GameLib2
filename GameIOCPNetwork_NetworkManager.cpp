@@ -875,19 +875,19 @@ namespace game
 						{
 							std::lock_guard<std::mutex> lock(_listenSocketMutex);
 							std::cout << "Acceptor stopped.\n";
-							if (_listenSocket != INVALID_SOCKET)
-							{
-								// don't need to shutdown because it is a listening socket
-								//if (shutdown(_listenSocket, SD_BOTH) == SOCKET_ERROR)
-								//{
-								//	game::IOCP::ErrorOutput("shutdown", __LINE__);
-								//}
-								if (closesocket(_listenSocket) == SOCKET_ERROR)
-								{
-									game::IOCP::ErrorOutput("closesocket", __LINE__);
-								}
-								_listenSocket = INVALID_SOCKET;
-							}
+							//if (_listenSocket != INVALID_SOCKET)
+							//{
+							//	// don't need to shutdown because it is a listening socket
+							//	//if (shutdown(_listenSocket, SD_BOTH) == SOCKET_ERROR)
+							//	//{
+							//	//	game::IOCP::ErrorOutput("shutdown", __LINE__);
+							//	//}
+							//	if (closesocket(_listenSocket) == SOCKET_ERROR)
+							//	{
+							//		game::IOCP::ErrorOutput("closesocket", __LINE__);
+							//	}
+							//	_listenSocket = INVALID_SOCKET;
+							//}
 						}
 
 						_CloseConnection(ioData, __LINE__, true);
@@ -1166,6 +1166,7 @@ namespace game
 				_stopping.store(1);
 
 				// Close the listening socket
+				std::cout << "Closing listening socket\n";
 				if (_listenSocket != INVALID_SOCKET)
 				{
 					if (closesocket(_listenSocket) == SOCKET_ERROR)
@@ -1174,7 +1175,8 @@ namespace game
 					}
 					_listenSocket = INVALID_SOCKET;
 				}
-
+				Sleep(100);
+				std::cout << "Closing internal connections\n";
 				// Close any open connections gracefully
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex); // Is this a problem? maybe move inside?
