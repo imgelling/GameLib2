@@ -58,7 +58,13 @@ namespace game
 
 			bool NetworkManager::_ExtractHeaderForReceive(PER_IO_DATA_NETWORK* ioData, uint32_t& bytesReceived)
 			{
-				auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+				{
+					std::lock_guard<std::mutex> lock(_connectionsMutex);
+					auto &c = _internalConnections.at(ioData->socket);
+					(void)c;
+				}
+#endif
 				// If expectedTransferTotal is zero, then we need to extract a header
 				if (!ioData->expectedTransferTotal)
 				{
@@ -151,7 +157,10 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+					auto &c = _internalConnections.at(ioData->socket);
+					(void)c;
+#endif
 					_internalConnections[ioData->socket].receiveData.clear();
 				}
 				GAME_ASSERT((int32_t)bytesReceived - (int32_t)bytesToRemove >= 0);
@@ -163,7 +172,10 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+					auto &c = _internalConnections.at(ioData->socket);
+					(void)c;
+#endif
 					_internalConnections[ioData->socket].AddBytesReceivedFrom(bytesReceived);
 					_internalConnections[ioData->socket].receiveData.insert(_internalConnections[ioData->socket].receiveData.end(), ioData->buffer.buf, ioData->buffer.buf + bytesReceived);
 				}
@@ -181,7 +193,10 @@ namespace game
 				if (ioData->NETWORK_SOCKET_TYPE == SOCK_STREAM)
 				{
 					std::lock_guard<std::mutex> lock(_connectionsMutex);
-					auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+					auto &c = _internalConnections.at(ioData->socket);
+					(void)c;
+#endif
 					_internalConnections[ioData->socket].AddBytesReceivedFrom(ioData->expectedTransferLeft);
 					if (_internalConnections[ioData->socket].receiveData.size())
 					{
@@ -353,7 +368,10 @@ namespace game
 
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+						auto &c = _internalConnections.at(ioData->socket);
+						(void)c;
+#endif
 						_internalConnections[ioData->socket].socket = ioData->socket;
 						_internalConnections[ioData->socket].remoteIpAddress = remoteAddrStr;
 						_internalConnections[ioData->socket].remotePort = remotePort;
@@ -434,7 +452,10 @@ namespace game
 
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+						auto &c = _internalConnections.at(ioData->socket);
+						(void)c;
+#endif
 						_internalConnections[ioData->socket].remoteIpAddress = remoteAddrStr;
 						_internalConnections[ioData->socket].remotePort = remotePort;
 						_internalConnections[ioData->socket].localIpAddress = localAddrStr;
@@ -530,7 +551,10 @@ namespace game
 					ioData->expectedTransferTotal = ioData->expectedTransferLeft;
 					{
 						std::lock_guard<std::mutex> lock(_connectionsMutex);
-						auto c = _internalConnections.at(ioData->socket);
+#if defined(_DEBUG)
+						auto &c = _internalConnections.at(ioData->socket);
+						(void)c;
+#endif
 						_internalConnections[ioData->socket].receiveData.clear();
 					}
 				}
@@ -1027,11 +1051,10 @@ namespace game
 			void NetworkManager::GetConnectionStats(const SOCKET socket, uint64_t& receivedFrom, uint64_t& sentTo)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				auto a = _internalConnections.find(socket);
-				if (a != _internalConnections.end())
+				if (_internalConnections.contains(socket))
 				{
-					receivedFrom = _internalConnections.at(socket).BytesReceivedFrom();
-					sentTo = _internalConnections.at(socket).BytesSentTo();
+					receivedFrom = _internalConnections[socket].BytesReceivedFrom();
+					sentTo = _internalConnections[socket].BytesSentTo();
 				}
 				else
 				{
@@ -1042,10 +1065,9 @@ namespace game
 			const ConnectionInfo NetworkManager::GetConnectionInfo(const SOCKET socket)
 			{
 				std::lock_guard<std::mutex> lock(_connectionsMutex);
-				auto a = _internalConnections.find(socket);
-				if (a != _internalConnections.end())
+				if (_internalConnections.contains(socket))
 				{
-					return a->second.GetInfo();
+					return _internalConnections[socket].GetInfo();
 				}
 				else
 				{
