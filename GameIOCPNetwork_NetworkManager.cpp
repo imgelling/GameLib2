@@ -1193,7 +1193,7 @@ namespace game
 			}
 			void NetworkManager::Shutdown()
 			{
-				std::cout << "Stopping Socket operations.\n";
+				std::cout << "Stopping network operations.\n";
 
 				// Set flag we are quitting
 				_stopping.store(1);
@@ -1208,7 +1208,7 @@ namespace game
 					}
 					_listenSocket = INVALID_SOCKET;
 				}
-				Sleep(100);
+
 				std::cout << "Closing internal connections\n";
 				// Close any open connections gracefully
 				{
